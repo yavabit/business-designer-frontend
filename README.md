@@ -11,6 +11,7 @@
 - Redux Toolkit
 - RTK Query
 - React Flow
+- React icons
 
 ## Contributions
 
