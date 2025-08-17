@@ -21,8 +21,10 @@ interface IProject {
 interface IProcess {
   id: number;
   name: string;
+  desc: Script;
   project_id: number;
   project_name: string;
+  content: string;
   pict_url?: string | null;
   author_id: number;
   author_name: string;

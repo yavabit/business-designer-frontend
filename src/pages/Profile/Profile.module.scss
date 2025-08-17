@@ -1,0 +1,24 @@
+.profile {
+	display: flex;
+	justify-content: space-around;
+	.left-panel {
+		display: flex;
+		flex-direction: column;
+		margin-right: 20px;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.right-panel {
+		width: 100%;
+	}
+
+	input {
+		font-size: 20px;
+	}
+
+	input:disabled {
+		cursor: default;
+		color: black;
+	}
+}

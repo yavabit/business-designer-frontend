@@ -5,6 +5,8 @@ import { ReduxProvider } from '@app/providers/ReduxProvider.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import '@ant-design/v5-patch-for-react-19';
 
+
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ReduxProvider>
