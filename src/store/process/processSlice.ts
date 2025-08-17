@@ -17,7 +17,7 @@ export interface IFilter {
 	sort?: string
 	orderCreatedDate?: string
 	orderAlphabet?: string
-	projectId?: string
+	projectId?: number
 }
 
 interface IFilterPayload {
@@ -56,15 +56,15 @@ const processSlice = createSlice({
 		fetchProcesses: (state, { payload }: IFilterPayload) => {
 			state.isLoading = true
 			let listProcesses: IProcess[] = Array(10).fill({
-				id: '0',
+				id: 0,
 				name: 'Процесс CI/CD',
 				desc: 'Описание процесса CI/CD',
-				project_id: '0',
+				project_id: 0,
 				project_name: '0',
-				scheme: '{}',
+				content: '{}',
 				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
-				creation_user_id: '0',
-				creation_user_name: '0',
+				author_id: 0,
+				author_name: '0',
 				created_at: new Date().toLocaleDateString(),
 				updated_at: new Date().toLocaleDateString(),
 			})
@@ -72,7 +72,7 @@ const processSlice = createSlice({
 			listProcesses = listProcesses.map((item, index) => {
 				return {
 					...item,
-					id: index.toString()
+					id: index
 				}
 			})
 

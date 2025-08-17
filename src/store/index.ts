@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { userReducer } from './user/userSlice'
 import { processReducer } from './process/processSlice'
+import projectsReducer from './projects/projectsSlice'
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
-		process: processReducer
+		process: processReducer,
+    projects: projectsReducer,
   },
 })
 
