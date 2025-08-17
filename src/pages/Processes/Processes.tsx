@@ -82,7 +82,7 @@ export const Processes = () => {
   useEffect(() => {
     dispatch(
       fetchProcesses({
-        projectId: projectId,
+        projectId: Number(projectId),
       })
     );
   }, [navigate, dispatch, projectId]);
@@ -94,7 +94,7 @@ export const Processes = () => {
         loading={isLoading}
         style={{ width: 300 }}
         cover={
-          <img alt="Изображение процесса" height={160} src={item.pict_url} />
+          <img alt="Изображение процесса" height={160} src={item.pict_url ?? undefined} />
         }
         actions={[
           <AiOutlineDelete
@@ -116,7 +116,7 @@ export const Processes = () => {
     ));
   };
 
-  const onChangeSortField = (value) => {
+  const onChangeSortField = () => {
     setFilters({
       ...filters,
     });
