@@ -59,7 +59,7 @@ const processSlice = createSlice({
 				id: 0,
 				name: 'Процесс CI/CD',
 				desc: 'Описание процесса CI/CD',
-				project_id: 0,
+				project_id: 1,
 				project_name: '0',
 				content: '{}',
 				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
@@ -76,7 +76,7 @@ const processSlice = createSlice({
 				}
 			})
 
-			state.listProcesses = listProcesses.filter(item => item.project_id === payload.projectId)
+			state.listProcesses = listProcesses.filter(item => item.project_id === payload.projectId || item.project_id === 1)
 			state.isLoading = false
 		},
 		fetchProcess: (state, { payload }: IProcessPayload) => {

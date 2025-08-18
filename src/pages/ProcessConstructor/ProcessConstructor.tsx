@@ -11,6 +11,9 @@ import {
   Background,
   Controls,
   MiniMap,
+	type OnNodesChange,
+	type OnEdgesChange,
+	type OnConnect,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
@@ -33,17 +36,17 @@ export const ProcessConstructor = () => {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
-  const onNodesChange = useCallback(
+  const onNodesChange = useCallback<OnNodesChange>(
     (changes) =>
       setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     []
   );
-  const onEdgesChange = useCallback(
+  const onEdgesChange = useCallback<OnEdgesChange>(
     (changes) =>
       setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
     []
   );
-  const onConnect = useCallback(
+  const onConnect = useCallback<OnConnect>(
     (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     []
   );
@@ -83,7 +86,7 @@ export const ProcessConstructor = () => {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onNodeClick={(e, node) => console.log(node)}
+          onNodeClick={(e, node) => console.log(e, node)}
           onConnect={onConnect}
           snapToGrid={true}
           snapGrid={snapGrid}
