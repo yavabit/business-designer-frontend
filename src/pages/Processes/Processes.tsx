@@ -104,6 +104,7 @@ export const Processes = () => {
           <AiOutlineEdit key="edit" />,
         ]}
         hoverable
+				onClick={() => navigate(`/process/${item.id}`)}
       >
         <Meta
           avatar={
