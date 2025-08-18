@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import { useState, useCallback } from "react";
 import {
   ReactFlow,
@@ -31,7 +29,6 @@ const initialEdges: Edge[] = [{ id: "n1-n2", source: "n1", target: "n2" }];
 const snapGrid: SnapGrid = [20, 20];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
->>>>>>> 22c9d2e (feat: Добавлена ReactFlow на страницу с конструктором)
 export const ProcessConstructor = () => {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
@@ -64,11 +61,6 @@ export const ProcessConstructor = () => {
   };
 
   return (
-<<<<<<< HEAD
-	  <div>ProcessConstructor</div>
-  )
-}
-=======
     <div>
       <Button
         size="large"
@@ -110,4 +102,3 @@ export const ProcessConstructor = () => {
     </div>
   );
 };
->>>>>>> 22c9d2e (feat: Добавлена ReactFlow на страницу с конструктором)
