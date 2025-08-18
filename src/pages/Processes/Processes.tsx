@@ -67,7 +67,8 @@ export const Processes = () => {
   const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
     console.log(info?.source, value);
 
-  const handleClickDeleteProcess = (item: IProcess) => {
+  const handleClickDeleteProcess = (e: React.MouseEvent<SVGElement>, item: IProcess) => {
+		e.stopPropagation()
     modal.confirm({
       title: "Подтверждение",
       content: "Удалить процесс?",
@@ -99,11 +100,12 @@ export const Processes = () => {
         actions={[
           <AiOutlineDelete
             key="ellipsis"
-            onClick={() => handleClickDeleteProcess(item)}
+            onClick={(e) => handleClickDeleteProcess(e, item)}
           />,
           <AiOutlineEdit key="edit" />,
         ]}
         hoverable
+				onClick={() => navigate(`/process/${item.id}`)}
       >
         <Meta
           avatar={
@@ -136,7 +138,6 @@ export const Processes = () => {
             placeholder="Выберите значение"
             optionFilterProp="label"
             onChange={onChangeSortField}
-            onSearch={onSearch}
             options={optionsSortField}
             style={{ width: 300 }}
           />
