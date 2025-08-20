@@ -18,6 +18,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
+import { NodesPanel } from "./NodesPanel/NodesPanel";
 
 const initialNodes: Node[] = [
   {
@@ -97,6 +98,7 @@ export const ProcessConstructor = () => {
             flex: 1,
           }}
         >
+          <NodesPanel/>
           <Controls />
           <MiniMap />
           <Background color="#ccc" variant={BackgroundVariant.Dots} />
