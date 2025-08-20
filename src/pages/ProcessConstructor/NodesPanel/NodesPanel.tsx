@@ -1,14 +1,15 @@
 import { Panel } from "@xyflow/react";
-import { Button, Card, List } from "antd";
+import { Button, Card, Input, List, Tooltip } from "antd";
 import { NodeListCard } from "@components/NodeCard/NodeCard";
 import { nodeList } from "../../../shared/data/nodes";
 import { useDispatch } from "react-redux";
 import { setSelectedNode } from "@store/nodes/nodesSlice";
-import { useState } from "react";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { useMemo, useState } from "react";
+import { AiOutlinePlus, AiOutlineMinus, AiOutlineSearch } from "react-icons/ai";
 
 export const NodesPanel = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [searchTerm, setSearchTerm] = useState("");
 	const dispatch = useDispatch();
 
 	const handleProcessSelect = (process: INodeItem) => {
@@ -19,26 +20,39 @@ export const NodesPanel = () => {
 		setIsCollapsed(!isCollapsed);
 	};
 
+	const filteredNodeList = useMemo(() => {
+		if (!searchTerm) return nodeList;
+
+		return nodeList.filter(
+			(item) =>
+				item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				(item.description &&
+					item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+		);
+	}, [searchTerm]);
+
 	return (
 		<Panel position="top-left">
 			{isCollapsed && (
-				<Button
-					size="large"
-					type="primary"
-					shape="circle"
-					icon={<AiOutlinePlus />}
-					onClick={toggleCollapse}					
-				/>
+				<Tooltip title="Добавить процесс">
+					<Button
+						size="large"
+						type="primary"
+						shape="circle"
+						icon={<AiOutlinePlus />}
+						onClick={toggleCollapse}
+					/>
+				</Tooltip>
 			)}
 			{!isCollapsed && (
 				<Card
 					title={
 						<div
-							style={{ 
+							style={{
 								display: "flex",
-								alignItems: "center", 
+								alignItems: "center",
 								gap: "8px",
-								cursor: 'pointer'
+								cursor: "pointer",
 							}}
 							onClick={toggleCollapse}
 						>
@@ -53,8 +67,17 @@ export const NodesPanel = () => {
 					}
 					style={{ width: 320 }}
 				>
+					<Input
+						placeholder="Поиск процессов..."
+						prefix={<AiOutlineSearch />}
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						allowClear
+						size="middle"
+						style={{marginBottom: 8}}
+					/>
 					<List
-						dataSource={nodeList}
+						dataSource={filteredNodeList}
 						renderItem={(item) => (
 							<List.Item
 								onClick={() => handleProcessSelect(item)}
