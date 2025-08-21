@@ -2,27 +2,26 @@ import {
   Avatar,
   Card,
   Flex,
-  Input,
   Modal,
   Radio,
   Select,
-  type GetProps,
+  type RadioChangeEvent,
 } from "antd";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import {
   deleteProcess,
   fetchProcesses,
+  setProcessCreationModal,
   type IFilter,
 } from "@store/process/processSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { CheckboxGroupProps } from "antd/es/checkbox";
+import { ItemsPageLayout } from "@app/layouts/ItemsPageLayout/ItemsPageLayout";
 
 const { Meta } = Card;
 
-const { Search } = Input;
-type SearchProps = GetProps<typeof Input.Search>;
 
 const optionsSortField = [
   {
@@ -38,22 +37,22 @@ const optionsSortField = [
     label: "Дата модификации",
   },
   {
-    value: "creation_user_name",
+    value: "author_name",
     label: "Автор",
   },
 ];
 
 const optionsOrderBy: CheckboxGroupProps<string>["options"] = [
-  { label: "Убыванию", value: "DESC" },
-  { label: "Возрастанию", value: "ASC" },
+  { label: "Убыванию", value: "desc" },
+  { label: "Возрастанию", value: "asc" },
 ];
 
 export const Processes = () => {
   const [filters, setFilters] = useState<IFilter>({
     search: "",
     sortField: "name",
+    order: "asc",
     orderCreatedDate: "desc",
-    orderAlphabet: "",
   });
 
   const { listProcesses, isLoading } = useAppSelector((state) => state.process);
@@ -64,11 +63,46 @@ export const Processes = () => {
 
   const { projectId } = useParams();
 
-  const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
-    console.log(info?.source, value);
+  const computedListProcesses = useMemo(() => {
+    console.log(filters);
+    const processes = listProcesses.filter((item) =>
+      item.name
+        .trim()
+        .toLocaleLowerCase()
+        .includes(filters.search.trim().toLocaleLowerCase())
+    );
 
-  const handleClickDeleteProcess = (e: React.MouseEvent<SVGElement>, item: IProcess) => {
-		e.stopPropagation()
+    processes.sort((a, b) => {
+      if (filters.order === "desc") return -a[filters.sortField].localeCompare(b[filters.sortField]);
+      else return a[filters.sortField].localeCompare(b[filters.sortField]);
+    });
+
+    // processes.sort((a, b) => {
+    //   if (filters.order === "desc")
+    //     return (
+    //       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    //     );
+    //   else
+    //     return (
+    //       new Date(a.created_at).getTime() + new Date(b.created_at).getTime()
+    //     );
+    // });
+
+    return processes;
+  }, [listProcesses, filters]);
+
+  const onSearch = (value: string) => {
+    setFilters({
+      ...filters,
+      search: value,
+    });
+  };
+
+  const handleClickDeleteProcess = (
+    e: React.MouseEvent<SVGElement>,
+    item: IProcess
+  ) => {
+    e.stopPropagation();
     modal.confirm({
       title: "Подтверждение",
       content: "Удалить процесс?",
@@ -83,19 +117,24 @@ export const Processes = () => {
   useEffect(() => {
     dispatch(
       fetchProcesses({
+        ...filters,
         projectId: Number(projectId),
       })
     );
   }, [navigate, dispatch, projectId]);
 
   const renderProcess = () => {
-    return listProcesses.map((item) => (
+    return computedListProcesses.map((item) => (
       <Card
         key={item.id}
         loading={isLoading}
         style={{ width: 300 }}
         cover={
-          <img alt="Изображение процесса" height={160} src={item.pict_url ?? undefined} />
+          <img
+            alt="Изображение процесса"
+            height={160}
+            src={item.pict_url ?? undefined}
+          />
         }
         actions={[
           <AiOutlineDelete
@@ -105,7 +144,7 @@ export const Processes = () => {
           <AiOutlineEdit key="edit" />,
         ]}
         hoverable
-				onClick={() => navigate(`/process/${item.id}`)}
+        onClick={() => navigate(`/process/${item.id}`)}
       >
         <Meta
           avatar={
@@ -118,55 +157,72 @@ export const Processes = () => {
     ));
   };
 
-  const onChangeSortField = () => {
+  const onChangeSortField = (value: keyof IProcess) => {
     setFilters({
       ...filters,
+			sortField: value
+    });
+  };
+
+  const handleChangeOrder = (e: RadioChangeEvent, prop: string) => {
+    setFilters({
+      ...filters,
+      [prop]: e.target.value,
     });
   };
 
   return (
-    <Flex gap="middle" vertical>
-      <Flex gap="small" vertical style={{ textAlign: "left", width: 540 }}>
-        <Search
-          placeholder="Поиск"
-          onSearch={onSearch}
-          onChange={(e) => onSearch(e.target.value)}
-        />
-        <Flex justify="flex-start" gap="small" align="center">
-          <div style={{ width: 230 }}>Поле выбора для сортировки:</div>
-          <Select
-            placeholder="Выберите значение"
-            optionFilterProp="label"
-            onChange={onChangeSortField}
-            options={optionsSortField}
-            style={{ width: 300 }}
-          />
+    <ItemsPageLayout
+      title="Процессы"
+      action={() => dispatch(setProcessCreationModal(true))}
+      searchAction={(value: string) => onSearch(value)}
+    >
+      <Flex gap="middle" vertical justify="space-evenly">
+        <Flex gap="small" vertical style={{ textAlign: "left", width: 540 }}>
+          <Flex justify="flex-start" gap="small" align="center">
+            <div style={{ width: 230 }}>Поле выбора для сортировки:</div>
+            <Select
+              placeholder="Выберите значение"
+              optionFilterProp="label"
+              options={optionsSortField}
+              style={{ width: 300 }}
+							defaultValue={filters.sortField}
+							value={filters.sortField}
+              onChange={onChangeSortField}
+            />
+          </Flex>
+          <Flex justify="flex-start" gap="small" align="center">
+            <div style={{ width: 230 }}>Порядок сортировки:</div>
+            <Radio.Group
+              block
+              options={optionsOrderBy}
+              defaultValue={filters.order}
+              value={filters.order}
+              optionType="button"
+              buttonStyle="solid"
+              onChange={(e: RadioChangeEvent) => handleChangeOrder(e, "order")}
+            />
+          </Flex>
+          <Flex justify="flex-start" gap="small" align="center">
+            <div style={{ width: 230 }}>Дата создания по:</div>
+            <Radio.Group
+              block
+              options={optionsOrderBy}
+              defaultValue={filters.orderCreatedDate}
+              value={filters.orderCreatedDate}
+              optionType="button"
+              buttonStyle="solid"
+              onChange={(e: RadioChangeEvent) =>
+                handleChangeOrder(e, "orderCreatedDate")
+              }
+            />
+          </Flex>
         </Flex>
-        <Flex justify="flex-start" gap="small" align="center">
-          <div style={{ width: 230 }}>Дата создания по:</div>
-          <Radio.Group
-            block
-            options={optionsOrderBy}
-            defaultValue="DESC"
-            optionType="button"
-            buttonStyle="solid"
-          />
-        </Flex>
-        <Flex justify="flex-start" gap="small" align="center">
-          <div style={{ width: 230 }}>Алфавитный порядок по:</div>
-          <Radio.Group
-            block
-            options={optionsOrderBy}
-            defaultValue="ASC"
-            optionType="button"
-            buttonStyle="solid"
-          />
+        <Flex wrap gap="small">
+          {renderProcess()}
+          {contextHolder}
         </Flex>
       </Flex>
-      <Flex wrap gap="small">
-        {renderProcess()}
-        {contextHolder}
-      </Flex>
-    </Flex>
+    </ItemsPageLayout>
   );
 };
