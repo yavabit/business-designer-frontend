@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -16,6 +16,7 @@ import {
 	type OnConnect,
   type NodeMouseHandler,
   ConnectionMode,
+  type ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
@@ -57,6 +58,14 @@ export const ProcessConstructor = () => {
 
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
+
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>(null);
+
+  useEffect(() => {
+    if (rfInstance) {
+      console.log(rfInstance.toObject());
+    }
+  }, [rfInstance]);
 
   const onNodesChange = useCallback<OnNodesChange>(
     (changes) =>
@@ -128,6 +137,7 @@ export const ProcessConstructor = () => {
           snapGrid={snapGrid}
           defaultViewport={defaultViewport}
           attributionPosition="top-right"
+          onInit={setRfInstance}
           fitView
           style={{
             flex: 1,
