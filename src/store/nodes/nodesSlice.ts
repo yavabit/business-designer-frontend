@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { nodeList } from "../../shared/data/nodes";
 
 const initialState = {
-	nodes: nodeList,
+	nodeList: nodeList,
 	selectedNode: null,
 };
 
