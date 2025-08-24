@@ -15,6 +15,7 @@ import {
 	type OnEdgesChange,
 	type OnConnect,
   type NodeMouseHandler,
+  ConnectionMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
@@ -23,6 +24,7 @@ import { NodesPanel } from "./NodesPanel/NodesPanel";
 import { NodeEditPanel } from "./NodeEditPanel/NodeEditPanel";
 import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
+import { nodeTypes } from "@components/Nodes";
 
 const initialNodes: Node[] = [
   {
@@ -30,7 +32,19 @@ const initialNodes: Node[] = [
     position: { x: 0, y: 0 },
     data: { label: "Node 1", text: "Hello", test: 1 },
   },
-  { id: "n2", position: { x: 0, y: 100 }, data: { label: "Node 2" } },
+  {
+    id: "n2",
+    type: "exampleNode",
+    position: { x: 0, y: 100 },
+    data: {
+      label: "Node 2",
+      value: "Текст",
+      style: {
+        padding: "20px",
+        border: "5px solid red",
+      },
+    },
+  },
 ];
 const initialEdges: Edge[] = [{ id: "n1-n2", source: "n1", target: "n2" }];
 
@@ -61,7 +75,7 @@ export const ProcessConstructor = () => {
 
   const handleAddNode = () => {
     const id = "" + nodes.length + 1;
-		
+
     const newNode = {
       id,
       position: { x: -150, y: -100 },
@@ -100,6 +114,8 @@ export const ProcessConstructor = () => {
         }}
       >
         <ReactFlow
+          colorMode="dark"
+          connectionMode={ConnectionMode.Loose}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
@@ -107,6 +123,7 @@ export const ProcessConstructor = () => {
           onNodeClick={handleNodeClick}
           onPaneClick={handlePaneClick}
           onConnect={onConnect}
+          nodeTypes={nodeTypes}
           snapToGrid={true}
           snapGrid={snapGrid}
           defaultViewport={defaultViewport}
