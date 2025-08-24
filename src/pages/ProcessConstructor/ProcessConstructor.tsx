@@ -14,11 +14,15 @@ import {
 	type OnNodesChange,
 	type OnEdgesChange,
 	type OnConnect,
+  type NodeMouseHandler,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
 import { NodesPanel } from "./NodesPanel/NodesPanel";
+import { NodeEditPanel } from "./NodeEditPanel/NodeEditPanel";
+import { setSelectedNode } from "@store/nodes/nodesSlice";
+import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 
 const initialNodes: Node[] = [
   {
@@ -34,6 +38,9 @@ const snapGrid: SnapGrid = [20, 20];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
 export const ProcessConstructor = () => {
+  const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
+  const dispatch = useAppDispatch()
+
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -64,6 +71,16 @@ export const ProcessConstructor = () => {
     setNodes((nds) => nds.concat(newNode));
   };
 
+  const handleNodeClick: NodeMouseHandler = useCallback((_, node) => {
+    dispatch(setSelectedNode(node));
+  }, [])
+
+  const handlePaneClick = useCallback(() => {
+    if (selectedNode != null) {
+      dispatch(setSelectedNode(null));
+    }
+  }, [selectedNode])
+
   return (
     <div>
       <Button
@@ -87,7 +104,8 @@ export const ProcessConstructor = () => {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onNodeClick={(e, node) => console.log(e, node)}
+          onNodeClick={handleNodeClick}
+          onPaneClick={handlePaneClick}
           onConnect={onConnect}
           snapToGrid={true}
           snapGrid={snapGrid}
@@ -99,6 +117,7 @@ export const ProcessConstructor = () => {
           }}
         >
           <NodesPanel/>
+          <NodeEditPanel/>
           <Controls />
           <MiniMap />
           <Background color="#ccc" variant={BackgroundVariant.Dots} />
