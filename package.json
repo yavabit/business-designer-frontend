@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "2.8.2",
     "@xyflow/react": "12.8.3",
     "antd": "5.27.0",
+    "lodash": "^4.17.21",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "react-icons": "5.5.0",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.32.0",
+    "@types/lodash": "^4.17.20",
     "@types/node": "24.2.1",
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
