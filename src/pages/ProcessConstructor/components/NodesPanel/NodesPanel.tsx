@@ -1,11 +1,12 @@
 import { Panel } from "@xyflow/react";
 import { Button, Card, Input, List, Tooltip } from "antd";
 import { NodeListCard } from "@components/NodeCard/NodeCard";
-import { nodeList } from "../../../shared/data/nodes";
+
 import { useDispatch } from "react-redux";
 import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useMemo, useState } from "react";
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineSearch } from "react-icons/ai";
+import { nodeList } from "../../../../shared/data/nodes";
 
 export const NodesPanel = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);

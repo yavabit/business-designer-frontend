@@ -20,8 +20,8 @@ import {
 import "@xyflow/react/dist/style.css";
 import { Button } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
-import { NodesPanel } from "./NodesPanel/NodesPanel";
-import { NodeEditPanel } from "./NodeEditPanel/NodeEditPanel";
+import { NodesPanel } from "./components/NodesPanel/NodesPanel";
+import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
 import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { nodeTypes } from "@components/Nodes";
