@@ -1,18 +1,28 @@
 import { Avatar, Button, Dropdown, Flex, type MenuProps } from "antd";
-import { type FC } from "react";
+import {  useEffect, useState, type FC } from "react";
 import styles from "./Header.module.scss";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BsPlus } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@store/index";
 import { setCreationModal } from "@store/projects/projectsSlice";
+import { useGetProjectsQuery } from "@store/api/projects/projectsApi";
 
 export const Header: FC = () => {
     const isAuth = useSelector((state: RootState) => state.user.isAuth);
+    const { data: projectsResponse, isLoading } = useGetProjectsQuery(undefined, {
+        skip: !isAuth
+    });
+    
+    const projects = projectsResponse?.data || [];
+
+    const [curProject, setCurProject] = useState<string | undefined>(undefined);
+    // const [curProcess, setCurProcess] = useState<string | undefined>(undefined);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const logoutHandler = () => {
         const logout: () => Promise<{ message: string }> = () =>
@@ -54,6 +64,22 @@ export const Header: FC = () => {
         ],
     };
 
+    useEffect(() => {
+        const arrLocation = location.pathname.split('/');
+        if (arrLocation[1] === 'project' && !!arrLocation[2]) {
+            const projectId = arrLocation[2];
+            const project = projects.find(p => p.id == projectId);
+            
+            if (project) {
+                setCurProject(project.name);
+            } else if (!isLoading) {
+                setCurProject(undefined);
+            }
+        } else {
+            setCurProject(undefined);
+        }
+    }, [location.pathname, projects, isLoading]);
+
     return (
         <header className={styles.header}>
             <Flex justify="space-between" align="center">
@@ -64,6 +90,11 @@ export const Header: FC = () => {
                             <Link to="/" className={styles["header-link"]}>
                                 Главная
                             </Link>
+                            {!!curProject && (
+                                <Link to={`/project/${location.pathname.split('/')[2]}`}>
+                                    / {curProject}
+                                </Link>
+                            )}
                             <Dropdown trigger={["click"]} menu={createItems}>
                                 <Button style={{ padding: ".5rem" }}>
                                     <Flex align="center" gap={8}>

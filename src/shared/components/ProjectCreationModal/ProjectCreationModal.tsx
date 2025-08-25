@@ -1,43 +1,58 @@
+import { useCreateProjectMutation } from "@store/api/projects/projectsApi";
 import type { RootState } from "@store/index";
 import { setCreationModal } from "@store/projects/projectsSlice";
-import { Flex, Form, Input, Modal, Upload } from "antd";
+import { Form, Input, message, Modal } from "antd";
+import { useForm } from "antd/es/form/Form";
 import { type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BsCloudUploadFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 export const ProjectCreationModal: FC = () => {
     const isOpen = useSelector(
         (state: RootState) => state.projects.isCreationModalOpen
     );
+    const [createProject, data] = useCreateProjectMutation();
 
     const dispath = useDispatch();
+    const navigate = useNavigate();
+
+    const [form] = useForm();
+
+    const createProjectHandler = () => {
+        const newName = form.getFieldValue("project-name");
+        if (!newName) {
+            message.error(
+                'Поле "Название проекта" является обязательным для заполенния!'
+            );
+            return;
+        }
+
+        createProject(newName).then((res) => {
+            if (res.data) {
+                dispath(setCreationModal(false));
+                navigate("/");
+                message.success(`Проект "${newName}" создан!`)
+            }
+            if (res.error) {
+                message.error('Ошибка при создании проекта!')
+            }
+        });
+    };
 
     return (
         <Modal
-            title="Создать проект"
             open={isOpen}
-            onOk={() => {}}
+            onOk={() => createProjectHandler()}
             onCancel={() => dispath(setCreationModal(false))}
             okText="Создать"
-            cancelText="Отмена">
-            <Form
-                layout="vertical"
-            >
-                <Form.Item name='project-name' label='Название проекта' rules={[{ required: true }]}>
-                    <Input />
-                </Form.Item>
+            cancelText="Отмена"
+            loading={data.isLoading}>
+            <Form layout="vertical" form={form}>
                 <Form.Item
-                    name="upload"
-                    label="Upload"
-                    valuePropName="fileList"
-                    getValueFromEvent={() => {}}
-                >
-                    <Upload.Dragger name="project-pict" action="/upload.do" listType="picture">
-                        <Flex gap={12}>
-                            <BsCloudUploadFill size={24} />
-                            <p>Добавить изобажение проекта</p>
-                        </Flex>
-                    </Upload.Dragger>
+                    name="project-name"
+                    label="Название проекта"
+                    rules={[{ required: true }]}>
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>
