@@ -3,8 +3,8 @@ import {
   createProcess,
   setProcessCreationModal,
 } from "@store/process/processSlice";
-import { Form, Input, Modal, type FormInstance } from "antd";
-import { useRef, useState, type FC, type RefObject } from "react";
+import { Form, Input, Modal } from "antd";
+import { type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TextArea from "antd/es/input/TextArea";
 import { useForm } from "antd/es/form/Form";
@@ -25,7 +25,12 @@ export const ProcessCreationModal: FC = () => {
 
   const handleClickCreate = () => {
     if (form) {
-      dispath(createProcess(form.getFieldValue()));
+      dispath(
+        createProcess({
+          name: form.getFieldValue("name"),
+          desc: form.getFieldValue("desc"),
+        })
+      );
       dispath(setProcessCreationModal(false));
     }
   };
