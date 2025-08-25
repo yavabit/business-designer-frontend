@@ -40,6 +40,13 @@ const Sidebar = () => {
       >
         Output Node
       </div>
+      <div
+        className={[style.dndnode, style.dndnode__output].join(" ")}
+        onDragStart={(event) => onDragStart(event, "exampleNode")}
+        draggable
+      >
+        Example Node
+      </div>
     </aside>
   );
 };
