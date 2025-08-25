@@ -11,9 +11,9 @@ import {
   Background,
   Controls,
   MiniMap,
-	type OnNodesChange,
-	type OnEdgesChange,
-	type OnConnect,
+  type OnNodesChange,
+  type OnEdgesChange,
+  type OnConnect,
   type NodeMouseHandler,
   ConnectionMode,
   type ReactFlowInstance,
@@ -60,13 +60,9 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 const getId = (nodes: Node[]) => `n_${nodes.length + 1}`;
 
 export const ProcessConstructor = () => {
-<<<<<<< HEAD
   const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-=======
-  // React Flow
->>>>>>> 2968dca (feat: Добавлен DnD для нод)
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -105,24 +101,22 @@ export const ProcessConstructor = () => {
     setNodes((nds) => nds.concat(newNode));
   };
 
-<<<<<<< HEAD
   const handleNodeClick: NodeMouseHandler = useCallback((_, node) => {
     dispatch(setSelectedNode(node));
-  }, [])
+  }, []);
 
   const handlePaneClick = useCallback(() => {
     if (selectedNode != null) {
       dispatch(setSelectedNode(null));
     }
-  }, [selectedNode])
-=======
+  }, [selectedNode]);
   // DnD
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
-		console.log('onDragOver')
+    console.log("onDragOver");
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
@@ -156,18 +150,9 @@ export const ProcessConstructor = () => {
     },
     [screenToFlowPosition, type, nodes]
   );
->>>>>>> 2968dca (feat: Добавлен DnD для нод)
 
   return (
     <div className={style.dndflow}>
-      <Button
-        size="large"
-        type="primary"
-        shape="circle"
-        icon={<AiOutlinePlus />}
-        onClick={handleAddNode}
-        className={style.buttonCreateNode}
-      />
       <Sidebar />
       <div
         style={{
@@ -188,13 +173,9 @@ export const ProcessConstructor = () => {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-<<<<<<< HEAD
           onNodeClick={handleNodeClick}
           onPaneClick={handlePaneClick}
           onConnect={onConnect}
-=======
-          onNodeClick={(e, node) => console.log(e, node)}
->>>>>>> 2968dca (feat: Добавлен DnD для нод)
           nodeTypes={nodeTypes}
           snapToGrid={true}
           snapGrid={snapGrid}
@@ -204,12 +185,11 @@ export const ProcessConstructor = () => {
           style={{
             flex: 1,
           }}
-          onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
-          <NodesPanel/>
-          <NodeEditPanel/>
+          <NodesPanel />
+          <NodeEditPanel />
           <Controls />
           <MiniMap />
           <Background color="#ccc" variant={BackgroundVariant.Dots} />
