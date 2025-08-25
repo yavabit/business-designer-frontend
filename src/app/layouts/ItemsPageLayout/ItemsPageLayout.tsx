@@ -1,6 +1,7 @@
 import { type FC, type ReactNode } from "react";
 import styles from "./ItemsPageLayout.module.scss";
 import { Button, Flex, Input } from "antd";
+import { BsPlus } from "react-icons/bs";
 
 export const ItemsPageLayout: FC<{
     children: ReactNode;
@@ -15,11 +16,25 @@ export const ItemsPageLayout: FC<{
                 align="center"
                 justify="space-between"
                 className={styles["page-header"]}>
-                <h3 style={{ fontSize: "24px" }}>{title}</h3>
+                <h3 
+                    style={{ 
+                        fontSize: "24px", 
+                        fontWeight: 500 
+                    }}
+                >
+                        {title}
+                </h3>
                 <Flex gap={12}>
                     {!!action && (
                         <Button onClick={() => action()}>
-                            {actionTitle ? actionTitle : <b>Создать</b>}
+                            {actionTitle 
+                                ? actionTitle 
+                                : (
+                                    <Flex gap={8} align="center">
+                                        <BsPlus size={20}/>
+                                        <b>Создать</b>
+                                    </Flex>
+                                )}
                         </Button>
                     )}
                     {!!searchAction && (

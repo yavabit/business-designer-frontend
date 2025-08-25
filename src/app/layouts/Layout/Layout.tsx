@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import styles from './Layout.module.scss'
 import { Flex } from 'antd'
 import { ProjectCreationModal } from '@components/ProjectCreationModal/ProjectCreationModal'
+import { ProjectEditModal } from '@components/ProjectEditModal/ProjectEditModal'
 
 export const Layout: FC = () => {
     return (
@@ -12,7 +13,8 @@ export const Layout: FC = () => {
             <main className={styles['main-layout']}>
                 <Outlet />
             </main>
-            <ProjectCreationModal/>
+            <ProjectCreationModal />
+            <ProjectEditModal />
         </Flex>
     )
 }

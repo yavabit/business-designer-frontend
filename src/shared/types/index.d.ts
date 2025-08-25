@@ -1,5 +1,5 @@
 interface IUser {
-  id: number;
+  id: string;
   firstname?: string;
   lastname?: string;
   name: string;
@@ -9,13 +9,13 @@ interface IUser {
 }
 
 interface IProject {
-  id: number;
+  id: string;
   name: string;
   pict_url?: string | null;
-  author_id: number;
-  author_name: string;
-  created_at: Date;
-  updated_at: Date;
+  author_id: string;
+  author_name?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface IProcess {

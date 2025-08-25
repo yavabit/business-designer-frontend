@@ -1,12 +1,5 @@
 import { FolderIcon } from "@components/FolderIcon/FolderIcon";
-import {
-    Flex,
-    Input,
-    type InputRef,
-    // Modal,
-    Dropdown,
-    type MenuProps,
-} from "antd";
+import { Flex, Input, type InputRef, Dropdown, type MenuProps } from "antd";
 import { useEffect, useRef, useState, type FC } from "react";
 import styles from "./ProjectItem.module.scss";
 import { BsTrashFill } from "react-icons/bs";
@@ -16,12 +9,12 @@ export const ProjectItem: FC<
     IProject & {
         checked: boolean;
         editing: boolean;
-        onClick: (id: number | undefined) => void;
-        onDoubleClick: (id: number) => void;
-        onStartEditing: (id: number) => void;
-        onEndEditing: (id: number, newName: string) => void;
-        onDelete: (id: number) => void;
-        onGlobalEdit: (id: number) => void;
+        onClick: (id: string | undefined) => void;
+        onDoubleClick: (id: string) => void;
+        onStartEditing: (id: string) => void;
+        onEndEditing: (id: string, newName: string) => void;
+        onDelete: (id: string) => void;
+        onGlobalEdit: (id: string) => void;
     }
 > = ({
     id,
@@ -131,9 +124,9 @@ export const ProjectItem: FC<
                         <div
                             className={styles["project-pict"]}
                             style={{
-                                background: `url('${pict_url}')`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
+                                background: `url('${
+                                    import.meta.env.VITE_API_HOST
+                                }${pict_url}') center / cover no-repeat`,
                             }}></div>
                     ) : (
                         <FolderIcon />

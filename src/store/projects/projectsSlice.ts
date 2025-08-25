@@ -4,11 +4,15 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface IProjectsStore {
     projects: IProject[];
     isCreationModalOpen: boolean;
+    isEditModalOpen: boolean;
+    editingId: string | undefined;
 }
 
 const initialState: IProjectsStore = {
     projects: [],
     isCreationModalOpen: false,
+    isEditModalOpen: false,
+    editingId: undefined,
 };
 
 export const projectsSlice = createSlice({
@@ -22,8 +26,17 @@ export const projectsSlice = createSlice({
         setCreationModal(state, action: PayloadAction<boolean>) {
             state.isCreationModalOpen = action.payload;
         },
+
+        setEditModal(
+            state,
+            action: PayloadAction<{ modalState: boolean; projectId?: string }>
+        ) {
+            state.isEditModalOpen = action.payload.modalState;
+            state.editingId = action.payload.projectId;
+        },
     },
 });
 
-export const { setProjects, setCreationModal } = projectsSlice.actions;
+export const { setCreationModal, setEditModal, setProjects } =
+    projectsSlice.actions;
 export default projectsSlice.reducer;
