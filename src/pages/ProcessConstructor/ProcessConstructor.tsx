@@ -30,6 +30,7 @@ import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
 import Sidebar from "@pages/ProcessConstructor/Sidebar";
+import { nodeList } from "../../shared/data/nodes";
 
 const initialNodes: Node[] = [
   {
@@ -40,7 +41,7 @@ const initialNodes: Node[] = [
   },
   {
     id: "n2",
-    type: "exampleNode",
+    type: "process",
     position: { x: 0, y: 100 },
     data: {
       label: "Node 2",
@@ -137,12 +138,25 @@ export const ProcessConstructor = () => {
         x: event.clientX,
         y: event.clientY,
       });
+      let nodeData = nodeList.find((item) => item.code === type.toString());
+
+      nodeData = !nodeData
+        ? {
+            label: "Node " + getId(nodes),
+          }
+        : nodeData.defaultData;
+
+
+			console.log(nodeData)
+
       const newNode: Node[] = [
         {
           id: getId(nodes),
           type: type.toString(),
           position,
-          data: { label: `${type} node` },
+          data: {
+            ...nodeData,
+          },
         },
       ];
 
@@ -153,7 +167,6 @@ export const ProcessConstructor = () => {
 
   return (
     <div className={style.dndflow}>
-      <Sidebar />
       <div
         style={{
           display: "flex",
