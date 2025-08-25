@@ -21,15 +21,12 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
-import { Button } from "antd";
-import { AiOutlinePlus } from "react-icons/ai";
 import { NodesPanel } from "./components/NodesPanel/NodesPanel";
 import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
 import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
-import Sidebar from "@pages/ProcessConstructor/Sidebar";
 import { nodeList } from "../../shared/data/nodes";
 
 const initialNodes: Node[] = [
@@ -90,18 +87,6 @@ export const ProcessConstructor = () => {
     []
   );
 
-  const handleAddNode = () => {
-    const id = getId(nodes);
-
-    const newNode = {
-      id,
-      position: { x: -150, y: -100 },
-      data: { label: `Node ${id}` },
-    };
-
-    setNodes((nds) => nds.concat(newNode));
-  };
-
   const handleNodeClick: NodeMouseHandler = useCallback((_, node) => {
     dispatch(setSelectedNode(node));
   }, []);
@@ -138,16 +123,17 @@ export const ProcessConstructor = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      let nodeData = nodeList.find((item) => item.code === type.toString());
+      const nodeData: INodeItem | undefined = nodeList.find(
+        (item) => item.code === type.toString()
+      );
 
-      nodeData = !nodeData
+      const defaltData: INodeItem["defaultData"] = !nodeData
         ? {
             label: "Node " + getId(nodes),
           }
         : nodeData.defaultData;
 
-
-			console.log(nodeData)
+      console.log(nodeData);
 
       const newNode: Node[] = [
         {
@@ -155,7 +141,7 @@ export const ProcessConstructor = () => {
           type: type.toString(),
           position,
           data: {
-            ...nodeData,
+            ...defaltData,
           },
         },
       ];
