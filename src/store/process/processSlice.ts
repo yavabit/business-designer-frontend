@@ -23,6 +23,16 @@ interface IFilterPayload {
 	payload: IFilter
 }
 
+interface ICreateProcess {
+	name: string
+	desc: string
+	project_id: string
+}
+
+interface ICreateProcessPayload {
+	payload: ICreateProcess
+}
+
 const initialState: IProcessState = {
 	listProcesses: [],
 	currentProcess: undefined,
@@ -87,20 +97,20 @@ const processSlice = createSlice({
 		setProcessCreationModal(state, action: PayloadAction<boolean>) {
 			state.isCreationModalOpen = action.payload;
 		},
-		createProcess: (state, { payload }: IProcessPayload) => {
+		createProcess: (state, { payload }: ICreateProcessPayload) => {
 			const id = state.listProcesses.length + 1
 			state.listProcesses = state.listProcesses.concat([{
 				id,
 				name: `${payload.name} ${id}`,
 				desc: payload.desc,
-				project_id: payload.project_id,
+				project_id: Number(payload.project_id),
 				project_name: '0',
 				content: '{}',
 				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
 				author_id: 0,
 				author_name: '0',
-				created_at: new Date().toLocaleDateString(),
-				updated_at: new Date().toLocaleDateString(),
+				created_at: new Date(),
+				updated_at: new Date(),
 			}])
 		},
 	},

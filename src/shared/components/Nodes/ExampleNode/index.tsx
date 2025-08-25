@@ -1,16 +1,14 @@
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useCallback } from "react";
 
 import style from "./style.module.scss";
 import { Button, Flex, message, Upload, type UploadProps } from "antd";
 import { AiOutlineUpload } from "react-icons/ai";
 
-export default function ExampleNode({ data }) {
+export default function ExampleNode({ data }: NodeProps) {
   const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
     console.log(evt.target.value);
   }, []);
-
-  console.log("style", style);
 
   const props: UploadProps = {
     name: "file",
@@ -31,7 +29,7 @@ export default function ExampleNode({ data }) {
   };
 
   return (
-    <div className={style["example-node"]} style={data.style}>
+    <div className={style["example-node"]} style={data.style ?? {}}>
       <Flex vertical>
         <div>
           <label htmlFor="text">Заголовок:</label>
