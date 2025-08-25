@@ -1,0 +1,7 @@
+.node-card {
+	cursor: pointer;
+	transition: transform .3s;
+	&:hover {
+		transform: translateX(-10px);
+	}
+}

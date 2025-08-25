@@ -1,8 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface IProcessState {
-	listProcesses: IProcess[],
-	currentProcess?: IProcess,
+	listProcesses: IProcess[]
+	currentProcess?: IProcess
+	isCreationModalOpen: boolean
 	isLoading: boolean
 }
 
@@ -11,12 +12,10 @@ interface IProcessPayload {
 }
 
 export interface IFilter {
-	search?: string
-	sortField?: string
-	order?: string
-	sort?: string
+	search: string
+	sortField: keyof IProcess
 	orderCreatedDate?: string
-	orderAlphabet?: string
+	order: string
 	projectId?: number
 }
 
@@ -24,9 +23,20 @@ interface IFilterPayload {
 	payload: IFilter
 }
 
+interface ICreateProcess {
+	name: string
+	desc: string
+	project_id: string
+}
+
+interface ICreateProcessPayload {
+	payload: ICreateProcess
+}
+
 const initialState: IProcessState = {
 	listProcesses: [],
 	currentProcess: undefined,
+	isCreationModalOpen: false,
 	isLoading: false
 }
 
@@ -72,7 +82,9 @@ const processSlice = createSlice({
 			listProcesses = listProcesses.map((item, index) => {
 				return {
 					...item,
-					id: index
+					id: index,
+					name: `${item.name} ${index}`,
+					author_name: `${item.author_name} ${index}`
 				}
 			})
 
@@ -82,8 +94,27 @@ const processSlice = createSlice({
 		fetchProcess: (state, { payload }: IProcessPayload) => {
 			state.currentProcess = state.listProcesses.find(item => item.id === payload.id)
 		},
+		setProcessCreationModal(state, action: PayloadAction<boolean>) {
+			state.isCreationModalOpen = action.payload;
+		},
+		createProcess: (state, { payload }: ICreateProcessPayload) => {
+			const id = state.listProcesses.length + 1
+			state.listProcesses = state.listProcesses.concat([{
+				id,
+				name: `${payload.name} ${id}`,
+				desc: payload.desc,
+				project_id: Number(payload.project_id),
+				project_name: '0',
+				content: '{}',
+				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
+				author_id: 0,
+				author_name: '0',
+				created_at: new Date(),
+				updated_at: new Date(),
+			}])
+		},
 	},
 });
 
 export const processReducer = processSlice.reducer;
-export const { setCurrentProcess, deleteProcess, saveProcess, fetchProcesses, fetchProcess } = processSlice.actions;
+export const { setCurrentProcess, deleteProcess, saveProcess, fetchProcesses, fetchProcess, setProcessCreationModal, createProcess } = processSlice.actions;

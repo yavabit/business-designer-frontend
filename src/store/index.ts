@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { userReducer } from './user/userSlice'
 import { processReducer } from './process/processSlice'
 import projectsReducer from './projects/projectsSlice'
+import { nodeReducer } from './nodes/nodesSlice'
 import { baseApi } from './api/api'
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userReducer,
 		process: processReducer,
     projects: projectsReducer,
+    nodes: nodeReducer
   },
   middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().concat(baseApi.middleware),

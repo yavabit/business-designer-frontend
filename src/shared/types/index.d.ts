@@ -31,3 +31,13 @@ interface IProcess {
   created_at: Date;
   updated_at: Date;
 }
+
+interface INodeItem {
+  id: string;
+  code: string;
+  name: string;
+  icon?: JSX.Element;
+  description?: string;
+	component?: JSX.Element
+	defaultData?: object
+}
