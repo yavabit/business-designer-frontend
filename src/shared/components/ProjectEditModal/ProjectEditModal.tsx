@@ -20,7 +20,7 @@ export const ProjectEditModal: FC = () => {
     const dispatch = useDispatch();
     const [form] = useForm();
 
-    const handleUploadChange = (info: any) => {
+    const handleUploadChange = (info) => {
         let newFileList = [...info.fileList];
         newFileList = newFileList.slice(-1);
         setFileList(newFileList);
