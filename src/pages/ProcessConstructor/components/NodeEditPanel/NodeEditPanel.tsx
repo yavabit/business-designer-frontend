@@ -41,7 +41,7 @@ export const NodeEditPanel = () => {
 		}
 	}, [selectedNode, form]);
 
-	const handleValuesChange = debounce((changedValues, allValues) => {
+	const handleValuesChange = debounce((_, allValues) => {
 		console.log("Финальные значения:", allValues);
 	}, 300);
 

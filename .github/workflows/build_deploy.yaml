@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build production build
+        run: npm run build
+
+      - name: Deploy to server using rsync
+        uses: up9cloud/action-rsync@master
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          USER: deploy-user
+          HOST: ${{secrets.DEPLOY_HOST}}
+          KEY: ${{secrets.DEPLOY_SSH_KEY}}
+          TARGET: /var/www/business-designer-frontend/
+          SOURCE: './dist'

@@ -99,7 +99,7 @@ export const ProcessConstructor = () => {
   // DnD
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
-  const [type] = useDnD();
+  const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
     console.log("onDragOver");
