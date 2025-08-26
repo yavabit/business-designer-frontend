@@ -2,8 +2,6 @@ import { Panel } from "@xyflow/react";
 import { Button, Card, Input, List, Tooltip } from "antd";
 import { NodeListCard } from "@components/NodeCard/NodeCard";
 
-import { useDispatch } from "react-redux";
-import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useMemo, useState } from "react";
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineSearch } from "react-icons/ai";
 import { nodeList } from "../../../../shared/data/nodes";
@@ -12,9 +10,8 @@ import { useDnD } from "@hooks/useDnD";
 export const NodesPanel = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const dispatch = useDispatch();
 
-  const [, setType] = useDnD();
+  const { setType } = useDnD();
 
   const onDragStart = (
     event: React.DragEvent<HTMLElement>,
@@ -24,10 +21,6 @@ export const NodesPanel = () => {
 
     setType(nodeType);
     event.dataTransfer.effectAllowed = "move";
-  };
-
-  const handleProcessSelect = (process: INodeItem) => {
-    dispatch(setSelectedNode(process.id));
   };
 
   const toggleCollapse = () => {

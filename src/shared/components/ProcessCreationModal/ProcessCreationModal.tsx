@@ -8,6 +8,7 @@ import { type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TextArea from "antd/es/input/TextArea";
 import { useForm } from "antd/es/form/Form";
+import { useParams } from "react-router-dom";
 
 interface IFormCreate {
   name: string;
@@ -23,12 +24,15 @@ export const ProcessCreationModal: FC = () => {
 
   const dispath = useDispatch();
 
+  const { projectId } = useParams();
+
   const handleClickCreate = () => {
-    if (form) {
+    if (form && projectId) {
       dispath(
         createProcess({
           name: form.getFieldValue("name"),
           desc: form.getFieldValue("desc"),
+					project_id: projectId
         })
       );
       dispath(setProcessCreationModal(false));

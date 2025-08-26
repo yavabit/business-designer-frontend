@@ -1,17 +1,27 @@
-import { createContext, useState, type SetStateAction } from "react";
+import {
+  createContext,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
-const DnDContext = createContext([
-  null,
-  (value: SetStateAction<null>) => {
-    console.warn('DnDContext', value);
+interface IDnDContext {
+  type: string;
+  setType: Dispatch<SetStateAction<string>>;
+}
+
+const DnDContext = createContext<IDnDContext>({
+  type: "",
+  setType: (value: SetStateAction<string>) => {
+    console.warn("DnDContext", value);
   },
-]);
+});
 
 export const DnDProvider = ({ children }: React.PropsWithChildren) => {
-  const [type, setType] = useState(null);
+  const [type, setType] = useState("");
 
   return (
-    <DnDContext.Provider value={[type, setType]}>
+    <DnDContext.Provider value={{ type, setType }}>
       {children}
     </DnDContext.Provider>
   );
