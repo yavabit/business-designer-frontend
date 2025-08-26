@@ -3,8 +3,10 @@ import type { RootState } from "@store/index";
 import { setEditModal } from "@store/projects/projectsSlice";
 import { Form, Input, message, Modal, Upload, type UploadFile } from "antd";
 import { useForm } from "antd/es/form/Form";
+import type { UploadChangeParam } from "antd/es/upload";
 import { useEffect, useState, type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 
 export const ProjectEditModal: FC = () => {
     const isOpen = useSelector(
@@ -20,7 +22,7 @@ export const ProjectEditModal: FC = () => {
     const dispatch = useDispatch();
     const [form] = useForm();
 
-    const handleUploadChange = (info) => {
+    const handleUploadChange = (info: UploadChangeParam<UploadFile>) => {
         let newFileList = [...info.fileList];
         newFileList = newFileList.slice(-1);
         setFileList(newFileList);
