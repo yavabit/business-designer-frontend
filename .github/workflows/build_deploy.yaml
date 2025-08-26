@@ -31,6 +31,7 @@ jobs:
       - name: Deploy to server using rsync
         uses: up9cloud/action-rsync@master
         env:
+          USER: deploy-user
           HOST: ${{secrets.DEPLOY_HOST}}
           KEY: ${{secrets.DEPLOY_SSH_KEY}}
           TARGET: /var/www/business-designer-frontend/dist
