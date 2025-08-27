@@ -12,7 +12,7 @@ import {
 	MdOutlineFormatItalic,
 } from "react-icons/md";
 import { ToggleIcon } from "@components/ToggleIcon/ToggleIcon";
-import { TextDecorationGroup } from "../../../../shared/TextDecorationGroup/TextDecorationGroup";
+import { TextDecorationGroup } from "../../../../shared/components/TextDecorationGroup/TextDecorationGroup";
 
 export const NodeEditPanel = () => {
 	const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
