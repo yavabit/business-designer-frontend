@@ -1,7 +1,10 @@
 import { PiRectangle, PiRectangleDashed } from "react-icons/pi";
 import { CgShapeRhombus } from "react-icons/cg";
 import { MdOutlineCircle } from "react-icons/md";
-import ExampleNode from "@components/Nodes/ExampleNode";
+import ProcessNode from "@components/Nodes/ProcessNode";
+import { DiamondNode } from "@components/Nodes/DiamonNode";
+import { CircleNode } from "@components/Nodes/CircleNode";
+import SubProcessNode from "@components/Nodes/SubProcessNode";
 
 export const nodeList: INodeItem[] = [
 	{
@@ -10,9 +13,9 @@ export const nodeList: INodeItem[] = [
 		name: "Процесс",
 		description: "Стандартный бизнес-процесс",
 		icon: <PiRectangle />,
-		component: ExampleNode,
+		component: ProcessNode,
 		defaultData: {
-			label: 'Node 1'
+			label: 'Процесс'
 		}
 	},
 	{
@@ -21,8 +24,9 @@ export const nodeList: INodeItem[] = [
 		name: "Условие",
 		description: "Ветвление в зависимости от условия",
 		icon: <CgShapeRhombus />,
+		component: DiamondNode,
 		defaultData: {
-			label: 'Node 2'
+			label: 'Условие'
 		}
 	},
 	{
@@ -31,8 +35,9 @@ export const nodeList: INodeItem[] = [
 		name: "Начало/конец",
 		description: "Начало или окончание всего процесса или подпроцесса",
 		icon: <MdOutlineCircle />,
+		component: CircleNode,
 		defaultData: {
-			label: 'Node 3'
+			label: 'Начало/конец'
 		}
 	},
 	{
@@ -41,8 +46,9 @@ export const nodeList: INodeItem[] = [
 		name: "Промежуточный процесс",
 		description: "Необязательный или промежуточный процесс",
 		icon: <PiRectangleDashed />,
+		component: SubProcessNode,
 		defaultData: {
-			label: 'Node 4'
+			label: 'Промежуточный процесс'
 		}
 	},
 ];
