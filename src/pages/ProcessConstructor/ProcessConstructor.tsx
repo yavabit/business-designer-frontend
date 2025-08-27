@@ -158,7 +158,7 @@ export const ProcessConstructor = () => {
           display: "flex",
           flexDirection: "column",
           gap: "8px",
-          height: "1000px",
+          height: "100vh",
           width: "100%",
         }}
         className="reactflow-wrapper"
