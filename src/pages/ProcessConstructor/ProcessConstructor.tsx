@@ -1,23 +1,19 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useRef, memo, useEffect } from "react";
 import {
   ReactFlow,
-  applyNodeChanges,
-  applyEdgeChanges,
-  addEdge,
-  type Node,
-  type Edge,
-  type SnapGrid,
   BackgroundVariant,
   Background,
   Controls,
   MiniMap,
-  type OnNodesChange,
-  type OnEdgesChange,
-  type OnConnect,
   type NodeMouseHandler,
   ConnectionMode,
   type ReactFlowInstance,
   useReactFlow,
+  type Node,
+  type OnNodesChange,
+  type OnEdgesChange,
+  type Edge,
+  type OnConnect,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -28,81 +24,37 @@ import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
 import { nodeList } from "../../shared/data/nodes";
+import {
+  addNode,
+  onConnect,
+  onEdgesChange,
+  onNodesChange,
+} from "@store/processConstructor/processConstructorSlice";
 
-const initialNodes: Node[] = [
-  {
-    id: "n1",
-    position: { x: 0, y: 0 },
-    type: "input",
-    data: { label: "Node 1", text: "Hello", test: 1 },
-  },
-  {
-    id: "n2",
-    type: "process",
-    position: { x: 0, y: 100 },
-    data: {
-      label: "Node 2",
-      value: "Текст",
-      style: {
-        padding: "20px",
-        border: "5px solid red",
-      },
-    },
-  },
-];
-const initialEdges: Edge[] = [{ id: "n1-n2", source: "n1", target: "n2" }];
+import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 
-const snapGrid: SnapGrid = [20, 20];
-const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
-
-const getId = (nodes: Node[]) => `n_${nodes.length + 1}`;
-
-export const ProcessConstructor = () => {
+export const ProcessConstructor = memo(() => {
   const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
   const dispatch = useAppDispatch();
 
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const { nodes, edges, snapGrid, defaultViewport } = useAppSelector(
+    (state) => state.processConstructor
+  );
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
-
   useEffect(() => {
     if (rfInstance) {
       console.log(rfInstance.toObject());
     }
-  }, [rfInstance]);
+    console.log(nodes);
+  }, [rfInstance, nodes]);
 
-  const onNodesChange = useCallback<OnNodesChange>(
-    (changes) =>
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    []
-  );
-  const onEdgesChange = useCallback<OnEdgesChange>(
-    (changes) =>
-      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    []
-  );
-  const onConnect = useCallback<OnConnect>(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-    []
-  );
-
-  const handleNodeClick: NodeMouseHandler = useCallback((_, node) => {
-    dispatch(setSelectedNode(node));
-  }, []);
-
-  const handlePaneClick = useCallback(() => {
-    if (selectedNode != null) {
-      dispatch(setSelectedNode(null));
-    }
-  }, [selectedNode]);
   // DnD
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
-    console.log("onDragOver");
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
@@ -110,15 +62,10 @@ export const ProcessConstructor = () => {
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLElement>) => {
       event.preventDefault();
-      console.log("onDrop ", type);
-      // check if the dropped element is valid
       if (!type) {
         return;
       }
 
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -127,28 +74,81 @@ export const ProcessConstructor = () => {
         (item) => item.code === type.toString()
       );
 
-      const defaltData: INodeItem["defaultData"] = !nodeData
+      const defaultData = !nodeData
         ? {
-            label: "Node " + getId(nodes),
+            label: "Default Node",
           }
         : nodeData.defaultData;
 
-      console.log(nodeData);
-
-      const newNode: Node[] = [
-        {
-          id: getId(nodes),
+      dispatch(
+        addNode({
+          id: "new",
+          data: defaultData,
           type: type.toString(),
           position,
-          data: {
-            ...defaltData,
-          },
-        },
-      ];
-
-      setNodes((nds) => nds.concat(newNode));
+        })
+      );
     },
-    [screenToFlowPosition, type, nodes]
+    [screenToFlowPosition, type, dispatch]
+  );
+
+  // Context Menu.
+  const [menu, setMenu] = useState<IContextMenu | null>(null);
+  const refReactFlow = useRef<HTMLDivElement | null>(null);
+
+  const onNodeContextMenu = useCallback<NodeMouseHandler<Node>>(
+    (event, node) => {
+      // Prevent native context menu from showing
+      event.preventDefault();
+
+      // Calculate position of the context menu. We want to make sure it
+      // doesn't get positioned off-screen.
+      if (refReactFlow?.current == null) return;
+
+      const pane = refReactFlow.current.getBoundingClientRect();
+      setMenu({
+        id: node.id,
+        top: event.clientY < pane.height - 200 ? undefined : event.clientY,
+        left: event.clientX < pane.width - 200 ? undefined : event.clientX,
+        right:
+          event.clientX >= pane.width - 200
+            ? undefined
+            : pane.width - event.clientX,
+        bottom:
+          event.clientY >= pane.height - 200
+            ? undefined
+            : pane.height - event.clientY,
+      });
+    },
+    [setMenu]
+  );
+
+  const handleNodeClick: NodeMouseHandler = useCallback(
+    (_, node) => {
+      dispatch(setSelectedNode(node));
+    },
+    [dispatch]
+  );
+
+  const handlePaneClick = useCallback(() => {
+    if (selectedNode != null) {
+      dispatch(setSelectedNode(null));
+    }
+
+    setMenu(null);
+  }, [dispatch, selectedNode, setMenu]);
+
+  const handleChangeNode = useCallback<OnNodesChange<Node>>(
+    (e) => dispatch(onNodesChange(e)),
+    [dispatch]
+  );
+  const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
+    (e) => dispatch(onEdgesChange(e)),
+    [dispatch]
+  );
+  const handleChangeConnect = useCallback<OnConnect>(
+    (e) => dispatch(onConnect(e)),
+    [dispatch]
   );
 
   return (
@@ -158,23 +158,23 @@ export const ProcessConstructor = () => {
           display: "flex",
           flexDirection: "column",
           gap: "8px",
-          height: "100vh",
+          height: "calc(100vh - 76px)",
           width: "100%",
         }}
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
         <ReactFlow
+          ref={refReactFlow}
           colorMode="dark"
-          connectionMode={ConnectionMode.Loose}
+          connectionMode={ConnectionMode.Strict}
           onInit={setRfInstance}
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
+          onNodesChange={handleChangeNode}
+          onEdgesChange={handleChangeEdges}
+          onConnect={handleChangeConnect}
           onNodeClick={handleNodeClick}
-          onPaneClick={handlePaneClick}
-          onConnect={onConnect}
           nodeTypes={nodeTypes}
           snapToGrid={true}
           snapGrid={snapGrid}
@@ -186,6 +186,8 @@ export const ProcessConstructor = () => {
           }}
           onDrop={onDrop}
           onDragOver={onDragOver}
+          onPaneClick={handlePaneClick}
+          onNodeContextMenu={onNodeContextMenu}
         >
           <NodesPanel />
           <NodeEditPanel />
@@ -196,4 +198,4 @@ export const ProcessConstructor = () => {
       </div>
     </div>
   );
-};
+});
