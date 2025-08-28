@@ -3,7 +3,10 @@ import { useReactFlow } from "@xyflow/react";
 
 import style from "./style.module.scss";
 import { useAppDispatch } from "@hooks/storeHooks";
-import { addNode } from "@store/processConstructor/processConstructorSlice";
+import {
+  addNode,
+  updateNodeColor,
+} from "@store/processConstructor/processConstructorSlice";
 
 export interface IContextMenu {
   id: string;
@@ -22,7 +25,6 @@ const ContextMenu = ({
   bottom,
   ...props
 }: IContextMenu) => {
-
   const { getNode, setNodes, setEdges } = useReactFlow();
 
   const dispatch = useAppDispatch();
@@ -55,6 +57,10 @@ const ContextMenu = ({
     setEdges((edges) => edges.filter((edge) => edge.source !== id));
   }, [id, setNodes, setEdges]);
 
+  const handleClickChangeColor = useCallback(() => {
+    dispatch(updateNodeColor({ id, color: "red" }));
+  }, [dispatch, id]);
+
   return (
     <div
       style={{ top, left, right, bottom }}
@@ -70,6 +76,12 @@ const ContextMenu = ({
         onClick={handleClickDeleteNode}
       >
         delete
+      </button>
+      <button
+        className={style.contextMenuButton}
+        onClick={handleClickChangeColor}
+      >
+        Change Color
       </button>
     </div>
   );
