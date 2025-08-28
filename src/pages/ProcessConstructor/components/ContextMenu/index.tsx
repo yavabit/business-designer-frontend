@@ -4,7 +4,6 @@ import { useReactFlow } from "@xyflow/react";
 import style from "./style.module.scss";
 import { useAppDispatch } from "@hooks/storeHooks";
 import { addNode } from "@store/processConstructor/processConstructorSlice";
-import type { MenuProps } from "antd";
 
 export interface IContextMenu {
   id: string;
