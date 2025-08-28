@@ -36,8 +36,6 @@ export const NodeEditPanel = () => {
 				fontStyle: /* selectedNode.data?.fontStyle ||  */ "normal",
 				textDecoration: /* selectedNode.data?.textDecoration ||  */ "none",
 			});
-		} else {
-			form.resetFields();
 		}
 	}, [selectedNode, form]);
 
