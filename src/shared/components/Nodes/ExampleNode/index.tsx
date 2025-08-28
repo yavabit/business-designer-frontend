@@ -1,11 +1,11 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 
 import style from "./style.module.scss";
 import { Button, Flex, message, Upload, type UploadProps } from "antd";
 import { AiOutlineUpload } from "react-icons/ai";
 
-export default function ExampleNode({ data }: NodeProps) {
+const ExampleNode = memo(({ data }: NodeProps) => {
   const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
     console.log(evt.target.value);
   }, []);
@@ -50,4 +50,6 @@ export default function ExampleNode({ data }: NodeProps) {
       </Flex>
     </div>
   );
-}
+});
+
+export default ExampleNode

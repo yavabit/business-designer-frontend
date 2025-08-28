@@ -2,12 +2,12 @@ import { Panel } from "@xyflow/react";
 import { Button, Card, Input, List, Tooltip } from "antd";
 import { NodeListCard } from "@components/NodeCard/NodeCard";
 
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineSearch } from "react-icons/ai";
 import { nodeList } from "../../../../shared/data/nodes";
 import { useDnD } from "@hooks/useDnD";
 
-export const NodesPanel = () => {
+export const NodesPanel = memo(() => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -87,7 +87,9 @@ export const NodesPanel = () => {
             dataSource={filteredNodeList}
             renderItem={(item) => (
               <List.Item
-                onDragStart={(event) => onDragStart(event, item.code ?? 'input')}
+                onDragStart={(event) =>
+                  onDragStart(event, item.code ?? "input")
+                }
                 draggable
                 style={{ padding: 0 }}
               >
@@ -99,4 +101,4 @@ export const NodesPanel = () => {
       )}
     </Panel>
   );
-};
+});
