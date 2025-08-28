@@ -5,7 +5,6 @@ import style from "./style.module.scss";
 import { useAppDispatch } from "@hooks/storeHooks";
 import { addNode } from "@store/processConstructor/processConstructorSlice";
 import type { MenuProps } from "antd";
-import { Dropdown, theme } from "antd";
 
 export interface IContextMenu {
   id: string;
@@ -16,21 +15,6 @@ export interface IContextMenu {
   onClick?: () => void;
 }
 
-const items: MenuProps["items"] = [
-  {
-    label: "1st menu item",
-    key: "1",
-  },
-  {
-    label: "2nd menu item",
-    key: "2",
-  },
-  {
-    label: "3rd menu item",
-    key: "3",
-  },
-];
-
 const ContextMenu = ({
   id,
   top,
@@ -39,9 +23,6 @@ const ContextMenu = ({
   bottom,
   ...props
 }: IContextMenu) => {
-  const {
-    token: { colorBgLayout, colorTextTertiary },
-  } = theme.useToken();
 
   const { getNode, setNodes, setEdges } = useReactFlow();
 
@@ -76,35 +57,22 @@ const ContextMenu = ({
   }, [id, setNodes, setEdges]);
 
   return (
-    // <div
-    //   style={{ top, left, right, bottom }}
-    //   className={style.contextMenu}
-    //   {...props}
-    // >
-    //   <p style={{ margin: "0.5em" }}></p>
-    //   <button className={style.contextMenuButton} onClick={duplicateNode}>
-    //     duplicate
-    //   </button>
-    //   <button
-    //     className={style.contextMenuButton}
-    //     onClick={handleClickDeleteNode}
-    //   >
-    //     delete
-    //   </button>
-    // </div>
-    <Dropdown menu={{ items }} trigger={["contextMenu"]}>
-      <div
-        style={{
-          color: colorTextTertiary,
-          background: colorBgLayout,
-          height: 200,
-          textAlign: "center",
-          lineHeight: "200px",
-        }}
+    <div
+      style={{ top, left, right, bottom }}
+      className={style.contextMenu}
+      {...props}
+    >
+      <p style={{ margin: "0.5em" }}></p>
+      <button className={style.contextMenuButton} onClick={duplicateNode}>
+        duplicate
+      </button>
+      <button
+        className={style.contextMenuButton}
+        onClick={handleClickDeleteNode}
       >
-        Right Click on here
-      </div>
-    </Dropdown>
+        delete
+      </button>
+    </div>
   );
 };
 
