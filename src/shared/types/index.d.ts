@@ -39,5 +39,5 @@ interface INodeItem {
   icon?: JSX.Element;
   description?: string;
 	component?: JSX.Element
-	defaultData?: object
+	defaultData: Record<string, unknown>
 }
