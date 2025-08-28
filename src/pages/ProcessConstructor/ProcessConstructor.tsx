@@ -193,7 +193,8 @@ export const ProcessConstructor = memo(() => {
           <NodeEditPanel />
           <Controls />
           <MiniMap />
-          <Background color="#ccc" variant={BackgroundVariant.Dots} />
+          <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
+          {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
         </ReactFlow>
       </div>
     </div>
