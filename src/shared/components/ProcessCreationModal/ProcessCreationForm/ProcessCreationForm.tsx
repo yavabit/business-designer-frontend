@@ -2,13 +2,11 @@ import { Form, Input, message } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, type FC } from "react";
 import { useParams } from "react-router-dom";
+import { useCreateProcessMutation } from "@store/api/processes/processesApi";
 
+type CreateProcessTrigger = ReturnType<typeof useCreateProcessMutation>[0]
 interface ProcessFormProps {
-    createProcess: (body: {
-        projectId: string;
-        name: string;
-        desc: string;
-    }) => Promise<any>;
+    createProcess: CreateProcessTrigger
     onSuccess: () => void;
 }
 

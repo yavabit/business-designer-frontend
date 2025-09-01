@@ -1,9 +1,12 @@
 import { Form, Input, message } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, type FC } from "react";
+import { useCreateProjectMutation } from "@store/api/projects/projectsApi";
+
+type CreateProjectTrigger = ReturnType<typeof useCreateProjectMutation>[0]
 
 interface ProjectFormProps {
-    createProject: (name: string) => Promise<any>;
+    createProject: CreateProjectTrigger;
     onSuccess: () => void;
 }
 

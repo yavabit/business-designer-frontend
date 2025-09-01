@@ -124,15 +124,15 @@ export const Processes: FC = () => {
 
     useEffect(() => {
         loadPage(1);
-    }, []);
+    }, [loadPage]);
 
     useEffect(() => {
         loadPage(1, true);
-    }, [searchString]);
+    }, [searchString, loadPage]);
 
     useEffect(() => {
         loadPage(1, true);
-    }, [sortField, sortOrder]);
+    }, [sortField, sortOrder, loadPage]);
 
     useEffect(() => {
         if (previousModalState && !isCreationModalOpen) {

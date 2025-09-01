@@ -80,7 +80,7 @@ export const ProjectEditModal: FC = () => {
         } else {
             dispatch(setEditModal({modalState: false}));
         }
-    }, [projectId, projects, form]);
+    }, [projectId, projects, form, dispatch]);
 
     return (
         <Modal

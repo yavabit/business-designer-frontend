@@ -1,5 +1,5 @@
 import { Avatar, Button, Dropdown, Flex, type MenuProps } from "antd";
-import {  useEffect, useState, type FC } from "react";
+import {  useEffect, useMemo, useState, type FC } from "react";
 import styles from "./Header.module.scss";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BsPlus } from "react-icons/bs";
@@ -14,9 +14,12 @@ export const Header: FC = () => {
     const { data: projectsResponse, isLoading } = useGetProjectsQuery({} as IGetAllParams, {
         skip: !isAuth
     });
-    
-    const projects = projectsResponse?.data || [];
 
+    const projects = useMemo(() => 
+        projectsResponse?.data || [], 
+        [projectsResponse]
+    );
+    
     const [curProject, setCurProject] = useState<string | undefined>(undefined);
     // const [curProcess, setCurProcess] = useState<string | undefined>(undefined);
 
@@ -65,6 +68,8 @@ export const Header: FC = () => {
     };
 
     useEffect(() => {
+        const projects = projectsResponse?.data || [];
+
         const arrLocation = location.pathname.split('/');
         if (arrLocation[1] === 'project' && !!arrLocation[2]) {
             const projectId = arrLocation[2];
