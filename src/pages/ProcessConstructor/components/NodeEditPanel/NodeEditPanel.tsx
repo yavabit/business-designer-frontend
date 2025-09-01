@@ -13,9 +13,13 @@ import {
 } from "react-icons/md";
 import { ToggleIcon } from "@components/ToggleIcon/ToggleIcon";
 import { TextDecorationGroup } from "../../../../shared/components/TextDecorationGroup/TextDecorationGroup";
+import { useDispatch } from "react-redux";
+import { updateNodeProperties } from "@store/processConstructor/processConstructorSlice";
 
 export const NodeEditPanel = () => {
-	const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
+	const selectedNode = useAppSelector((state) => state.processConstructor.selectedNode);
+
+	const dispatch = useDispatch()
 	const [form] = useForm();
 
 	const normalizeColor = useCallback((value: AggregationColor) => {
@@ -28,19 +32,24 @@ export const NodeEditPanel = () => {
 	useEffect(() => {
 		if (selectedNode) {
 			form.setFieldsValue({
-				backgroundColor: /* selectedNode.data?.backgroundColor ||  */ "#1677ff",
-				borderColor: /* selectedNode.data?.borderColor ||  */ "#1677ff",
-				fontColor: /* selectedNode.data?.fontColor ||  */ "#1677ff",
-				fontSize: /* selectedNode.data?.fontSize ||  */ 16,
-				fontWeight: /* selectedNode.data?.fontWeight ||  */ "normal",
-				fontStyle: /* selectedNode.data?.fontStyle ||  */ "normal",
-				textDecoration: /* selectedNode.data?.textDecoration ||  */ "none",
+				backgroundColor: selectedNode.data?.style?.backgroundColor ||  "#1677ff",
+				borderColor: selectedNode.data?.style?.borderColor ||  "#1677ff",
+				color: selectedNode.data?.style?.color ||  "#1677ff",
+				fontSize: selectedNode.data?.style?.fontSize ||  16,
+				fontWeight: selectedNode.data?.style?.fontWeight ||  "normal",
+				fontStyle: selectedNode.data?.style?.fontStyle ||  "normal",
+				textDecoration: selectedNode.data?.style?.textDecoration ||  "none",
 			});
 		}
 	}, [selectedNode, form]);
 
-	const handleValuesChange = debounce((_, allValues) => {
-		console.log("Финальные значения:", allValues);
+	const handleValuesChange = debounce((curValue) => {
+		const [[key, value]] = Object.entries(curValue);
+		dispatch(updateNodeProperties({
+			id: selectedNode?.id as string,
+			propertyKey: key,
+			propertyValue: value as string
+		}))
 	}, 300);
 
 	useEffect(() => {
@@ -69,7 +78,7 @@ export const NodeEditPanel = () => {
 							)}
 						/>
 					</Form.Item>
-					<Form.Item name={"fontColor"} normalize={normalizeColor}>
+					<Form.Item name={"color"} normalize={normalizeColor}>
 						<ColorPicker
 							showText={(color) => (
 								<span>Цвет текста ({color.toHexString()})</span>
