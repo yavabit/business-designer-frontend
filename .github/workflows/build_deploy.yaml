@@ -38,3 +38,9 @@ jobs:
           KEY: ${{secrets.DEPLOY_SSH_KEY}}
           TARGET: /var/www/business-designer-frontend/
           SOURCE: './dist'
+          POST_SCRIPT: |
+            cd /var/www/business-designer-frontend/
+            touch .env
+            echo VITE_API_HOST="https://api.business-designer.ru" >> .env
+            echo VITE_API_URL="/api/" >> .env
+            cat .env
