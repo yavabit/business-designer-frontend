@@ -1,139 +1,85 @@
-import { useUpdateProjectDataMutation } from "@store/api/projects/projectsApi";
-import type { RootState } from "@store/index";
-import { setEditModal } from "@store/projects/projectsSlice";
-import { Form, Input, message, Modal, Upload, type UploadFile } from "antd";
-import { useForm } from "antd/es/form/Form";
-import type { UploadChangeParam } from "antd/es/upload";
-import { useEffect, useState, type FC } from "react";
+import { Modal, Button } from "antd";
+import { useEffect, type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setEditModal } from "@store/projects/projectsSlice";
+import type { RootState } from "@store/index";
+import {
+    useUpdateProjectDataMutation,
+    useLazyGetProjectByIdQuery,
+} from "@store/api/projects/projectsApi";
+import { ProjectEditForm } from "./components/ProjectEditForm";
 
 export const ProjectEditModal: FC = () => {
     const isOpen = useSelector(
         (state: RootState) => state.projects.isEditModalOpen
     );
-    const projectId = useSelector((state: RootState) => state.projects.editingId);
-    const projects = useSelector((state: RootState) => state.projects.projects)
+    const projectId = useSelector(
+        (state: RootState) => state.projects.editingId
+    );
+    const projects = useSelector((state: RootState) => state.projects.projects);
 
-    const [project, setProject] = useState<IProject>();
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [updateProject, { isLoading }] = useUpdateProjectDataMutation();
-
+    const [getProjectById, { data: projectData, isLoading: isProjectLoading }] =
+        useLazyGetProjectByIdQuery();
     const dispatch = useDispatch();
-    const [form] = useForm();
 
-    const handleUploadChange = (info: UploadChangeParam<UploadFile>) => {
-        let newFileList = [...info.fileList];
-        newFileList = newFileList.slice(-1);
-        setFileList(newFileList);
-    };
-
-
-    const editProjectHandler = async (): Promise<void> => {
-        try {
-            const values = await form.validateFields();
-            const newName = values['project-name'];
-            
-            if (!newName) {
-                message.error('Поле "Название проекта" является обязательным для заполнения!');
-                return;
-            }
-
-            if (!projectId) {
-                message.error('ID проекта не найден');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('name', newName);
-
-            if (fileList.length > 0 && fileList[0].originFileObj) {
-                formData.append('photo', fileList[0].originFileObj);
-            }
-
-            const result = await updateProject({
-                id: projectId,
-                data: formData
-            }).unwrap();
-
-            if (result.message) {
-                message.success('Проект успешно обновлен!');
-                form.resetFields();
-                setFileList([]);
-                dispatch(setEditModal({ modalState: false }));
-            }
-
-        } catch (error) {
-            console.error('Ошибка при обновлении проекта:', error);
-            message.error('Ошибка при обновлении проекта');
-        }
-    };
+    const localProject = projects.find((p) => p.id === projectId);
 
     useEffect(() => {
-        const curProject = projects.find(p => p.id == projectId);
-        if (curProject) {
-            setProject(curProject);
-
-            form.setFieldsValue({
-                'project-name': curProject.name,
-            });
-
-        } else {
-            dispatch(setEditModal({modalState: false}));
+        if (isOpen && projectId && !localProject) {
+            getProjectById(projectId);
         }
-    }, [projectId, projects, form, dispatch]);
+    }, [isOpen, projectId, localProject, getProjectById]);
+
+    const handleCancel = () => {
+        dispatch(setEditModal({ modalState: false }));
+    };
+
+    const handleSuccess = () => {
+        dispatch(setEditModal({ modalState: false }));
+    };
+
+    if (!isOpen) {
+        return null;
+    }
+
+    const project = localProject || projectData?.data;
 
     return (
         <Modal
-            open={isOpen}
-            onOk={editProjectHandler}
-            onCancel={() => dispatch(setEditModal({modalState: false}))}
-            okText="Сохранить"
-            cancelText="Отмена"
-            confirmLoading={isLoading}
-            destroyOnHidden={true}
-            forceRender={false}
-        >
-            <Form 
-                layout="vertical" 
-                form={form} 
-                initialValues={{
-                    'project-name': project?.name,
-                }}
-            >
-                <Form.Item
-                    name="project-name"
-                    label="Название проекта"
-                    rules={[{ 
-                        required: true, 
-                        message: 'Введите название проекта' 
-                    }]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    name="project-picture"
-                    label="Обложка проекта"
-                    valuePropName="fileList"
-                    getValueFromEvent={(e) => {
-                        if (Array.isArray(e)) {
-                            return e;
-                        }
-                        return e?.fileList;
-                    }}
-                >
-                    <Upload.Dragger 
-                        fileList={fileList}
-                        onChange={handleUploadChange}
-                        beforeUpload={() => false}
-                        maxCount={1}
-                        listType="picture"
-                        accept="image/*"
-                    >
-                        <p className="ant-upload-text">Нажмите или перетащите файл</p>
-                        <p className="ant-upload-hint">Поддерживаются только изображения</p>
-                    </Upload.Dragger>
-                </Form.Item>
-            </Form>
+            open={true}
+            onCancel={handleCancel}
+            loading={isProjectLoading}
+            footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                    Отмена
+                </Button>,
+                <Button
+                    key="submit"
+                    type="primary"
+                    loading={isLoading}
+                    onClick={() => {
+                        const event = new KeyboardEvent("keydown", {
+                            key: "Enter",
+                            bubbles: true,
+                        });
+                        document.dispatchEvent(event);
+                    }}>
+                    Сохранить
+                </Button>,
+            ]}>
+            {project ? (
+                <ProjectEditForm
+                    project={project}
+                    updateProject={updateProject}
+                    onSuccess={handleSuccess}
+                />
+            ) : (
+                <div style={{ textAlign: "center", padding: "20px" }}>
+                    <p>Проект не найден</p>
+                    <Button onClick={handleCancel}>Закрыть</Button>
+                </div>
+            )}
         </Modal>
     );
 };

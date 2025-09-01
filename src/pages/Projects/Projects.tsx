@@ -25,7 +25,6 @@ export const Projects: FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [allProjects, setAllProjects] = useState<IProject[]>([]);
-    const [previousModalState, setPreviousModalState] = useState(false);
 
     const debouncedSearchValue = useDebounce(searchValue, 500);
 
@@ -40,6 +39,10 @@ export const Projects: FC = () => {
 
     const isCreationModalOpen = useSelector(
         (state: RootState) => state.projects.isCreationModalOpen
+    );
+
+    const isEditModalOpen = useSelector(
+        (state: RootState) => state.projects.isEditModalOpen
     );
 
     useEffect(() => {
@@ -106,12 +109,18 @@ export const Projects: FC = () => {
     }, [sortField, sortOrder, loadPage]);
 
     useEffect(() => {
-        if (previousModalState && !isCreationModalOpen) {
+        if (!isCreationModalOpen) {
             loadPage(1, true);
         }
 
-        setPreviousModalState(isCreationModalOpen);
-    }, [isCreationModalOpen, previousModalState, loadPage, searchString]);
+    }, [isCreationModalOpen, loadPage]);
+
+    useEffect(() => {
+        if (!isEditModalOpen) {
+            loadPage(1, true);
+        }
+
+    }, [isEditModalOpen, loadPage]);
 
     const handleItemClick = useCallback((id: string | undefined) => {
         setChecked(id);
