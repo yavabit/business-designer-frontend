@@ -26,6 +26,13 @@ export const projectsApi = baseApi.injectEndpoints({
                     : [{ type: apiTags.projects, id: "LIST" }],
         }),
 
+        getProjectById: builder.query<{data: IProject}, string>({
+            query: (id: string) => ({
+                url: `/projects/${id}`,
+                method: "GET",
+            })
+        }),
+
         createProject: builder.mutation<{ data: IProject }, string>({
             query: (newName) => ({
                 url: "/projects",
@@ -57,9 +64,7 @@ export const projectsApi = baseApi.injectEndpoints({
                 body: body.data,
                 headers: {},
             }),
-            invalidatesTags: (_result, _error, { id }) => [
-                { type: apiTags.projects, id },
-            ],
+            invalidatesTags: [{ type: apiTags.projects, id: "LIST" }],
         }),
 
         deleteProject: builder.mutation<void, string>({
@@ -76,6 +81,7 @@ export const projectsApi = baseApi.injectEndpoints({
 
 export const {
     useLazyGetProjectsQuery,
+    useLazyGetProjectByIdQuery,
     useGetProjectsQuery,
     useCreateProjectMutation,
     useUpdateProjectNameMutation,
