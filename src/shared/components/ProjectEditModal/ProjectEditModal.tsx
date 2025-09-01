@@ -7,7 +7,6 @@ import type { UploadChangeParam } from "antd/es/upload";
 import { useEffect, useState, type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-
 export const ProjectEditModal: FC = () => {
     const isOpen = useSelector(
         (state: RootState) => state.projects.isEditModalOpen
@@ -81,7 +80,7 @@ export const ProjectEditModal: FC = () => {
         } else {
             dispatch(setEditModal({modalState: false}));
         }
-    }, [projectId, projects, form]);
+    }, [projectId, projects, form, dispatch]);
 
     return (
         <Modal
@@ -91,6 +90,8 @@ export const ProjectEditModal: FC = () => {
             okText="Сохранить"
             cancelText="Отмена"
             confirmLoading={isLoading}
+            destroyOnHidden={true}
+            forceRender={false}
         >
             <Form 
                 layout="vertical" 

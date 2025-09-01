@@ -6,3 +6,24 @@
         padding-bottom: 1rem;
     }
 }
+
+@media (max-width: 768px) {
+    .items-page {
+        padding: 0.5rem;
+        
+        > .ant-flex {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            
+            > * {
+                width: 100%;
+                
+                .ant-input,
+                .ant-select {
+                    width: 100% !important;
+                }
+            }
+        }
+    }
+}

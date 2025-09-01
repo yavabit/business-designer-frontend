@@ -1,3 +1,4 @@
 export const apiTags = {
-    projects: "Projects"
+    projects: "Projects",
+    processes: "Processes"
 }
