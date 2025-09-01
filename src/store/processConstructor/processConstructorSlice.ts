@@ -57,12 +57,12 @@ const processConstructorSlice = createSlice({
 			};
 			state.nodes = [...state.nodes, newNode];
 		},
-		updateNodeProperties: (state, action: PayloadAction<{
+		updateNodeProperties: (state, { payload }: PayloadAction<{
 			id: string;
 			propertyKey: string;
 			propertyValue: string;
 		}>) => {
-			const { id, propertyKey, propertyValue } = action.payload;
+			const { id, propertyKey, propertyValue } = payload;
 
 			state.nodes = state.nodes.map((node) => {
 				if (node.id === id) {

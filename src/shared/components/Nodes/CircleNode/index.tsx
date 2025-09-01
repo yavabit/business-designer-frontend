@@ -1,31 +1,15 @@
-import { NodeInput } from "@components/NodeInput/NodeInput";
-import { useNodeInput } from "@hooks/useNodeInput";
-import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
+import { type Node, type NodeProps } from "@xyflow/react";
+import { NodeWrapper } from "../NodeWrapper";
 
-export const CircleNode = (props: NodeProps<Node<NodeCustomData>>) => {
-	const { data } = props;
-	const {inputValue, onChangeInput} = useNodeInput({input: data.label as string})
-
-	return (
-		<div
-			className={`react-flow__node-input nopan selectable draggable `}
-			style={{
-				width: 100,
-				height: 60,
-				borderRadius: "50%",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				...data.style
-			}}
-		>
-			<NodeInput
-				value={inputValue}
-				onChange={onChangeInput}
-				style={{color: data.style?.color ?? "white"}}
-			/>
-			<Handle type="target" position={Position.Left} />
-			<Handle type="source" position={Position.Right} />
-		</div>
-	);
+const circleNodeStyle = {
+	width: 100,
+	height: 60,
+	borderRadius: "50%",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
 };
+
+export const CircleNode = (props: NodeProps<Node<NodeCustomData>>) => (
+	<NodeWrapper data={props.data} style={{ ...circleNodeStyle }} />
+);
