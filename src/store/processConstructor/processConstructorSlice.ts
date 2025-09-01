@@ -99,6 +99,31 @@ const processConstructorSlice = createSlice({
 				return node;
 			});
 		},
+		updateNodeSizes: (state, { payload }: PayloadAction<{
+			id: string;
+			width?: number;
+			height?: number;
+		}>) => {
+			const { id, width, height } = payload;
+
+			state.nodes = state.nodes.map((node) => {
+			if (node.id === id) {
+				return {
+					...node,
+					...(width !== undefined && { width }),
+					...(height !== undefined && { height }),
+					...(node.measured && {
+						measured: {
+							...node.measured,
+							...(width !== undefined && { width }),
+							...(height !== undefined && { height })
+						}
+					})
+				};
+			}
+			return node;
+		});
+		},
 
 		onNodesChange: (state, action) => {
 			console.log('onNodesChange', action)
@@ -126,5 +151,7 @@ export const {
 	addNode, 
 	updateNodeProperties, 
 	setSelectedNode, 
-	updateNodeColor 
+	updateNodeColor,
+	updateNodeSizes,
+	updateNodeText
 } = processConstructorSlice.actions;

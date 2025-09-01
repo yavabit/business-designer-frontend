@@ -1,6 +1,9 @@
-import { Handle, Position } from "@xyflow/react";
+import { Handle, NodeResizer, Position, type Node, type NodeProps } from "@xyflow/react";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
+import { useDispatch } from "react-redux";
+import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
+import { useEffect } from "react";
 
 type HandlePositionType = {
 	left?: number; 
@@ -11,7 +14,7 @@ type HandlePositionType = {
 }
 
 type NodeWrapperType = {
-	data: NodeCustomData;
+	node: NodeProps<Node<NodeCustomData>>;
 	children?: React.ReactNode;
 	handleLeft?: boolean;
 	handleRight?: boolean;
@@ -28,7 +31,7 @@ type NodeWrapperType = {
 };
 
 export const NodeWrapper = ({
-	data,
+	node,
 	children,
 	handleLeft = true,
 	handleRight = true,
@@ -38,22 +41,40 @@ export const NodeWrapper = ({
 	handleStyle,
 	inputStyle
 }: NodeWrapperType) => {
+	const dispatch = useDispatch()
+	const { data } = node
 
-	const { inputValue, onChangeInput } = useNodeInput({
+	const { inputValue, onChangeInput, setInput } = useNodeInput({
 		input: data.label as string,
 	});
+
+	useEffect(() => {
+		setInput(data.label as string);
+	}, [data.label, setInput]);
+
+	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		const newValue = e.target.value;
+		onChangeInput(e);
+		dispatch(updateNodeText({ 
+			id: node.id,
+			text: newValue 
+		}));
+	};
 
 	return (
 		<div
 			className={`react-flow__node-input nopan selectable draggable `}
 			style={{
+				width: '100%',
+				height: '100%',
 				...style,
 				...data.style,
 			}}
 		>
+			<NodeResizer isVisible={node.selected}/>
 			<NodeInput
 				value={inputValue}
-				onChange={onChangeInput}
+				onChange={handleChangeInput}
 				style={{ 
 					color: data.style?.color ?? "white", 
 					fontSize: data.style?.fontSize,

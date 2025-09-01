@@ -12,5 +12,5 @@ export const useNodeInput = (initialState: initialStateType) => {
 		setInput(evt.target.value);
 	}, []);
 
-	return {inputValue, onChangeInput}
+	return {inputValue, onChangeInput, setInput}
 };

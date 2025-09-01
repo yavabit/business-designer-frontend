@@ -20,7 +20,7 @@ const inputStyle = { transform: "rotate(-45deg)" };
 export const DiamondNode = (props: NodeProps<Node<NodeCustomData>>) => {
 	return (
 		<NodeWrapper
-			data={props.data}
+			node={props}
 			style={{ ...circleNodeStyle }}
 			inputStyle={{ ...inputStyle }}
 			handleStyle={{ left: handleStyleLeft, right: handleStyleRight }}

@@ -4,5 +4,5 @@ import { NodeWrapper } from "../NodeWrapper";
 const subProcessNodeStyle = { borderStyle: "dashed" };
 
 export const SubProcessNode = (props: NodeProps<Node<NodeCustomData>>) => (
-	<NodeWrapper data={props.data} style={{ ...subProcessNodeStyle }} />
+	<NodeWrapper node={props} style={{ ...subProcessNodeStyle }} />
 );
