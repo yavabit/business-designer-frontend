@@ -19,17 +19,17 @@ interface IProject {
 }
 
 interface IProcess {
-  id: number;
+  id: string;
   name: string;
-  desc: Script;
-  project_id: number;
+  desc: string;
+  project_id: string;
   project_name: string;
   content: string;
   pict_url?: string | null;
-  author_id: number;
+  author_id: string;
   author_name: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 interface INodeItem {
@@ -40,4 +40,21 @@ interface INodeItem {
   description?: string;
 	component?: JSX.Element
 	defaultData: Record<string, unknown>
+}
+
+interface IGetAllParams {
+  limit?: number;
+  page?: number;
+  field?: string;
+  order?: string;
+  search?: string;
+}
+
+interface IPagination {
+  page?: number,
+  limit?: number,
+  total?: number,
+  total_pages?: number,
+  prev?: string | null,
+  next?: string | null
 }

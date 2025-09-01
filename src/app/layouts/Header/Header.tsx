@@ -11,7 +11,7 @@ import { useGetProjectsQuery } from "@store/api/projects/projectsApi";
 
 export const Header: FC = () => {
     const isAuth = useSelector((state: RootState) => state.user.isAuth);
-    const { data: projectsResponse, isLoading } = useGetProjectsQuery(undefined, {
+    const { data: projectsResponse, isLoading } = useGetProjectsQuery({} as IGetAllParams, {
         skip: !isAuth
     });
     

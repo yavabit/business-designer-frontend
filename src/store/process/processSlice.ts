@@ -16,7 +16,7 @@ export interface IFilter {
 	sortField: keyof IProcess
 	orderCreatedDate?: string
 	order: string
-	projectId?: number
+	projectId?: string
 }
 
 interface IFilterPayload {
@@ -37,7 +37,7 @@ const initialState: IProcessState = {
 	listProcesses: [],
 	currentProcess: undefined,
 	isCreationModalOpen: false,
-	isLoading: false
+	isLoading: false,
 }
 
 
@@ -66,14 +66,14 @@ const processSlice = createSlice({
 		fetchProcesses: (state, { payload }: IFilterPayload) => {
 			state.isLoading = true
 			let listProcesses: IProcess[] = Array(10).fill({
-				id: 0,
+				id: '0',
 				name: 'Процесс CI/CD',
 				desc: 'Описание процесса CI/CD',
-				project_id: 1,
+				project_id: '1',
 				project_name: '0',
 				content: '{}',
 				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
-				author_id: 0,
+				author_id: '0',
 				author_name: '0',
 				created_at: new Date().toLocaleDateString(),
 				updated_at: new Date().toLocaleDateString(),
@@ -82,13 +82,13 @@ const processSlice = createSlice({
 			listProcesses = listProcesses.map((item, index) => {
 				return {
 					...item,
-					id: index,
+					id: String(index),
 					name: `${item.name} ${index}`,
 					author_name: `${item.author_name} ${index}`
 				}
 			})
 
-			state.listProcesses = listProcesses.filter(item => item.project_id === payload.projectId || item.project_id === 1)
+			state.listProcesses = listProcesses.filter(item => item.project_id === payload.projectId || item.project_id === '1')
 			state.isLoading = false
 		},
 		fetchProcess: (state, { payload }: IProcessPayload) => {
@@ -98,19 +98,19 @@ const processSlice = createSlice({
 			state.isCreationModalOpen = action.payload;
 		},
 		createProcess: (state, { payload }: ICreateProcessPayload) => {
-			const id = state.listProcesses.length + 1
+			const id = String(state.listProcesses.length + 1)
 			state.listProcesses = state.listProcesses.concat([{
 				id,
 				name: `${payload.name} ${id}`,
 				desc: payload.desc,
-				project_id: Number(payload.project_id),
+				project_id: payload.project_id,
 				project_name: '0',
 				content: '{}',
 				pict_url: 'https://svg.template.creately.com/c5JMedWsSpq',
-				author_id: 0,
+				author_id: '0',
 				author_name: '0',
-				created_at: new Date(),
-				updated_at: new Date(),
+				created_at: new Date().toLocaleDateString(),
+				updated_at: new Date().toLocaleDateString(),
 			}])
 		},
 	},

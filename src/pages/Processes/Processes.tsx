@@ -1,228 +1,284 @@
-import {
-  Avatar,
-  Card,
-  Flex,
-  Modal,
-  Radio,
-  Select,
-  type RadioChangeEvent,
-} from "antd";
+import { Avatar, Button, Card, Flex, Spin } from "antd";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
-import {
-  deleteProcess,
-  fetchProcesses,
-  setProcessCreationModal,
-  type IFilter,
-} from "@store/process/processSlice";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { CheckboxGroupProps } from "antd/es/checkbox";
 import { ItemsPageLayout } from "@app/layouts/ItemsPageLayout/ItemsPageLayout";
+import {
+    useDeleteProcessMutation,
+    useLazyGetProcessesQuery,
+} from "@store/api/processes/processesApi";
+import { useDebounce } from "@hooks/useDebounce";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@store/index";
+import { useInfiniteScroll } from "@hooks/useInfinityScroll";
+import { setProcessCreationModal } from "@store/process/processSlice";
 
 const { Meta } = Card;
 
+export const Processes: FC = () => {
+    const [searchString, setSearchString] = useState<string>("");
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [sortField, setSortField] = useState<string>("updated_at");
+    const [sortOrder, setSortOrder] = useState<string>("DESC");
+    const [hasMore, setHasMore] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [allProcesses, setAllProcesses] = useState<IProcess[]>([]);
+    const [previousModalState, setPreviousModalState] = useState(false);
 
-const optionsSortField = [
-  {
-    value: "name",
-    label: "Название",
-  },
-  {
-    value: "created_at",
-    label: "Дата создания",
-  },
-  {
-    value: "updated_at",
-    label: "Дата модификации",
-  },
-  {
-    value: "author_name",
-    label: "Автор",
-  },
-];
+    const debouncedSearchValue = useDebounce(searchValue, 700);
 
-const optionsOrderBy: CheckboxGroupProps<string>["options"] = [
-  { label: "Убыванию", value: "desc" },
-  { label: "Возрастанию", value: "asc" },
-];
+    const { projectId } = useParams();
 
-export const Processes = () => {
-  const [filters, setFilters] = useState<IFilter>({
-    search: "",
-    sortField: "name",
-    order: "asc",
-    orderCreatedDate: "desc",
-  });
+    const [getProcesses, { isLoading, isFetching, error }] =
+        useLazyGetProcessesQuery();
 
-  const { listProcesses, isLoading } = useAppSelector((state) => state.process);
-  const [modal, contextHolder] = Modal.useModal();
+    const [deleteProcess] = useDeleteProcessMutation();
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  const { projectId } = useParams();
-
-  const computedListProcesses = useMemo(() => {
-    console.log(filters);
-    const processes = listProcesses.filter((item) =>
-      item.name
-        .trim()
-        .toLocaleLowerCase()
-        .includes(filters.search.trim().toLocaleLowerCase())
+    const isCreationModalOpen = useSelector(
+        (state: RootState) => state.process.isCreationModalOpen
     );
 
-    processes.sort((a, b) => {
-      if (filters.order === "desc") return -a[filters.sortField].localeCompare(b[filters.sortField]);
-      else return a[filters.sortField].localeCompare(b[filters.sortField]);
-    });
+    useEffect(() => {
+        setSearchString(debouncedSearchValue);
+    }, [debouncedSearchValue]);
 
-    // processes.sort((a, b) => {
-    //   if (filters.order === "desc")
-    //     return (
-    //       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    //     );
-    //   else
-    //     return (
-    //       new Date(a.created_at).getTime() + new Date(b.created_at).getTime()
-    //     );
-    // });
+    const loadPage = useCallback(
+        async (page: number, reset: boolean = false) => {
+            if (projectId) {
+                const result = await getProcesses({
+                    projectId,
+                    page: page,
+                    limit: 70,
+                    search: searchString,
+                    field: sortField,
+                    order: sortOrder,
+                });
 
-    return processes;
-  }, [listProcesses, filters]);
+                if (result.data) {
+                    const newProcesses = result.data.data;
+                    const pagination = result.data.pagination;
 
-  const onSearch = (value: string) => {
-    setFilters({
-      ...filters,
-      search: value,
-    });
-  };
+                    if (page === 1 || reset) {
+                        setAllProcesses(newProcesses);
+                    } else {
+                        const uniqueNewProcess = newProcesses.filter(
+                            (newProcess) =>
+                                !allProcesses.some(
+                                    (existing) => existing.id === newProcess.id
+                                )
+                        );
+                        setAllProcesses((prev) => [
+                            ...prev,
+                            ...uniqueNewProcess,
+                        ]);
+                    }
 
-  const handleClickDeleteProcess = (
-    e: React.MouseEvent<SVGElement>,
-    item: IProcess
-  ) => {
-    e.stopPropagation();
-    modal.confirm({
-      title: "Подтверждение",
-      content: "Удалить процесс?",
-      okText: "Да",
-      cancelText: "Нет",
-      onOk() {
-        dispatch(deleteProcess(item));
-      },
-    });
-  };
-
-  useEffect(() => {
-    dispatch(
-      fetchProcesses({
-        ...filters,
-        projectId: Number(projectId),
-      })
+                    const totalPages = pagination?.total_pages || 1;
+                    setHasMore(page < totalPages);
+                    setCurrentPage(page);
+                }
+            }
+        },
+        [
+            getProcesses,
+            searchString,
+            sortField,
+            sortOrder,
+            allProcesses,
+            projectId,
+        ]
     );
-  }, [navigate, dispatch, projectId]);
 
-  const renderProcess = () => {
-    return computedListProcesses.map((item) => (
-      <Card
-        key={item.id}
-        loading={isLoading}
-        style={{ width: 300 }}
-        cover={
-          <img
-            alt="Изображение процесса"
-            height={160}
-            src={item.pict_url ?? undefined}
-          />
+    const loadNextPage = useCallback(() => {
+        if (!hasMore || isFetching) return;
+        loadPage(currentPage + 1);
+    }, [hasMore, isFetching, currentPage, loadPage]);
+
+    const loadingRef = useInfiniteScroll({
+        onLoadMore: loadNextPage,
+        hasMore,
+        isLoading: isFetching,
+        threshold: 0.1,
+        rootMargin: "40% 0px",
+    });
+
+    const handleDelete = useCallback(
+        async (id: string, name: string) => {
+            const shouldDelete = window.confirm(`Удалить процесс "${name}"?`);
+            if (shouldDelete) {
+                try {
+                    await deleteProcess(id).unwrap();
+                    setAllProcesses((prev) =>
+                        prev.filter((process) => process.id !== id)
+                    );
+                } catch (error) {
+                    console.error("Ошибка при удалении процесса:", error);
+                }
+            }
+        },
+        [deleteProcess]
+    );
+
+    useEffect(() => {
+        loadPage(1);
+    }, []);
+
+    useEffect(() => {
+        loadPage(1, true);
+    }, [searchString]);
+
+    useEffect(() => {
+        loadPage(1, true);
+    }, [sortField, sortOrder]);
+
+    useEffect(() => {
+        if (previousModalState && !isCreationModalOpen) {
+            loadPage(1, true);
         }
-        actions={[
-          <AiOutlineDelete
-            key="ellipsis"
-            onClick={(e) => handleClickDeleteProcess(e, item)}
-          />,
-          <AiOutlineEdit key="edit" />,
-        ]}
-        hoverable
-        onClick={() => navigate(`/process/${item.id}`)}
-      >
-        <Meta
-          avatar={
-            <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=6" />
-          }
-          title={item.name}
-          description={item.desc}
-        />
-      </Card>
-    ));
-  };
 
-  const onChangeSortField = (value: keyof IProcess) => {
-    setFilters({
-      ...filters,
-			sortField: value
-    });
-  };
+        setPreviousModalState(isCreationModalOpen);
+    }, [isCreationModalOpen, previousModalState, loadPage, searchString]);
 
-  const handleChangeOrder = (e: RadioChangeEvent, prop: string) => {
-    setFilters({
-      ...filters,
-      [prop]: e.target.value,
-    });
-  };
+    const handleSearch = useCallback((value: string) => {
+        setSearchValue(value);
+        setCurrentPage(1);
+    }, []);
 
-  return (
-    <ItemsPageLayout
-      title="Процессы"
-      action={() => dispatch(setProcessCreationModal(true))}
-      searchAction={(value: string) => onSearch(value)}
-    >
-      <Flex gap="middle" vertical justify="space-evenly">
-        <Flex gap="small" vertical style={{ textAlign: "left", width: 540 }}>
-          <Flex justify="flex-start" gap="small" align="center">
-            <div style={{ width: 230 }}>Поле выбора для сортировки:</div>
-            <Select
-              placeholder="Выберите значение"
-              optionFilterProp="label"
-              options={optionsSortField}
-              style={{ width: 300 }}
-							defaultValue={filters.sortField}
-							value={filters.sortField}
-              onChange={onChangeSortField}
-            />
-          </Flex>
-          <Flex justify="flex-start" gap="small" align="center">
-            <div style={{ width: 230 }}>Порядок сортировки:</div>
-            <Radio.Group
-              block
-              options={optionsOrderBy}
-              defaultValue={filters.order}
-              value={filters.order}
-              optionType="button"
-              buttonStyle="solid"
-              onChange={(e: RadioChangeEvent) => handleChangeOrder(e, "order")}
-            />
-          </Flex>
-          <Flex justify="flex-start" gap="small" align="center">
-            <div style={{ width: 230 }}>Дата создания по:</div>
-            <Radio.Group
-              block
-              options={optionsOrderBy}
-              defaultValue={filters.orderCreatedDate}
-              value={filters.orderCreatedDate}
-              optionType="button"
-              buttonStyle="solid"
-              onChange={(e: RadioChangeEvent) =>
-                handleChangeOrder(e, "orderCreatedDate")
-              }
-            />
-          </Flex>
-        </Flex>
-        <Flex wrap gap="small">
-          {renderProcess()}
-          {contextHolder}
-        </Flex>
-      </Flex>
-    </ItemsPageLayout>
-  );
+    const handleSortField = useCallback((value: string) => {
+        setSortField(value);
+        setCurrentPage(1);
+    }, []);
+
+    const handleSortOrder = useCallback((value: string) => {
+        setSortOrder(value);
+        setCurrentPage(1);
+    }, []);
+
+    return (
+        <ItemsPageLayout
+            title="Процессы"
+            action={() => dispatch(setProcessCreationModal(true))}
+            searchAction={handleSearch}
+            sortFieldAction={handleSortField}
+            sortOrderAction={handleSortOrder}>
+            <Flex gap="middle" vertical justify="space-evenly">
+                {isLoading &&
+                    currentPage === 1 &&
+                    allProcesses.length === 0 && (
+                        <Flex justify="center" style={{ padding: "20px" }}>
+                            <Spin size="large" />
+                        </Flex>
+                    )}
+
+                {error && (
+                    <Flex
+                        vertical
+                        gap={12}
+                        align="center"
+                        style={{ padding: "20px" }}>
+                        <p>Ошибка при загрузке процессов!</p>
+                        <Button onClick={() => loadPage(1, true)}>
+                            Попробовать снова
+                        </Button>
+                    </Flex>
+                )}
+
+                {!isLoading &&
+                    !error &&
+                    allProcesses.length === 0 &&
+                    searchString === "" && (
+                        <Flex
+                            vertical
+                            gap={12}
+                            align="center"
+                            style={{ padding: "20px" }}>
+                            <p>Не создано ни одного процесса.</p>
+                            <Button
+                                onClick={() =>
+                                    dispatch(setProcessCreationModal(true))
+                                }>
+                                Создать?
+                            </Button>
+                        </Flex>
+                    )}
+
+                {!isLoading &&
+                    !error &&
+                    allProcesses.length === 0 &&
+                    searchString !== "" && (
+                        <Flex
+                            vertical
+                            gap={12}
+                            align="center"
+                            style={{ padding: "20px" }}>
+                            <p>Процессы не найдены.</p>
+                        </Flex>
+                    )}
+
+                {allProcesses.length > 0 && (
+                    <Flex wrap gap="small">
+                        {allProcesses.map((item) => (
+                            <Card
+                                key={item.id}
+                                loading={isLoading}
+                                style={{ width: 300 }}
+                                cover={
+                                    <img
+                                        alt="Изображение процесса"
+                                        height={160}
+                                        src={item.pict_url ?? undefined}
+                                    />
+                                }
+                                actions={[
+                                    <AiOutlineDelete
+                                        key="ellipsis"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(item.id, item.name);
+                                        }}
+                                    />,
+                                    <AiOutlineEdit key="edit" />,
+                                ]}
+                                hoverable
+                                onClick={() => navigate(`/process/${item.id}`)}>
+                                <Meta
+                                    avatar={
+                                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=6" />
+                                    }
+                                    title={item.name}
+                                    description={item.desc}
+                                />
+                            </Card>
+                        ))}
+                    </Flex>
+                )}
+
+                {isFetching && currentPage > 1 && (
+                    <Flex
+                        justify="center"
+                        style={{ padding: "20px" }}
+                        ref={loadingRef}>
+                        <Spin size="large" />
+                    </Flex>
+                )}
+
+                {!hasMore && allProcesses.length > 0 && (
+                    <Flex
+                        justify="center"
+                        style={{ padding: "20px", color: "#666" }}>
+                        <p>
+                            Все процессы загружены ({allProcesses.length} всего)
+                        </p>
+                    </Flex>
+                )}
+
+                {hasMore && !isFetching && allProcesses.length > 0 && (
+                    <div ref={loadingRef} style={{ height: "1px" }} />
+                )}
+            </Flex>
+        </ItemsPageLayout>
+    );
 };

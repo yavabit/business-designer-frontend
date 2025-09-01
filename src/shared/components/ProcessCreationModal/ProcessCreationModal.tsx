@@ -1,66 +1,57 @@
 import type { RootState } from "@store/index";
-import {
-  createProcess,
-  setProcessCreationModal,
-} from "@store/process/processSlice";
-import { Form, Input, Modal } from "antd";
+import { setProcessCreationModal } from "@store/process/processSlice";
+import { Button, Modal } from "antd";
 import { type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TextArea from "antd/es/input/TextArea";
-import { useForm } from "antd/es/form/Form";
-import { useParams } from "react-router-dom";
-
-interface IFormCreate {
-  name: string;
-  desc: string;
-}
+import { useCreateProcessMutation } from "@store/api/processes/processesApi";
+import { ProcessCreationForm } from "./ProcessCreationForm/ProcessCreationForm";
 
 export const ProcessCreationModal: FC = () => {
-  const [form] = useForm<IFormCreate>();
+    const isOpen = useSelector(
+        (state: RootState) => state.process.isCreationModalOpen
+    );
 
-  const isOpen = useSelector(
-    (state: RootState) => state.process.isCreationModalOpen
-  );
+    const [createProcess, { isLoading }] = useCreateProcessMutation();
+    const dispatch = useDispatch();
 
-  const dispath = useDispatch();
+    const handleCancel = () => {
+        dispatch(setProcessCreationModal(false));
+    };
 
-  const { projectId } = useParams();
+    const handleSuccess = () => {
+        dispatch(setProcessCreationModal(false));
+    };
 
-  const handleClickCreate = () => {
-    if (form && projectId) {
-      dispath(
-        createProcess({
-          name: form.getFieldValue("name"),
-          desc: form.getFieldValue("desc"),
-					project_id: projectId
-        })
-      );
-      dispath(setProcessCreationModal(false));
+    if (!isOpen) {
+        return null;
     }
-  };
 
-  return (
-    <Modal
-      title="Создать процесс"
-      open={isOpen}
-      onOk={handleClickCreate}
-      onCancel={() => dispath(setProcessCreationModal(false))}
-      okText="Создать"
-      cancelText="Отмена"
-    >
-      <Form
-        layout="vertical"
-        onFinish={handleClickCreate}
-        autoComplete="off"
-        form={form}
-      >
-        <Form.Item name="name" label="Название" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="desc" label="Описание" rules={[{ required: true }]}>
-          <TextArea />
-        </Form.Item>
-      </Form>
-    </Modal>
-  );
+    return (
+        <Modal
+            open={true}
+            onCancel={handleCancel}
+            footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                    Отмена
+                </Button>,
+                <Button
+                    key="submit"
+                    type="primary"
+                    loading={isLoading}
+                    onClick={() => {
+                        const event = new KeyboardEvent("keydown", {
+                            key: "Enter",
+                            bubbles: true,
+                        });
+                        document.dispatchEvent(event);
+                    }}>
+                    Создать
+                </Button>,
+            ]}>
+            <ProcessCreationForm
+                createProcess={createProcess}
+                onSuccess={handleSuccess}
+            />
+        </Modal>
+    );
 };
