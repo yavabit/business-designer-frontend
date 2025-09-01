@@ -27,7 +27,7 @@ export const Projects: FC = () => {
     const [allProjects, setAllProjects] = useState<IProject[]>([]);
     const [previousModalState, setPreviousModalState] = useState(false);
 
-    const debouncedSearchValue = useDebounce(searchValue, 700);
+    const debouncedSearchValue = useDebounce(searchValue, 500);
 
     const [getProjects, { isLoading, isFetching, error }] =
         useLazyGetProjectsQuery();
@@ -77,7 +77,7 @@ export const Projects: FC = () => {
                 setCurrentPage(page);
             }
         },
-        [getProjects, searchString, sortField, sortOrder, allProjects]
+        [getProjects, searchString, sortField, sortOrder]
     );
 
     const loadNextPage = useCallback(() => {

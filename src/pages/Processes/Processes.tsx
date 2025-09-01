@@ -25,7 +25,7 @@ export const Processes: FC = () => {
     const [allProcesses, setAllProcesses] = useState<IProcess[]>([]);
     const [previousModalState, setPreviousModalState] = useState(false);
 
-    const debouncedSearchValue = useDebounce(searchValue, 700);
+    const debouncedSearchValue = useDebounce(searchValue, 500);
 
     const { projectId } = useParams();
 
@@ -87,7 +87,6 @@ export const Processes: FC = () => {
             searchString,
             sortField,
             sortOrder,
-            allProcesses,
             projectId,
         ]
     );
