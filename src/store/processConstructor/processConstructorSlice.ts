@@ -18,7 +18,13 @@ const initialState: IConstructorState = {
 			id: nodeId1,
 			position: { x: 0, y: 0 },
 			type: "input",
-			data: { label: "Node 1", text: "Hello", test: 1 },
+			data: {
+				label: "Node 1", text: "Hello", test: 1,
+				style: {
+					padding: "20px",
+					border: "5px solid red",
+				},
+			},
 		},
 		{
 			id: nodeId2,
@@ -72,13 +78,20 @@ const processConstructorSlice = createSlice({
 		updateNodeColor: (state, action) => {
 			state.nodes = state.nodes.map((node) => {
 				if (node.id === action.payload.id) {
-					node.data = { ...node.data, color: action.payload.color };
+					const style = node.data.style
+					node.data = {
+						...node.data, style: Object.assign({
+							style,
+							color: action.payload.color
+						})
+					};
 				}
 				return node;
 			});
 		},
 
 		onNodesChange: (state, action) => {
+			console.log('onNodesChange', action)
 			state.nodes = applyNodeChanges(action.payload, state.nodes);
 		},
 		onEdgesChange: (state, action) => {
@@ -93,4 +106,4 @@ const processConstructorSlice = createSlice({
 
 
 export const processConstructorReducer = processConstructorSlice.reducer;
-export const { onNodesChange, onEdgesChange, onConnect, addNode } = processConstructorSlice.actions;
+export const { onNodesChange, onEdgesChange, onConnect, addNode, updateNodeColor } = processConstructorSlice.actions;

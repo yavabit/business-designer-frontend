@@ -44,9 +44,9 @@ export const ProcessConstructor = memo(() => {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
   useEffect(() => {
     if (rfInstance) {
-      console.log(rfInstance.toObject());
+      console.log("rfInstance", rfInstance.toObject());
     }
-    console.log(nodes);
+    console.log("nodes", nodes);
   }, [rfInstance, nodes]);
 
   // DnD
