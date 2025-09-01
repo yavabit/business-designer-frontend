@@ -32,9 +32,9 @@ export const NodeEditPanel = () => {
 	useEffect(() => {
 		if (selectedNode) {
 			form.setFieldsValue({
-				backgroundColor: selectedNode.data?.style?.backgroundColor ||  "#1677ff",
-				borderColor: selectedNode.data?.style?.borderColor ||  "#1677ff",
-				color: selectedNode.data?.style?.color ||  "#1677ff",
+				backgroundColor: selectedNode.data?.style?.backgroundColor ||  "#1e1e1e",
+				borderColor: selectedNode.data?.style?.borderColor ||  "#3c3c3c",
+				color: selectedNode.data?.style?.color ||  "#ffffff",
 				fontSize: selectedNode.data?.style?.fontSize ||  16,
 				fontWeight: selectedNode.data?.style?.fontWeight ||  "normal",
 				fontStyle: selectedNode.data?.style?.fontStyle ||  "normal",
