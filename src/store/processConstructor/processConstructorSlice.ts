@@ -2,10 +2,11 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { addEdge, applyEdgeChanges, applyNodeChanges, type Edge, type Node, type SnapGrid, type Viewport } from "@xyflow/react";
 
 interface IConstructorState {
-	nodes: Node[]
+	nodes: Node<NodeCustomData>[]
 	edges: Edge[]
 	snapGrid: SnapGrid
 	defaultViewport: Viewport
+	selectedNode: Node<NodeCustomData> | null
 }
 
 const nodeId1 = crypto.randomUUID()
@@ -22,7 +23,7 @@ const initialState: IConstructorState = {
 				label: "Node 1", text: "Hello", test: 1,
 				style: {
 					padding: "20px",
-					border: "5px solid red",
+					borderColor: "red",
 				},
 			},
 		},
@@ -35,13 +36,14 @@ const initialState: IConstructorState = {
 				value: "Текст",
 				style: {
 					padding: "20px",
-					border: "5px solid red",
+					borderColor: "5px solid red",
 				},
 			},
 		}],
 	edges: [{ id: nodeId1_nodeId2, source: nodeId1, target: nodeId2 }],
 	snapGrid: [20, 20],
-	defaultViewport: { x: 0, y: 0, zoom: 1.5 }
+	defaultViewport: { x: 0, y: 0, zoom: 1.5 },
+	selectedNode: null
 }
 
 const processConstructorSlice = createSlice({
@@ -55,13 +57,21 @@ const processConstructorSlice = createSlice({
 			};
 			state.nodes = [...state.nodes, newNode];
 		},
-		updateNodeProperties: (state, action) => {
+		updateNodeProperties: (state, action: PayloadAction<{
+			id: string;
+			propertyKey: string;
+			propertyValue: string;
+		}>) => {
+			const { id, propertyKey, propertyValue } = action.payload;
+
 			state.nodes = state.nodes.map((node) => {
-				if (node.id === action.payload.id) {
+				if (node.id === id) {
 					node.data = {
 						...node.data,
-						//add rest of payload to to node data, through map? or ..action.payload.updatedProperties
-						slashCommand: action.payload.slashCommand,
+						style: {
+							...node.data.style,
+							[propertyKey]: propertyValue
+						}
 					};
 				}
 				return node;
@@ -99,11 +109,22 @@ const processConstructorSlice = createSlice({
 		},
 		onConnect: (state, action) => {
 			state.edges = addEdge(action.payload, state.edges);
-		}
+		},
+		setSelectedNode: (state, { payload }) => {
+			state.selectedNode = payload;
+		},
 
 	}
 })
 
 
 export const processConstructorReducer = processConstructorSlice.reducer;
-export const { onNodesChange, onEdgesChange, onConnect, addNode, updateNodeColor } = processConstructorSlice.actions;
+export const { 
+	onNodesChange, 
+	onEdgesChange, 
+	onConnect, 
+	addNode, 
+	updateNodeProperties, 
+	setSelectedNode, 
+	updateNodeColor 
+} = processConstructorSlice.actions;

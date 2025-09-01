@@ -19,7 +19,6 @@ import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
 import { NodesPanel } from "./components/NodesPanel/NodesPanel";
 import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
-import { setSelectedNode } from "@store/nodes/nodesSlice";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
@@ -29,12 +28,13 @@ import {
   onConnect,
   onEdgesChange,
   onNodesChange,
+  setSelectedNode,
 } from "@store/processConstructor/processConstructorSlice";
 
 import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 
 export const ProcessConstructor = memo(() => {
-  const selectedNode = useAppSelector((state) => state.nodes.selectedNode);
+  const selectedNode = useAppSelector((state) => state.processConstructor.selectedNode);
   const dispatch = useAppDispatch();
 
   const { nodes, edges, snapGrid, defaultViewport } = useAppSelector(

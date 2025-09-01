@@ -16,7 +16,7 @@ export const NodeInput = ({ onChange, value, style }: NodeInputType) => {
 			value={value as string}
 			variant="borderless"
 			style={{
-				color: 'white',
+				color: style?.color ?? 'white',
 				textAlign: 'center',
 				resize: 'none',
 				height: 30,	

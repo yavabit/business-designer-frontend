@@ -58,3 +58,20 @@ interface IPagination {
   prev?: string | null,
   next?: string | null
 }
+
+type NodeCustomData = {
+    label?: string;
+    value?: string;
+    text?: string;
+    test?: string | number;
+    style?: {
+        backgroundColor?: string;
+        borderColor?: string;
+        color?: string;
+        fontSize?: string;
+        fontWeight?: string;
+        fontStyle?: string;
+        textDecoration?: string;
+        padding?: string;
+    };
+}
