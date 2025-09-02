@@ -1,7 +1,7 @@
 import type { FormProps } from "antd";
-import { Button, Checkbox, Flex, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 type FieldType = {
 	email?: string;
@@ -14,16 +14,11 @@ const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
 };
 
 export const Signin = () => {
-	const navigate = useNavigate()
 	const [form] = useForm();
 
 	const onReset = () => {
 		form.resetFields();
 	};
-
-	const handleRegistrationLink = () => {
-		navigate("/signup")
-	}
 
 	return (
 		<div className="auth-form__container">
@@ -63,27 +58,22 @@ export const Signin = () => {
 					</Form.Item>
 
 					<Form.Item>
-						<Flex>
+						<Space>
 							<Button type="primary" htmlType="submit">
 								Войти
 							</Button>
 							<Button
 								htmlType="button"
 								onClick={onReset}
-								style={{ marginLeft: 10 }}
 							>
 								Сбросить
 							</Button>
-							<Button
-								color="primary"
-								variant="outlined"
-								style={{ marginLeft: "auto" }}
-								onClick={handleRegistrationLink}
-							>
-								Зарегистрироваться
-							</Button>
-						</Flex>
+						</Space>
 					</Form.Item>
+					<div className="auth-form__additional">
+						<span>Нет аккаунта?</span>
+						<Link to={"/signup"}>Зарегистрироваться</Link>
+					</div>
 				</Form>
 			</div>
 		</div>

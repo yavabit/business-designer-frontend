@@ -89,6 +89,13 @@ button:focus-visible {
       border-bottom: 2px solid rgb(20, 20, 20);
     }
 
+    .auth-form__additional {
+      font-size: 14px;
+      span {
+        margin-right: 5px;
+      }
+    }
+
     button:focus {
       outline: none;
     }
