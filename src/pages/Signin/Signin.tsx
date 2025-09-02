@@ -1,7 +1,7 @@
 import type { FormProps } from "antd";
-import { Button, Checkbox, Form, Input, Space } from "antd";
+import { Button, Checkbox, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type FieldType = {
 	email?: string;
@@ -9,12 +9,45 @@ type FieldType = {
 	remember?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-	console.log("Success:", values);
-};
-
 export const Signin = () => {
 	const [form] = useForm();
+
+	const navigate = useNavigate()
+
+	const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+		try {
+			const response = await fetch("/api/login", {
+				method: "POST",
+				body: JSON.stringify(values),
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				navigate("/projects")
+			} else {
+				if (data.error) {
+					form.setFields([
+						{
+							name: "email",
+							errors: [data.error || "Неверный логин или пароль"],
+						},
+						{
+							name: "password",
+							errors: [data.error || "Неверный логин или пароль"],
+						},
+					]);
+				} else {
+					message.error(data.error || "Ошибка входа");
+				}
+			}
+		} catch (e) {			
+			message.error("Ошибка сети");
+			console.log(e);
+		} finally {
+			//setLoading(false);
+		}
+	};
 
 	const onReset = () => {
 		form.resetFields();
