@@ -1,6 +1,6 @@
 import { Layout } from "@app/layouts/Layout/Layout";
 import { DnDProvider } from "@contexts/DnDContext";
-import { Login } from "@pages/Login/Login";
+import { Signin } from "@pages/Signin/Signin";
 import { ProcessConstructor } from "@pages/ProcessConstructor/ProcessConstructor";
 import { Processes } from "@pages/Processes/Processes";
 import { Profile } from "@pages/Profile/Profile";
@@ -26,13 +26,14 @@ export const Router = () => {
           }
         />
 
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
-
         <Route path="me" element={<Profile />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
+
+      <Route path="login" element={<Signin />} />
+      <Route path="signup" element={<Signup />} />
+      
     </Routes>
   );
 };

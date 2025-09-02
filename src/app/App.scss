@@ -65,3 +65,39 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.auth-form__container {
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(20, 20, 20);
+  display: flex;
+  justify-content: center;
+
+  .auth-form__wrapper {
+    margin-top: 150px;
+    width: auto;
+    height: fit-content;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 20px 40px;
+    background-color: #ffffffd5;
+
+    .auth-form__title {
+      margin-bottom: 20px;
+      font-size: 25px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgb(20, 20, 20);
+    }
+
+    .auth-form__additional {
+      font-size: 14px;
+      span {
+        margin-right: 5px;
+      }
+    }
+
+    button:focus {
+      outline: none;
+    }
+  }
+}
