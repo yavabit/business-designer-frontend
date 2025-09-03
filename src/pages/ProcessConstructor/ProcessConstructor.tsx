@@ -98,11 +98,8 @@ export const ProcessConstructor = memo(() => {
 
   const onNodeContextMenu = useCallback<NodeMouseHandler<Node>>(
     (event, node) => {
-      // Prevent native context menu from showing
       event.preventDefault();
 
-      // Calculate position of the context menu. We want to make sure it
-      // doesn't get positioned off-screen.
       if (refReactFlow?.current == null) return;
 
       const pane = refReactFlow.current.getBoundingClientRect();

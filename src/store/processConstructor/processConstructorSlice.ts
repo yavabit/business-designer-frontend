@@ -9,38 +9,9 @@ interface IConstructorState {
 	selectedNode: Node<NodeCustomData> | null
 }
 
-const nodeId1 = crypto.randomUUID()
-const nodeId2 = crypto.randomUUID()
-const nodeId1_nodeId2 = `${nodeId1}-${nodeId2}`
-
 const initialState: IConstructorState = {
-	nodes: [
-		{
-			id: nodeId1,
-			position: { x: 0, y: 0 },
-			type: "input",
-			data: {
-				label: "Node 1", text: "Hello", test: 1,
-				style: {
-					padding: "20px",
-					borderColor: "red",
-				},
-			},
-		},
-		{
-			id: nodeId2,
-			type: "process",
-			position: { x: 0, y: 100 },
-			data: {
-				label: "Node 2",
-				value: "Текст",
-				style: {
-					padding: "20px",
-					borderColor: "5px solid red",
-				},
-			},
-		}],
-	edges: [{ id: nodeId1_nodeId2, source: nodeId1, target: nodeId2 }],
+	nodes: [],
+	edges: [],
 	snapGrid: [20, 20],
 	defaultViewport: { x: 0, y: 0, zoom: 1.5 },
 	selectedNode: null
