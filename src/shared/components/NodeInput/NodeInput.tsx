@@ -20,6 +20,7 @@ export const NodeInput = ({ onChange, value, style }: NodeInputType) => {
 				textAlign: 'center',
 				resize: 'none',
 				minHeight: 50,
+				overflow: 'hidden',
 				...(style || {})
 			}}
 		/>

@@ -3,8 +3,9 @@ import { NodeWrapper } from "../NodeWrapper";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useDispatch } from "react-redux";
 import { useNodeInput } from "@hooks/useNodeInput";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
+import { debounce } from "lodash";
 
 const inputStyle: React.CSSProperties = {
 	textAlign: "center",
@@ -22,13 +23,18 @@ export const DiamondNode = (props: NodeProps<Node<NodeCustomData>>) => {
 		setInput(data.label as string);
 	}, [data.label, setInput]);
 
+	const debouncedDispatch = useMemo(
+		() => debounce((value: string) => {
+			dispatch(updateNodeText({ id: props.id, text: value }));
+		}, 300),
+		[dispatch, props.id]
+	);
+
+	useEffect(() => () => debouncedDispatch.cancel(), [debouncedDispatch]);
+
 	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const newValue = e.target.value;
 		onChangeInput(e);
-		dispatch(updateNodeText({ 
-			id: props.id,
-			text: newValue 
-		}));
+		debouncedDispatch(e.target.value);
 	};
 
 	return (

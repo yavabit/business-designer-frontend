@@ -3,7 +3,8 @@ import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
 import { useDispatch } from "react-redux";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
-import { useEffect } from "react";
+import { memo, useEffect, useMemo } from "react";
+import { debounce } from "lodash";
 
 type HandlePositionType = {
 	left?: number | string; 
@@ -31,7 +32,7 @@ type NodeWrapperType = {
 	isNeedInput?: boolean;
 };
 
-export const NodeWrapper = ({
+export const NodeWrapper = memo(({
 	node,
 	children,
 	handleLeft = true,
@@ -54,13 +55,18 @@ export const NodeWrapper = ({
 		setInput(data.label as string);
 	}, [data.label, setInput]);
 
+	const debouncedDispatch = useMemo(
+		() => debounce((value: string) => {
+			dispatch(updateNodeText({ id: node.id, text: value }));
+		}, 300),
+		[dispatch, node.id]
+	);
+
+	useEffect(() => () => debouncedDispatch.cancel(), [debouncedDispatch]);
+
 	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const newValue = e.target.value;
 		onChangeInput(e);
-		dispatch(updateNodeText({ 
-			id: node.id,
-			text: newValue 
-		}));
+		debouncedDispatch(e.target.value);
 	};
 
 	return (
@@ -93,4 +99,4 @@ export const NodeWrapper = ({
 			{handleBottom && <Handle id="bottom" type="source" isConnectable position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
 		</div>
 	);
-};
+});
