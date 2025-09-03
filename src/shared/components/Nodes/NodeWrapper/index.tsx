@@ -6,10 +6,10 @@ import { updateNodeText } from "@store/processConstructor/processConstructorSlic
 import { useEffect } from "react";
 
 type HandlePositionType = {
-	left?: number; 
-	right?: number; 
-	bottom?: number; 
-	top?: number;
+	left?: number | string; 
+	right?: number | string; 
+	bottom?: number | string; 
+	top?: number | string;
 	transform?: string;
 }
 
@@ -28,6 +28,7 @@ type NodeWrapperType = {
 		bottom?: HandlePositionType;
 	};
 	inputStyle?: React.CSSProperties;
+	isNeedInput?: boolean;
 };
 
 export const NodeWrapper = ({
@@ -39,7 +40,8 @@ export const NodeWrapper = ({
 	handleBottom = true,
 	style,
 	handleStyle,
-	inputStyle
+	inputStyle,
+	isNeedInput = true
 }: NodeWrapperType) => {
 	const dispatch = useDispatch()
 	const { data } = node
@@ -72,7 +74,8 @@ export const NodeWrapper = ({
 			}}
 		>
 			<NodeResizer isVisible={node.selected}/>
-			<NodeInput
+
+			{isNeedInput && <NodeInput
 				value={inputValue}
 				onChange={handleChangeInput}
 				style={{ 
@@ -80,7 +83,7 @@ export const NodeWrapper = ({
 					fontSize: data.style?.fontSize,
 					...inputStyle 
 				}}
-			/>
+			/>}
 
 			{children}
 

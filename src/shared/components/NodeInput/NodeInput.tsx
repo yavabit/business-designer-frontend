@@ -19,7 +19,7 @@ export const NodeInput = ({ onChange, value, style }: NodeInputType) => {
 				color: style?.color ?? 'white',
 				textAlign: 'center',
 				resize: 'none',
-				height: 30,	
+				minHeight: 50,
 				...(style || {})
 			}}
 		/>
