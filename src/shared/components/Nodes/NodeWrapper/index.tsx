@@ -35,8 +35,8 @@ export const NodeWrapper = ({
 	children,
 	handleLeft = true,
 	handleRight = true,
-	handleTop = false,
-	handleBottom = false,
+	handleTop = true,
+	handleBottom = true,
 	style,
 	handleStyle,
 	inputStyle
@@ -84,10 +84,10 @@ export const NodeWrapper = ({
 
 			{children}
 
-			{handleLeft && <Handle type="target" position={Position.Left} style={{...handleStyle?.left}}/>}
-			{handleRight && <Handle type="source" position={Position.Right} style={{...handleStyle?.right}}/>}
-			{handleTop && <Handle type="source" position={Position.Top} style={{...handleStyle?.top}}/>}
-			{handleBottom && <Handle type="source" position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
+			{handleLeft && <Handle id="left" type="source" isConnectable position={Position.Left} style={{...handleStyle?.left}}/>}
+			{handleRight && <Handle id="right" type="source" isConnectable position={Position.Right} style={{...handleStyle?.right}}/>}
+			{handleTop && <Handle id="top" type="source" isConnectable position={Position.Top} style={{...handleStyle?.top}}/>}
+			{handleBottom && <Handle id="bottom" type="source" isConnectable position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
 		</div>
 	);
 };
