@@ -104,7 +104,14 @@ const processConstructorSlice = createSlice({
 			state.edges = applyEdgeChanges(action.payload, state.edges);
 		},
 		onConnect: (state, action) => {
-			state.edges = addEdge(action.payload, state.edges);
+			 const connection = action.payload;
+			const newEdge: Edge = {
+				...connection,
+				id: crypto.randomUUID(),
+				type: 'step',
+				style: { stroke: '##3e3e3e' },
+			};
+			state.edges = addEdge(newEdge, state.edges);
 		},
 		setSelectedNode: (state, { payload }) => {
 			state.selectedNode = payload;

@@ -164,7 +164,7 @@ export const ProcessConstructor = memo(() => {
         <ReactFlow
           ref={refReactFlow}
           colorMode="dark"
-          connectionMode={ConnectionMode.Strict}
+          connectionMode={ConnectionMode.Loose}
           onInit={setRfInstance}
           nodes={nodes}
           edges={edges}

@@ -3,13 +3,14 @@ import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
 import { useDispatch } from "react-redux";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
-import { useEffect } from "react";
+import { memo, useEffect, useMemo } from "react";
+import { debounce } from "lodash";
 
 type HandlePositionType = {
-	left?: number; 
-	right?: number; 
-	bottom?: number; 
-	top?: number;
+	left?: number | string; 
+	right?: number | string; 
+	bottom?: number | string; 
+	top?: number | string;
 	transform?: string;
 }
 
@@ -28,18 +29,20 @@ type NodeWrapperType = {
 		bottom?: HandlePositionType;
 	};
 	inputStyle?: React.CSSProperties;
+	isNeedInput?: boolean;
 };
 
-export const NodeWrapper = ({
+export const NodeWrapper = memo(({
 	node,
 	children,
 	handleLeft = true,
 	handleRight = true,
-	handleTop = false,
-	handleBottom = false,
+	handleTop = true,
+	handleBottom = true,
 	style,
 	handleStyle,
-	inputStyle
+	inputStyle,
+	isNeedInput = true
 }: NodeWrapperType) => {
 	const dispatch = useDispatch()
 	const { data } = node
@@ -52,13 +55,18 @@ export const NodeWrapper = ({
 		setInput(data.label as string);
 	}, [data.label, setInput]);
 
+	const debouncedDispatch = useMemo(
+		() => debounce((value: string) => {
+			dispatch(updateNodeText({ id: node.id, text: value }));
+		}, 300),
+		[dispatch, node.id]
+	);
+
+	useEffect(() => () => debouncedDispatch.cancel(), [debouncedDispatch]);
+
 	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const newValue = e.target.value;
 		onChangeInput(e);
-		dispatch(updateNodeText({ 
-			id: node.id,
-			text: newValue 
-		}));
+		debouncedDispatch(e.target.value);
 	};
 
 	return (
@@ -72,7 +80,8 @@ export const NodeWrapper = ({
 			}}
 		>
 			<NodeResizer isVisible={node.selected}/>
-			<NodeInput
+
+			{isNeedInput && <NodeInput
 				value={inputValue}
 				onChange={handleChangeInput}
 				style={{ 
@@ -80,14 +89,14 @@ export const NodeWrapper = ({
 					fontSize: data.style?.fontSize,
 					...inputStyle 
 				}}
-			/>
+			/>}
 
 			{children}
 
-			{handleLeft && <Handle type="target" position={Position.Left} style={{...handleStyle?.left}}/>}
-			{handleRight && <Handle type="source" position={Position.Right} style={{...handleStyle?.right}}/>}
-			{handleTop && <Handle type="source" position={Position.Top} style={{...handleStyle?.top}}/>}
-			{handleBottom && <Handle type="source" position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
+			{handleLeft && <Handle id="left" type="source" isConnectable position={Position.Left} style={{...handleStyle?.left}}/>}
+			{handleRight && <Handle id="right" type="source" isConnectable position={Position.Right} style={{...handleStyle?.right}}/>}
+			{handleTop && <Handle id="top" type="source" isConnectable position={Position.Top} style={{...handleStyle?.top}}/>}
+			{handleBottom && <Handle id="bottom" type="source" isConnectable position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
 		</div>
 	);
-};
+});
