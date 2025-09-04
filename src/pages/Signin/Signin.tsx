@@ -1,3 +1,4 @@
+import { baseUrl } from "@store/api/api";
 import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -16,7 +17,7 @@ export const Signin = () => {
 
 	const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
 		try {
-			const response = await fetch("/api/login", {
+			const response = await fetch(`${baseUrl}/auth/login`, {
 				method: "POST",
 				body: JSON.stringify(values),
 			});
