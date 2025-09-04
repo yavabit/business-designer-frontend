@@ -1,3 +1,4 @@
+import { baseUrl } from "@store/api/api";
 import type { FormProps } from "antd";
 import { Button, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -20,7 +21,7 @@ export const Signup = () => {
 
 	const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
 		try {
-			const response = await fetch("/api/register", {
+			const response = await fetch(`${baseUrl}/auth/register`, {
 				method: "POST",
 				body: JSON.stringify(values),
 			});
