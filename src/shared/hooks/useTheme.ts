@@ -11,7 +11,7 @@ export const useTheme = () => {
 
 	const currentTheme = useAppSelector(getCurrentThemeConfig);
 
-	const isDarkMode = currentTheme.name === "light";
+	const isDarkMode = currentTheme.name === "dark";
 
 	return {
 		currentTheme,
