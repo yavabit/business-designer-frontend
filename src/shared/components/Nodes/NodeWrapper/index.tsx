@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
 import { memo, useEffect, useMemo } from "react";
 import { debounce } from "lodash";
+import { useTheme } from "@hooks/useTheme";
 
 type HandlePositionType = {
 	left?: number | string; 
@@ -44,6 +45,8 @@ export const NodeWrapper = memo(({
 	inputStyle,
 	isNeedInput = true
 }: NodeWrapperType) => {
+	const { token } = useTheme()
+
 	const dispatch = useDispatch()
 	const { data } = node
 
@@ -71,7 +74,7 @@ export const NodeWrapper = memo(({
 
 	return (
 		<div
-			className={`react-flow__node-input nopan selectable draggable `}
+			className={`react-flow__node-input nopan selectable draggable`}
 			style={{
 				width: '100%',
 				height: '100%',
@@ -85,7 +88,7 @@ export const NodeWrapper = memo(({
 				value={inputValue}
 				onChange={handleChangeInput}
 				style={{ 
-					color: data.style?.color ?? "white", 
+					color: data.style?.color ?? token.colorText,
 					fontSize: data.style?.fontSize,
 					...inputStyle 
 				}}

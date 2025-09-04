@@ -13,10 +13,10 @@ import { useTheme } from "@hooks/useTheme";
 import { setThemeName } from "@store/user/themeSlice";
 
 export const Header: FC = () => {
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, token } = useTheme();
 
   const handleChangeSwitchTheme = (e: boolean) => {
-    const selectedTheme = e ? "light" : "dark";
+    const selectedTheme = e ? "dark" : "light";
 
     dispatch(setThemeName(selectedTheme));
   };
@@ -100,17 +100,27 @@ export const Header: FC = () => {
   }, [location.pathname, projects, isLoading]);
 
   return (
-    <header className={styles.header}>
+    <header
+      className={styles.header}
+      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
+    >
       <Flex justify="space-between" align="center">
         <Flex align="center" gap={40} style={{ height: "2.5rem" }}>
           <h2>BD</h2>
           {isAuth && (
             <Flex align="center" gap={24}>
-              <Link to="/" className={styles["header-link"]}>
+              <Link
+                to="/"
+                className={styles["header-link"]}
+                style={{ color: token.colorTextBase }}
+              >
                 Главная
               </Link>
               {!!curProject && (
-                <Link to={`/project/${location.pathname.split("/")[2]}`}>
+                <Link
+                  to={`/project/${location.pathname.split("/")[2]}`}
+                  style={{ color: token.colorTextBase }}
+                >
                   / {curProject}
                 </Link>
               )}
@@ -138,7 +148,6 @@ export const Header: FC = () => {
                   size={"large"}
                   src={undefined}
                   icon={<BsFillPersonFill />}
-                  style={{ background: "#FFFFFF", color: "#090909" }}
                 />
               </Dropdown>
             </Flex>

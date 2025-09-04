@@ -6,10 +6,14 @@ import { Flex } from "antd";
 import { ProjectCreationModal } from "@components/ProjectCreationModal/ProjectCreationModal";
 import { ProcessCreationModal } from "@components/ProcessCreationModal/ProcessCreationModal";
 import { ProjectEditModal } from "@components/ProjectEditModal/ProjectEditModal";
+import { useTheme } from "@hooks/useTheme";
 
 export const Layout: FC = () => {
+	
+		const { token } = useTheme();
+
   return (
-    <Flex vertical className={styles.layout}>
+    <Flex vertical className={styles.layout} style={{ backgroundColor: token.colorBgContainer, color: token.colorTextBase }}>
       <Header />
       <main className={styles["main-layout"]}>
         <Outlet />
