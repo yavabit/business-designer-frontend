@@ -33,13 +33,28 @@ import {
 
 import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 import { useTheme } from "@hooks/useTheme";
+import { debounce } from "lodash";
+import { useGetProcessQuery } from "@store/api/processConstructor/processConstructorApi";
+import { useParams } from "react-router-dom";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
-	const colorModeFlow = useMemo(() => {
-		return isDarkMode ? "dark" : "light"	
-	}, [isDarkMode])
+  const { processId } = useParams();
+
+  const [getProcess, { isLoading, isFetching, isError }] = useGetProcessQuery({
+    processId,
+  });
+
+  console.log(
+    getProcess({
+      processId,
+    })
+  );
+
+  const colorModeFlow = useMemo(() => {
+    return isDarkMode ? "dark" : "light";
+  }, [isDarkMode]);
 
   const selectedNode = useAppSelector(
     (state) => state.processConstructor.selectedNode
@@ -144,8 +159,18 @@ export const ProcessConstructor = memo(() => {
     setMenu(null);
   }, [dispatch, selectedNode, setMenu]);
 
+  const flowAutosave = useMemo(
+    () =>
+      debounce(() => {
+        console.log("test");
+      }, 500),
+    []
+  );
+
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
-    (e) => dispatch(onNodesChange(e)),
+    (e) => {
+      dispatch(onNodesChange(e));
+    },
     [dispatch]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
@@ -177,8 +202,14 @@ export const ProcessConstructor = memo(() => {
           onInit={setRfInstance}
           nodes={nodes}
           edges={edges}
-          onNodesChange={handleChangeNode}
-          onEdgesChange={handleChangeEdges}
+          onNodesChange={(e) => {
+            handleChangeNode(e);
+            flowAutosave();
+          }}
+          onEdgesChange={(e) => {
+            handleChangeEdges(e);
+            flowAutosave();
+          }}
           onConnect={handleChangeConnect}
           onNodeClick={handleNodeClick}
           nodeTypes={nodeTypes}

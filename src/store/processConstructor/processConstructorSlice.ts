@@ -78,33 +78,33 @@ const processConstructorSlice = createSlice({
 			const { id, width, height } = payload;
 
 			state.nodes = state.nodes.map((node) => {
-			if (node.id === id) {
-				return {
-					...node,
-					...(width !== undefined && { width }),
-					...(height !== undefined && { height }),
-					...(node.measured && {
-						measured: {
-							...node.measured,
-							...(width !== undefined && { width }),
-							...(height !== undefined && { height })
-						}
-					})
-				};
-			}
-			return node;
-		});
+				if (node.id === id) {
+					return {
+						...node,
+						...(width !== undefined && { width }),
+						...(height !== undefined && { height }),
+						...(node.measured && {
+							measured: {
+								...node.measured,
+								...(width !== undefined && { width }),
+								...(height !== undefined && { height })
+							}
+						})
+					};
+				}
+				return node;
+			});
 		},
 
 		onNodesChange: (state, action) => {
-			console.log('onNodesChange', action)
+			//console.log('onNodesChange', action)
 			state.nodes = applyNodeChanges(action.payload, state.nodes);
 		},
 		onEdgesChange: (state, action) => {
 			state.edges = applyEdgeChanges(action.payload, state.edges);
 		},
 		onConnect: (state, action) => {
-			 const connection = action.payload;
+			const connection = action.payload;
 			const newEdge: Edge = {
 				...connection,
 				id: crypto.randomUUID(),
@@ -116,19 +116,21 @@ const processConstructorSlice = createSlice({
 		setSelectedNode: (state, { payload }) => {
 			state.selectedNode = payload;
 		},
+		fetchProcess: async () => {
 
+		}
 	}
 })
 
 
 export const processConstructorReducer = processConstructorSlice.reducer;
-export const { 
-	onNodesChange, 
-	onEdgesChange, 
-	onConnect, 
-	addNode, 
-	updateNodeProperties, 
-	setSelectedNode, 
+export const {
+	onNodesChange,
+	onEdgesChange,
+	onConnect,
+	addNode,
+	updateNodeProperties,
+	setSelectedNode,
 	updateNodeColor,
 	updateNodeSizes,
 	updateNodeText
