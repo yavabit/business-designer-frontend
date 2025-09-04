@@ -28,7 +28,7 @@ export const Projects: FC = () => {
 
     const debouncedSearchValue = useDebounce(searchValue, 500);
 
-    const [getProjects, { isLoading, isFetching, error }] =
+    const [getProjects, { isLoading, isFetching, isError }] =
         useLazyGetProjectsQuery();
 
     const [updateProject] = useUpdateProjectNameMutation();
@@ -217,7 +217,7 @@ export const Projects: FC = () => {
                 </Flex>
             )}
 
-            {error && (
+            {isError && (
                 <Flex
                     vertical
                     gap={12}
@@ -231,7 +231,7 @@ export const Projects: FC = () => {
             )}
 
             {!isLoading &&
-                !error &&
+                !isError &&
                 allProjects.length === 0 &&
                 searchString === "" && (
                     <Flex
@@ -248,7 +248,7 @@ export const Projects: FC = () => {
                 )}
 
             {!isLoading &&
-                !error &&
+                !isError &&
                 allProjects.length === 0 &&
                 searchString !== "" && (
                     <Flex
