@@ -31,6 +31,7 @@ type NodeWrapperType = {
 	};
 	inputStyle?: React.CSSProperties;
 	isNeedInput?: boolean;
+	overrideStyle?: React.CSSProperties;
 };
 
 export const NodeWrapper = memo(({
@@ -43,7 +44,8 @@ export const NodeWrapper = memo(({
 	style,
 	handleStyle,
 	inputStyle,
-	isNeedInput = true
+	isNeedInput = true,
+	overrideStyle
 }: NodeWrapperType) => {
 	const { token } = useTheme()
 
@@ -79,7 +81,7 @@ export const NodeWrapper = memo(({
 				width: '100%',
 				height: '100%',
 				...style,
-				...data.style,
+				...(overrideStyle ?? data.style),
 			}}
 		>
 			<NodeResizer isVisible={node.selected}/>
