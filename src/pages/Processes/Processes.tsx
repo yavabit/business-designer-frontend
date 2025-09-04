@@ -29,7 +29,7 @@ export const Processes: FC = () => {
 
     const { projectId } = useParams();
 
-    const [getProcesses, { isLoading, isFetching, error }] =
+    const [getProcesses, { isLoading, isFetching, isError }] =
         useLazyGetProcessesQuery();
 
     const [deleteProcess] = useDeleteProcessMutation();
@@ -172,7 +172,7 @@ export const Processes: FC = () => {
                         </Flex>
                     )}
 
-                {error && (
+                {isError && (
                     <Flex
                         vertical
                         gap={12}
@@ -186,7 +186,7 @@ export const Processes: FC = () => {
                 )}
 
                 {!isLoading &&
-                    !error &&
+                    !isError &&
                     allProcesses.length === 0 &&
                     searchString === "" && (
                         <Flex
@@ -205,7 +205,7 @@ export const Processes: FC = () => {
                     )}
 
                 {!isLoading &&
-                    !error &&
+                    !isError &&
                     allProcesses.length === 0 &&
                     searchString !== "" && (
                         <Flex
