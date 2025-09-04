@@ -1,3 +1,4 @@
+import { useTheme } from "@hooks/useTheme";
 import { useLoginMutation } from "@store/api/user/userApi";
 import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Space } from "antd";
@@ -5,142 +6,152 @@ import { useForm } from "antd/es/form/Form";
 import { Link, useNavigate } from "react-router-dom";
 
 type FieldType = {
-    email?: string;
-    password?: string;
-    remember?: string;
+  email?: string;
+  password?: string;
+  remember?: string;
 };
 
 export const Signin = () => {
-    const [form] = useForm();
+  const { token } = useTheme();
 
-    const navigate = useNavigate();
-    const [login, { isLoading }] = useLoginMutation();
+  const [form] = useForm();
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-        try {
-			if (!values.email || !values.password) {
-				if (!values.email) {
-					form.setFields([
-						{
-							name: "email",
-							errors: ["Введите логин!"],
-						},
-					]);
-				}
+  const navigate = useNavigate();
+  const [login, { isLoading }] = useLoginMutation();
 
-				if (!values.password) {
-					form.setFields([
-						{
-							name: "password",
-							errors: ["Введите пароль!"],
-						},
-					]);
-				}
-
-				return
-			}
-
-			const creds = {
-				email: values.email!,
-				password: values.password!,
-			}
-
-			const response = await login(creds);
-
-            if (response.data) {
-                navigate("/projects");
-            } else {
-                if (response.error) {
-                    form.setFields([
-                        {
-                            name: "email",
-                            errors: ["Неверный логин или пароль"],
-                        },
-                        {
-                            name: "password",
-                            errors: ["Неверный логин или пароль"],
-                        },
-                    ]);
-                } else {
-                    message.error("Ошибка входа");
-                }
-            }
-        } catch (e) {
-            message.error("Ошибка сети");
-            console.log(e);
-        } finally {
-            //setLoading(false);
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    try {
+      if (!values.email || !values.password) {
+        if (!values.email) {
+          form.setFields([
+            {
+              name: "email",
+              errors: ["Введите логин!"],
+            },
+          ]);
         }
-    };
 
-    const onReset = () => {
-        form.resetFields();
-    };
+        if (!values.password) {
+          form.setFields([
+            {
+              name: "password",
+              errors: ["Введите пароль!"],
+            },
+          ]);
+        }
 
-    return (
-        <div className="auth-form__container">
-            <div className="auth-form__wrapper">
-                <div className="auth-form__title">
-                    Войти в Business Designer
-                </div>
-                <Form
-                    form={form}
-                    name="basic"
-                    layout="vertical"
-                    style={{ width: 450 }}
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                    autoComplete="off">
-                    <Form.Item<FieldType>
-                        label="Логин"
-                        name="email"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Пожалуйста, введите логин!",
-                            },
-                        ]}>
-                        <Input allowClear />
-                    </Form.Item>
+        return;
+      }
 
-                    <Form.Item<FieldType>
-                        label="Пароль"
-                        name="password"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Пожалуйста, введите пароль!",
-                            },
-                        ]}>
-                        <Input.Password allowClear />
-                    </Form.Item>
+      const creds = {
+        email: values.email!,
+        password: values.password!,
+      };
 
-                    <Form.Item<FieldType>
-                        name="remember"
-                        valuePropName="checked"
-                        label={null}>
-                        <Checkbox>Запомнить меня</Checkbox>
-                    </Form.Item>
+      const response = await login(creds);
 
-                    <Form.Item>
-                        <Space>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                loading={isLoading}>
-                                Войти
-                            </Button>
-                            <Button htmlType="button" onClick={onReset}>
-                                Сбросить
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                    <div className="auth-form__additional">
-                        <span>Нет аккаунта?</span>
-                        <Link to={"/signup"}>Зарегистрироваться</Link>
-                    </div>
-                </Form>
-            </div>
-        </div>
-    );
+      if (response.data) {
+        navigate("/projects");
+      } else {
+        if (response.error) {
+          form.setFields([
+            {
+              name: "email",
+              errors: ["Неверный логин или пароль"],
+            },
+            {
+              name: "password",
+              errors: ["Неверный логин или пароль"],
+            },
+          ]);
+        } else {
+          message.error("Ошибка входа");
+        }
+      }
+    } catch (e) {
+      message.error("Ошибка сети");
+      console.log(e);
+    } finally {
+      //setLoading(false);
+    }
+  };
+
+  const onReset = () => {
+    form.resetFields();
+  };
+
+  return (
+    <div
+      className="auth-form__container"
+      style={{ backgroundColor: token.colorBgContainer }}
+    >
+      <div
+        className="auth-form__wrapper"
+        style={{
+          backgroundColor: token.colorBgBase,
+          borderColor: token.colorBorder,
+        }}
+      >
+        <div className="auth-form__title" style={{ color: token.colorTextBase }}>Войти в Business Designer</div>
+        <Form
+          form={form}
+          name="basic"
+          layout="vertical"
+          style={{ width: 450 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item<FieldType>
+            label="Логин"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Пожалуйста, введите логин!",
+              },
+            ]}
+          >
+            <Input allowClear />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            label="Пароль"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Пожалуйста, введите пароль!",
+              },
+            ]}
+          >
+            <Input.Password allowClear />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            name="remember"
+            valuePropName="checked"
+            label={null}
+          >
+            <Checkbox>Запомнить меня</Checkbox>
+          </Form.Item>
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit" loading={isLoading}>
+                Войти
+              </Button>
+              <Button htmlType="button" onClick={onReset}>
+                Сбросить
+              </Button>
+            </Space>
+          </Form.Item>
+          <div className="auth-form__additional">
+            <span>Нет аккаунта?</span>
+            <Link to={"/signup"}>Зарегистрироваться</Link>
+          </div>
+        </Form>
+      </div>
+    </div>
+  );
 };
