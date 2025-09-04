@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Switch,
-  type MenuProps,
-} from "antd";
+import { Avatar, Button, Dropdown, Flex, Switch, type MenuProps } from "antd";
 import { useEffect, useMemo, useState, type FC } from "react";
 import styles from "./Header.module.scss";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -23,7 +16,7 @@ export const Header: FC = () => {
   const { isDarkMode, token } = useTheme();
 
   const handleChangeSwitchTheme = (e: boolean) => {
-    const selectedTheme = e ? "light" : "dark";
+    const selectedTheme = e ? "dark" : "light";
 
     dispatch(setThemeName(selectedTheme));
   };

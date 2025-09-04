@@ -23,7 +23,7 @@ const globalToken = {
 }
 
 const initialState: IThemeState = {
-	currentThemeName: localStorage.getItem('theme') ?? 'light',
+	currentThemeName: localStorage.getItem('theme') ?? 'dark',
 	config: {
 		light: {
 			name: 'light',
