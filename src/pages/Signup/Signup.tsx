@@ -93,7 +93,10 @@ export const Signup = () => {
 					<Form.Item<FieldType>
 						label="Электронная почта"
 						name="email"
-						rules={[{ required: true, message: "Пожалуйста, введите почту!" }]}
+						rules={[
+							{ required: true, message: "Пожалуйста, введите почту!" },
+							{ type: "email", message: "Введите корректный email!" },
+						]}
 					>
 						<Input allowClear />
 					</Form.Item>
