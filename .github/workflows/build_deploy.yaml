@@ -30,7 +30,7 @@ jobs:
         run: |
             touch .env
             echo VITE_API_HOST="https://api.business-designer.ru" >> .env
-            echo VITE_API_URL="/api/" >> .env
+            echo VITE_API_URL="/api" >> .env
             cat .env
             npm run build
 
