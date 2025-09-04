@@ -19,8 +19,8 @@ export const DiamondNode = (props: NodeProps<Node<NodeCustomData>>) => {
 
 	const themeStylesDiamond = useMemo(() => {
 		const baseStyles = {
-		backgroundColor: "#1e1e1e",
-		borderColor: "#3c3c3c"
+			backgroundColor: "#1e1e1e",
+			borderColor: "#3c3c3c"
 		};
 
 		if (currentThemeName === "light") {
