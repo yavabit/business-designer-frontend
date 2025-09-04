@@ -3,7 +3,7 @@ import { NodeWrapper } from "../NodeWrapper";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useDispatch } from "react-redux";
 import { useNodeInput } from "@hooks/useNodeInput";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
@@ -13,7 +13,7 @@ const inputStyle: React.CSSProperties = {
 	textAlign: "center",
 };
 
-export const DiamondNode = (props: NodeProps<Node<NodeCustomData>>) => {
+export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 	const { token } = useTheme()
 	const { currentThemeName } = useAppSelector((state) => state.theme)
 
@@ -117,4 +117,4 @@ export const DiamondNode = (props: NodeProps<Node<NodeCustomData>>) => {
 			</div>
 		</NodeWrapper>
 	);
-};
+});
