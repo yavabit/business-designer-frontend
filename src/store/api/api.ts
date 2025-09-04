@@ -4,6 +4,8 @@ import type { RootState } from "..";
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { reset, setCredentials } from "@store/user/userSlice";
 
+export const baseUrl = import.meta.env.VITE_API_HOST + import.meta.env.VITE_API_URL
+
 const baseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_HOST + import.meta.env.VITE_API_URL,
     credentials: "include",
