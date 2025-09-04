@@ -4,7 +4,6 @@ import {
   Dropdown,
   Flex,
   Switch,
-  theme,
   type MenuProps,
 } from "antd";
 import { useEffect, useMemo, useState, type FC } from "react";
@@ -19,7 +18,6 @@ import { useGetProjectsQuery } from "@store/api/projects/projectsApi";
 import { AiOutlineMoon, AiOutlineSun } from "react-icons/ai";
 import { useTheme } from "@hooks/useTheme";
 import { setThemeName } from "@store/user/themeSlice";
-const { useToken } = theme;
 
 export const Header: FC = () => {
   const { isDarkMode, token } = useTheme();
