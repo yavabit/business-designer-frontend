@@ -7,6 +7,8 @@ import {
   addNode,
   updateNodeColor,
 } from "@store/processConstructor/processConstructorSlice";
+import { Divider } from "antd";
+import { useTheme } from "@hooks/useTheme";
 
 export interface IContextMenu {
   id: string;
@@ -25,6 +27,8 @@ const ContextMenu = ({
   bottom,
   ...props
 }: IContextMenu) => {
+  const { token } = useTheme();
+
   const { getNode, setNodes, setEdges } = useReactFlow();
 
   const dispatch = useAppDispatch();
@@ -63,26 +67,31 @@ const ContextMenu = ({
 
   return (
     <div
-      style={{ top, left, right, bottom }}
+      style={{
+        top,
+        left,
+        right,
+        bottom,
+        backgroundColor: token.colorBgBase,
+        color: token.colorText,
+      }}
       className={style.contextMenu}
       {...props}
     >
-      <p style={{ margin: "0.5em" }}></p>
-      <button className={style.contextMenuButton} onClick={duplicateNode}>
-        duplicate
-      </button>
-      <button
+      <div
         className={style.contextMenuButton}
         onClick={handleClickDeleteNode}
+        style={{ color: "red" }}
       >
-        delete
-      </button>
-      <button
-        className={style.contextMenuButton}
-        onClick={handleClickChangeColor}
-      >
-        Change Color
-      </button>
+        Удалить
+      </div>
+      <Divider size="small" />
+      <div className={style.contextMenuButton} onClick={duplicateNode}>
+        Дублировать
+      </div>
+      <div className={style.contextMenuButton} onClick={handleClickChangeColor}>
+        Изменить цвет
+      </div>
     </div>
   );
 };
