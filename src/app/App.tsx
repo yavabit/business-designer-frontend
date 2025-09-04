@@ -1,11 +1,16 @@
-import './App.scss'
-import { Router } from './router/Router'
+import { ConfigProvider } from "antd";
+import "./App.scss";
+import { Router } from "./router/Router";
+import { useTheme } from "@hooks/useTheme";
 
 function App() {
+  const { currentTheme } = useTheme();
 
   return (
-    <Router/>
-  )
+    <ConfigProvider theme={currentTheme}>
+      <Router />
+    </ConfigProvider>
+  );
 }
 
-export default App
+export default App;
