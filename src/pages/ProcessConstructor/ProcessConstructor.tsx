@@ -33,13 +33,27 @@ import {
 
 import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 import { useTheme } from "@hooks/useTheme";
+import { debounce } from "lodash";
+import { useLazyGetProcessQuery } from "@store/api/processConstructor/processConstructorApi";
+import { useParams } from "react-router-dom";
+import { Flex, Spin } from "antd";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
-	const colorModeFlow = useMemo(() => {
-		return isDarkMode ? "dark" : "light"	
-	}, [isDarkMode])
+  const { processId } = useParams();
+
+  const [getProcess, { isLoading }] = useLazyGetProcessQuery();
+
+  useEffect(() => {
+    getProcess({
+      processId,
+    });
+  }, [getProcess, processId]);
+
+  const colorModeFlow = useMemo(() => {
+    return isDarkMode ? "dark" : "light";
+  }, [isDarkMode]);
 
   const selectedNode = useAppSelector(
     (state) => state.processConstructor.selectedNode
@@ -144,8 +158,18 @@ export const ProcessConstructor = memo(() => {
     setMenu(null);
   }, [dispatch, selectedNode, setMenu]);
 
+  const flowAutosave = useMemo(
+    () =>
+      debounce(() => {
+        console.log("test");
+      }, 500),
+    []
+  );
+
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
-    (e) => dispatch(onNodesChange(e)),
+    (e) => {
+      dispatch(onNodesChange(e));
+    },
     [dispatch]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
@@ -170,38 +194,51 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <ReactFlow
-          ref={refReactFlow}
-          colorMode={colorModeFlow}
-          connectionMode={ConnectionMode.Loose}
-          onInit={setRfInstance}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={handleChangeNode}
-          onEdgesChange={handleChangeEdges}
-          onConnect={handleChangeConnect}
-          onNodeClick={handleNodeClick}
-          nodeTypes={nodeTypes}
-          snapToGrid={true}
-          snapGrid={snapGrid}
-          defaultViewport={defaultViewport}
-          attributionPosition="top-right"
-          fitView
-          style={{
-            flex: 1,
-          }}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onPaneClick={handlePaneClick}
-          onNodeContextMenu={onNodeContextMenu}
-        >
-          <NodesPanel />
-          <NodeEditPanel />
-          <Controls />
-          <MiniMap />
-          <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
-          {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
-        </ReactFlow>
+        {isLoading && (
+          <Flex justify="center" style={{ padding: "20px" }}>
+            <Spin size="large" />
+          </Flex>
+        )}
+        {!isLoading && (
+          <ReactFlow
+            ref={refReactFlow}
+            colorMode={colorModeFlow}
+            connectionMode={ConnectionMode.Loose}
+            onInit={setRfInstance}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={(e) => {
+              handleChangeNode(e);
+              flowAutosave();
+            }}
+            onEdgesChange={(e) => {
+              handleChangeEdges(e);
+              flowAutosave();
+            }}
+            onConnect={handleChangeConnect}
+            onNodeClick={handleNodeClick}
+            nodeTypes={nodeTypes}
+            snapToGrid={true}
+            snapGrid={snapGrid}
+            defaultViewport={defaultViewport}
+            attributionPosition="top-right"
+            fitView
+            style={{
+              flex: 1,
+            }}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onPaneClick={handlePaneClick}
+            onNodeContextMenu={onNodeContextMenu}
+          >
+            <NodesPanel />
+            <NodeEditPanel />
+            <Controls />
+            <MiniMap />
+            <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
+            {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
+          </ReactFlow>
+        )}
       </div>
     </div>
   );
