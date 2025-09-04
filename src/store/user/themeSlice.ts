@@ -18,16 +18,26 @@ interface IThemeState {
 	config: IConfig
 }
 
+const globalToken = {
+	fontFamily: `"Roboto Flex", sans-serif`
+}
+
 const initialState: IThemeState = {
 	currentThemeName: localStorage.getItem('theme') ?? 'light',
 	config: {
 		light: {
 			name: 'light',
-			algorithm: theme.defaultAlgorithm
+			algorithm: theme.defaultAlgorithm,
+			token: {
+				...globalToken
+			}
 		},
 		dark: {
 			name: 'dark',
-			algorithm: theme.darkAlgorithm
+			algorithm: theme.darkAlgorithm,
+			token: {
+				...globalToken
+			}
 		}
 	}
 }

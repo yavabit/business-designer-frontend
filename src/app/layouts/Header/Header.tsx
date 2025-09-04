@@ -9,13 +9,11 @@ import type { RootState } from "@store/index";
 import { setCreationModal } from "@store/projects/projectsSlice";
 import { useGetProjectsQuery } from "@store/api/projects/projectsApi";
 import { AiOutlineMoon, AiOutlineSun } from "react-icons/ai";
-import { getCurrentThemeConfig, setThemeName } from "@store/user/themeSlice";
-import { useAppSelector } from "@hooks/storeHooks";
+import { useTheme } from "@hooks/useTheme";
+import { setThemeName } from "@store/user/themeSlice";
 
 export const Header: FC = () => {
-  const currentTheme = useAppSelector(getCurrentThemeConfig);
-
-  const isDarkMode = currentTheme.name === "light";
+  const { isDarkMode } = useTheme();
 
   const handleChangeSwitchTheme = (e: boolean) => {
     const selectedTheme = e ? "light" : "dark";
