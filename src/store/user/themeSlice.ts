@@ -1,7 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@store/index";
 import { theme, type ThemeConfig } from "antd";
-import type { SeedToken } from "antd/es/theme/internal";
 
 
 type ThemeType = { light: string, dark: string }
