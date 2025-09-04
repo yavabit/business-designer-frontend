@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, memo, useEffect } from "react";
+import { useState, useCallback, useRef, memo, useEffect, useMemo } from "react";
 import {
   ReactFlow,
   BackgroundVariant,
@@ -32,9 +32,18 @@ import {
 } from "@store/processConstructor/processConstructorSlice";
 
 import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
+import { useTheme } from "@hooks/useTheme";
 
 export const ProcessConstructor = memo(() => {
-  const selectedNode = useAppSelector((state) => state.processConstructor.selectedNode);
+  const { isDarkMode } = useTheme();
+
+	const colorModeFlow = useMemo(() => {
+		return isDarkMode ? "dark" : "light"	
+	}, [isDarkMode])
+
+  const selectedNode = useAppSelector(
+    (state) => state.processConstructor.selectedNode
+  );
   const dispatch = useAppDispatch();
 
   const { nodes, edges, snapGrid, defaultViewport } = useAppSelector(
@@ -163,7 +172,7 @@ export const ProcessConstructor = memo(() => {
       >
         <ReactFlow
           ref={refReactFlow}
-          colorMode="dark"
+          colorMode={colorModeFlow}
           connectionMode={ConnectionMode.Loose}
           onInit={setRfInstance}
           nodes={nodes}
