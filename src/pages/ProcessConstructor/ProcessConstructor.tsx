@@ -34,23 +34,22 @@ import {
 import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 import { useTheme } from "@hooks/useTheme";
 import { debounce } from "lodash";
-import { useGetProcessQuery } from "@store/api/processConstructor/processConstructorApi";
+import { useLazyGetProcessQuery } from "@store/api/processConstructor/processConstructorApi";
 import { useParams } from "react-router-dom";
+import { Flex, Spin } from "antd";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
   const { processId } = useParams();
 
-  const [getProcess, { isLoading, isFetching, isError }] = useGetProcessQuery({
-    processId,
-  });
+  const [getProcess, { isLoading }] = useLazyGetProcessQuery();
 
-  console.log(
+  useEffect(() => {
     getProcess({
       processId,
-    })
-  );
+    });
+  }, [getProcess, processId]);
 
   const colorModeFlow = useMemo(() => {
     return isDarkMode ? "dark" : "light";
@@ -195,44 +194,51 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <ReactFlow
-          ref={refReactFlow}
-          colorMode={colorModeFlow}
-          connectionMode={ConnectionMode.Loose}
-          onInit={setRfInstance}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={(e) => {
-            handleChangeNode(e);
-            flowAutosave();
-          }}
-          onEdgesChange={(e) => {
-            handleChangeEdges(e);
-            flowAutosave();
-          }}
-          onConnect={handleChangeConnect}
-          onNodeClick={handleNodeClick}
-          nodeTypes={nodeTypes}
-          snapToGrid={true}
-          snapGrid={snapGrid}
-          defaultViewport={defaultViewport}
-          attributionPosition="top-right"
-          fitView
-          style={{
-            flex: 1,
-          }}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onPaneClick={handlePaneClick}
-          onNodeContextMenu={onNodeContextMenu}
-        >
-          <NodesPanel />
-          <NodeEditPanel />
-          <Controls />
-          <MiniMap />
-          <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
-          {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
-        </ReactFlow>
+        {isLoading && (
+          <Flex justify="center" style={{ padding: "20px" }}>
+            <Spin size="large" />
+          </Flex>
+        )}
+        {!isLoading && (
+          <ReactFlow
+            ref={refReactFlow}
+            colorMode={colorModeFlow}
+            connectionMode={ConnectionMode.Loose}
+            onInit={setRfInstance}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={(e) => {
+              handleChangeNode(e);
+              flowAutosave();
+            }}
+            onEdgesChange={(e) => {
+              handleChangeEdges(e);
+              flowAutosave();
+            }}
+            onConnect={handleChangeConnect}
+            onNodeClick={handleNodeClick}
+            nodeTypes={nodeTypes}
+            snapToGrid={true}
+            snapGrid={snapGrid}
+            defaultViewport={defaultViewport}
+            attributionPosition="top-right"
+            fitView
+            style={{
+              flex: 1,
+            }}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onPaneClick={handlePaneClick}
+            onNodeContextMenu={onNodeContextMenu}
+          >
+            <NodesPanel />
+            <NodeEditPanel />
+            <Controls />
+            <MiniMap />
+            <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
+            {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
+          </ReactFlow>
+        )}
       </div>
     </div>
   );

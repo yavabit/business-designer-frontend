@@ -115,9 +115,6 @@ const processConstructorSlice = createSlice({
 		},
 		setSelectedNode: (state, { payload }) => {
 			state.selectedNode = payload;
-		},
-		fetchProcess: async () => {
-
 		}
 	}
 })

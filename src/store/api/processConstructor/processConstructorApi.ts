@@ -22,4 +22,4 @@ export const processConstructorApi = baseApi.injectEndpoints({
 	})
 })
 
-export const { useGetProcessQuery } = processConstructorApi
+export const { useLazyGetProcessQuery, useGetProcessQuery } = processConstructorApi
