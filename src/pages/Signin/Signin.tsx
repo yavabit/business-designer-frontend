@@ -118,6 +118,10 @@ export const Signin = () => {
                 required: true,
                 message: "Пожалуйста, введите логин!",
               },
+              {
+                type: "email",
+                message: "Введите корректный email!",
+              },
             ]}
           >
             <Input allowClear />
