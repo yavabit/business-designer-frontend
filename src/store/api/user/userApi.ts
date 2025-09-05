@@ -81,4 +81,5 @@ export const {
     useLazyGetProfileQuery,
     useRegisterMutation,
     useUpdateProfileLowMutation,
+    useLazyCheckAuthQuery,
 } = usersApi;
