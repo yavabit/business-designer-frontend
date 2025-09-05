@@ -4,6 +4,9 @@ import { useEffect, useRef, useState, type FC } from "react";
 import styles from "./ProjectItem.module.scss";
 import { BsTrashFill } from "react-icons/bs";
 import { BsFillPencilFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import type { RootState } from "@store/index";
+import dayjs from "dayjs";
 
 export const ProjectItem: FC<
     IProject & {
@@ -20,6 +23,9 @@ export const ProjectItem: FC<
     id,
     name,
     pict_url,
+    author_id,
+    author_name,
+    updated_at,
     checked,
     editing,
     onClick,
@@ -34,6 +40,8 @@ export const ProjectItem: FC<
     const inputRef = useRef<InputRef>(null);
     const itemRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
+
+    const userId = useSelector((state: RootState) => state.user.id);
 
     const handleItemClick = () => {
         onClick(id);
@@ -110,8 +118,14 @@ export const ProjectItem: FC<
     }, [editing]);
 
     return (
-        <Dropdown menu={menu} trigger={["contextMenu"]}>
+        <Dropdown
+            menu={menu}
+            trigger={["contextMenu"]}
+            disabled={userId !== author_id}>
             <div
+                title={`Автор: ${author_name}, обновлено: ${dayjs(
+                    updated_at
+                ).format("DD.MM.YYYY HH:mm")}`}
                 ref={itemRef}
                 onDoubleClick={handleItemDoubleClick}
                 onClick={handleItemClick}
@@ -124,9 +138,7 @@ export const ProjectItem: FC<
                         <div
                             className={styles["project-pict"]}
                             style={{
-                                background: `url('${
-                                    import.meta.env.VITE_API_HOST
-                                }${pict_url}') center / cover no-repeat`,
+                                background: `url('${pict_url}') center / cover no-repeat`,
                             }}></div>
                     ) : (
                         <FolderIcon />
@@ -146,7 +158,11 @@ export const ProjectItem: FC<
                     ) : (
                         <p
                             ref={textRef}
-                            onClick={handleTextClick}
+                            onClick={(e) => {
+                                if (userId == author_id) {
+                                    handleTextClick(e);
+                                }
+                            }}
                             className={styles.text}
                             title={name.length > 15 ? name : ""}>
                             {name}

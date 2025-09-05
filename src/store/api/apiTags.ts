@@ -1,5 +1,6 @@
 export const apiTags = {
     projects: "Projects",
     processes: "Processes",
-    process: "Process"
+    process: "Process",
+    profile: "Profile",
 }
