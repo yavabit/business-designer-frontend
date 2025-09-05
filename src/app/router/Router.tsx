@@ -8,27 +8,30 @@ import { Projects } from "@pages/Projects/Projects";
 import { Signup } from "@pages/Signup/Signup";
 import { ReactFlowProvider } from "@xyflow/react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { RequireAuth } from "@app/layouts/RequireAuth/RequireAuth";
 
 export const Router = () => {
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route index element={<Projects />} />
-        <Route path="project/:projectId" element={<Processes />} />
-        <Route
-          path="process/:processId"
-          element={
-            <ReactFlowProvider>
-              <DnDProvider>
-                <ProcessConstructor />
-              </DnDProvider>
-            </ReactFlowProvider>
-          }
-        />
+      <Route element={<RequireAuth />}>
+        <Route element={<Layout />}>
+          <Route index element={<Projects />} />
+          <Route path="project/:projectId" element={<Processes />} />
+          <Route
+            path="process/:processId"
+            element={
+              <ReactFlowProvider>
+                <DnDProvider>
+                  <ProcessConstructor />
+                </DnDProvider>
+              </ReactFlowProvider>
+            }
+          />
 
-        <Route path="me" element={<Profile />} />
+          <Route path="me" element={<Profile />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
       </Route>
 
       <Route path="login" element={<Signin />} />

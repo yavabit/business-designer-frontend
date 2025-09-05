@@ -78,5 +78,5 @@ type NodeCustomData = {
 
 interface ICredentials {
     accessToken: string;
-    data: { email: string };
+    data: Omit<IUser, 'isAuth'>;
 }

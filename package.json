@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "2.8.2",
     "@xyflow/react": "12.8.3",
     "antd": "5.27.0",
+    "dayjs": "^1.11.18",
     "lodash": "^4.17.21",
     "react": "19.1.1",
     "react-dom": "19.1.1",

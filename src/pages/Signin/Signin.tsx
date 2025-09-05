@@ -1,8 +1,10 @@
 import { useTheme } from "@hooks/useTheme";
 import { useLoginMutation } from "@store/api/user/userApi";
+import { setCredentials } from "@store/user/userSlice";
 import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 type FieldType = {
@@ -15,6 +17,7 @@ export const Signin = () => {
   const { token } = useTheme();
 
   const [form] = useForm();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
@@ -52,6 +55,11 @@ export const Signin = () => {
 
       if (response.data) {
         navigate("/projects");
+		dispatch(setCredentials({
+			email: response.data.data.email,
+			id: response.data.data.id,
+			accessToken: response.data.accessToken
+		}))
       } else {
         if (response.error) {
           form.setFields([

@@ -112,7 +112,6 @@ export const Projects: FC = () => {
         if (!isCreationModalOpen) {
             loadPage(1, true);
         }
-
     }, [isCreationModalOpen, loadPage]);
 
     useEffect(() => {
@@ -206,7 +205,7 @@ export const Projects: FC = () => {
 
     return (
         <ItemsPageLayout
-            title="Мои проекты"
+            title="Проекты"
             action={() => dispatch(setCreationModal(true))}
             searchAction={handleSearch}
             sortFieldAction={handleSortField}

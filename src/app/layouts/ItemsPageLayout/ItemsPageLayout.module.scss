@@ -2,8 +2,12 @@
     padding: 1rem;
 
     .page-header {
-        border-bottom: 1px solid rgba(#000000, .5);
+        border-bottom: 1px solid rgba(#000000, .2);
         padding-bottom: 1rem;
+
+        &.dark {
+            border-bottom: 1px solid rgba(#FFFFFF, .3) !important;
+        }
     }
 }
 
