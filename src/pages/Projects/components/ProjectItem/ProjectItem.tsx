@@ -7,6 +7,7 @@ import { BsFillPencilFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import type { RootState } from "@store/index";
 import dayjs from "dayjs";
+import { useTheme } from "@hooks/useTheme";
 
 export const ProjectItem: FC<
     IProject & {
@@ -42,6 +43,8 @@ export const ProjectItem: FC<
     const textRef = useRef<HTMLDivElement>(null);
 
     const userId = useSelector((state: RootState) => state.user.id);
+
+    const { isDarkMode } = useTheme();
 
     const handleItemClick = () => {
         onClick(id);
@@ -132,7 +135,7 @@ export const ProjectItem: FC<
                 onContextMenu={handleContextMenu}
                 className={`${styles["project-item"]} ${
                     checked ? styles.checked : ""
-                }`}>
+                } ${isDarkMode ? styles.dark : ""}`}>
                 <Flex vertical gap={4}>
                     {pict_url ? (
                         <div
