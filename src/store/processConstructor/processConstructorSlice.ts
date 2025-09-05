@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { processConstructorApi } from "@store/api/processConstructor/processConstructorApi";
 import { addEdge, applyEdgeChanges, applyNodeChanges, type Edge, type Node, type SnapGrid, type Viewport } from "@xyflow/react";
 
 interface IConstructorState {
@@ -116,7 +117,18 @@ const processConstructorSlice = createSlice({
 		setSelectedNode: (state, { payload }) => {
 			state.selectedNode = payload;
 		}
-	}
+	},
+	extraReducers(builder) {
+		builder.addMatcher(processConstructorApi.endpoints.getProcess.matchFulfilled, (state, { payload }) => {
+			const { data } = payload
+			const scheme = JSON.parse(data.content)
+
+			if (scheme) {
+				state.nodes = scheme.nodes
+				state.edges = scheme.edges
+			}
+		})
+	},
 })
 
 
