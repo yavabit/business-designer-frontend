@@ -123,6 +123,10 @@ const processConstructorSlice = createSlice({
 			const { data } = payload
 			const scheme = JSON.parse(data.content)
 
+
+			state.nodes = []
+			state.edges = []
+
 			if (scheme) {
 				state.nodes = scheme.nodes
 				state.edges = scheme.edges
