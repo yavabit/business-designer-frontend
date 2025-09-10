@@ -8,7 +8,7 @@ const { Option } = Select;
 
 export const ItemsPageLayout: FC<{
     children: ReactNode;
-    title?: string;
+    title?: ReactNode;
     action?: () => void;
     actionTitle?: ReactNode;
     searchAction?: (value: string) => void;

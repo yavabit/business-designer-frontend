@@ -14,7 +14,7 @@ export const ProjectItem: FC<
         checked: boolean;
         editing: boolean;
         onClick: (id: string | undefined) => void;
-        onDoubleClick: (id: string) => void;
+        onDoubleClick: (id: string, project?: string) => void;
         onStartEditing: (id: string) => void;
         onEndEditing: (id: string, newName: string) => void;
         onDelete: (id: string) => void;
@@ -51,7 +51,7 @@ export const ProjectItem: FC<
     };
 
     const handleItemDoubleClick = () => {
-        onDoubleClick(id);
+        onDoubleClick(id, name);
     };
 
     const handleTextClick = (e: React.MouseEvent) => {

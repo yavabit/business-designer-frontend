@@ -129,8 +129,12 @@ export const Projects: FC = () => {
     }, []);
 
     const handleItemDoubleClick = useCallback(
-        (id: string) => {
-            navigate(`/project/${id}`);
+        (id: string, project?: string) => {
+            navigate(`/project/${id}`, {
+                state: {
+                    metadata: project ?? ""
+                }
+            });
         },
         [navigate]
     );
@@ -288,11 +292,11 @@ export const Projects: FC = () => {
                 </Flex>
             )}
 
-            {!hasMore && allProjects.length > 0 && (
+            {!hasMore && allProjects.length > 0 && currentPage > 1 && (
                 <Flex
                     justify="center"
                     style={{ padding: "20px", color: "#666" }}>
-                    <p>Все проекты загружены ({allProjects.length} всего)</p>
+                    <p>Все проекты загружены</p>
                 </Flex>
             )}
 

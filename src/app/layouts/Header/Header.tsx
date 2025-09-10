@@ -55,8 +55,9 @@ export const Header: FC = () => {
 
     return (
         <header
-            className={styles.header}
-            style={{ borderBottom: `1px solid ${token.colorBorder}` }}>
+            className={`${styles.header} ${isDarkMode ? styles.dark : ""}`}
+            style={{ borderBottom: `1px solid ${token.colorBorder}` }}
+        >
             <Flex justify="space-between" align="center">
                 <Flex align="center" gap={40} style={{ height: "2.5rem" }}>
                     <Link

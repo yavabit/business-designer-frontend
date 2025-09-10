@@ -2,5 +2,10 @@
     padding: 1.125rem;
     width: 100%;
     position: fixed;
-		z-index: 2;
+		z-index: 100;
+    background-color: #FFFFFF;
+
+    &.dark {
+      background-color: #141414;
+    }
 }
