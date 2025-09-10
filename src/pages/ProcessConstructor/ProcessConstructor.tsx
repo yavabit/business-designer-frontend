@@ -13,7 +13,9 @@ import {
   type OnNodesChange,
   type OnEdgesChange,
   type Edge,
-  type OnConnect
+  type OnConnect,
+  getNodesBounds,
+  getViewportForBounds,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -36,10 +38,12 @@ import { useTheme } from "@hooks/useTheme";
 import { debounce } from "lodash";
 import {
   useLazyGetProcessQuery,
+  useUpdateProcessImageMutation,
   useUpdateProcessSchemeMutation,
 } from "@store/api/processConstructor/processConstructorApi";
 import { useParams } from "react-router-dom";
 import { Flex, Spin } from "antd";
+import { toBlob } from "html-to-image";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
@@ -49,6 +53,7 @@ export const ProcessConstructor = memo(() => {
   const [getProcess, { isLoading }] = useLazyGetProcessQuery();
 
   const [updateProcessScheme] = useUpdateProcessSchemeMutation();
+  const [updateProcessImage] = useUpdateProcessImageMutation();
 
   useEffect(() => {
     getProcess({
@@ -73,7 +78,7 @@ export const ProcessConstructor = memo(() => {
 
   // DnD
   const reactFlowWrapper = useRef(null);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, getNodes } = useReactFlow();
   const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
@@ -167,48 +172,52 @@ export const ProcessConstructor = memo(() => {
             content: JSON.stringify(rfInstance.toObject()),
           });
 
-          // const imageWidth = 250;
-          // const imageHeight = 250;
+          const imageWidth = 1920;
+          const imageHeight = 1080;
 
-          // const nodesBounds = getNodesBounds(getNodes());
-          // const viewport = getViewportForBounds(
-          //   nodesBounds,
-          //   imageWidth,
-          //   imageHeight,
-          //   0.5,
-          //   2,
-          //   20
-          // );
+          const nodesBounds = getNodesBounds(getNodes());
+          const viewport = getViewportForBounds(
+            nodesBounds,
+            imageWidth,
+            imageHeight,
+            0.5,
+            2,
+            20
+          );
 
-          // const view: HTMLElement | null = document.querySelector(
-          //   ".react-flow__viewport"
-          // );
+          const view: HTMLElement | null = document.querySelector(
+            ".react-flow__viewport"
+          );
 
-          // if (!view && !refReactFlow) return;
+          if (!view && !refReactFlow) return;
 
-          // toBlob(refReactFlow.current, {
-          //   backgroundColor: "#1a365d",
-          //   width: imageWidth,
-          //   height: imageHeight,
-          //   style: {
-          //     width: imageWidth.toString(),
-          //     height: imageHeight.toString(),
-          //     transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
-          //   },
-          // }).then((dataUrl) => {
-          //   const formData = new FormData();
+          toBlob(refReactFlow.current, {
+            backgroundColor: "#1a365d",
+            width: imageWidth,
+            height: imageHeight,
+            style: {
+              width: imageWidth.toString(),
+              height: imageHeight.toString(),
+              transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+            },
+          }).then((dataUrl) => {
+            const formData = new FormData();
+            console.log(dataUrl);
+            let file = new File([dataUrl], "test.png", {
+              type: "image/png",
+              mimetype: "image/png",
+              path: "test.png",
+              lastModified: new Date().getTime(),
+            });
 
-          //   let file = new File([dataUrl], "img.png", {
-          //     type: "image/png",
-          //     lastModified: new Date().getTime(),
-          //   });
-          //   formData.append("photo", file);
+            formData.append("name", "test.png");
+            formData.append("photo", file);
 
-          //   updateProcessImage({
-          //     id: processId,
-          //     data: file,
-          //   });
-          // });
+            updateProcessImage({
+              id: processId,
+              data: formData,
+            });
+          });
         }
       }, 400),
     [processId, rfInstance, updateProcessScheme]
