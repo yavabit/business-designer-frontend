@@ -189,7 +189,7 @@ export const ProcessConstructor = memo(() => {
             ".react-flow__viewport"
           );
 
-          if (!view && !refReactFlow) return;
+          if (!view && !refReactFlow || refReactFlow?.current == null) return;
 
           toBlob(refReactFlow.current, {
             backgroundColor: "#1a365d",
@@ -202,8 +202,9 @@ export const ProcessConstructor = memo(() => {
             },
           }).then((dataUrl) => {
             const formData = new FormData();
-            console.log(dataUrl);
-            let file = new File([dataUrl], "test.png", {
+
+            if (!dataUrl) return;
+            const file = new File([dataUrl], "test.png", {
               type: "image/png",
               mimetype: "image/png",
               path: "test.png",
