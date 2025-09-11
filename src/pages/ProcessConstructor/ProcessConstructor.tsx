@@ -14,7 +14,6 @@ import {
   type OnEdgesChange,
   type Edge,
   type OnConnect,
-  getNodesBounds,
   getViewportForBounds,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -78,7 +77,7 @@ export const ProcessConstructor = memo(() => {
 
   // DnD
   const reactFlowWrapper = useRef(null);
-  const { screenToFlowPosition, getNodes } = useReactFlow();
+  const { screenToFlowPosition, getNodes, getNodesBounds } = useReactFlow();
   const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
