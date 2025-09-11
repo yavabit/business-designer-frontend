@@ -6,7 +6,6 @@ import { useLazyCheckAuthQuery } from "@store/api/user/userApi";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setAuth, setCredentials } from "@store/user/userSlice";
-import { useNavigate } from "react-router-dom";
 
 function App() {
   const { currentTheme } = useTheme();
