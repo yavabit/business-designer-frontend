@@ -14,7 +14,6 @@ function App() {
   const [checkAuth, checkAuthData] = useLazyCheckAuthQuery();
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     checkAuth()
