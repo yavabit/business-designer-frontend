@@ -5,7 +5,7 @@ import { useTheme } from "@hooks/useTheme";
 import { useLazyCheckAuthQuery } from "@store/api/user/userApi";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "@store/user/userSlice";
+import { setAuth, setCredentials } from "@store/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -25,10 +25,14 @@ function App() {
             email: res.data.data.email,
             id: res.data.data.id 
           }))
-          navigate('/')
+					return
         }
-      })
-  }, [])
+				
+				dispatch(setAuth(false))
+      }).catch(() => {
+				dispatch(setAuth(false))
+			})
+  }, [dispatch, checkAuth])
 
   return (
     <ConfigProvider theme={currentTheme}>
