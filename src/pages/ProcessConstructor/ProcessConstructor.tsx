@@ -38,15 +38,18 @@ import {
   useLazyGetProcessQuery,
   useUpdateProcessSchemeMutation,
 } from "@store/api/processConstructor/processConstructorApi";
-import { useParams } from "react-router-dom";
-import { Flex, Spin } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Flex, Spin } from "antd";
+import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
   const { processId } = useParams();
 
-  const [getProcess, { isLoading }] = useLazyGetProcessQuery();
+  const navigate = useNavigate();
+
+  const [getProcess, { data: processData, isLoading }] = useLazyGetProcessQuery();
 
   const [updateProcessScheme] = useUpdateProcessSchemeMutation();
 
@@ -235,13 +238,27 @@ export const ProcessConstructor = memo(() => {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "8px",
           height: "calc(100vh - 76px)",
           width: "100%",
         }}
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
+        <Flex 
+          justify="space-between" 
+          align="center" 
+          className={`${style['process-bar']} ${isDarkMode ? style['bar-dark'] : ''}`}
+        >
+          <Flex align="center" gap={16}>
+            <Button onClick={() => navigate(-1)}>
+              <BsChevronLeft />
+            </Button>
+            <p>{processData?.data.name}</p>
+          </Flex>
+          <Button>
+            <BsFillPencilFill />
+          </Button>
+        </Flex>
         {isLoading && (
           <Flex justify="center" style={{ padding: "20px" }}>
             <Spin size="large" />
