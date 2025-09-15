@@ -21,7 +21,6 @@ import style from "./ProcessConstructor.module.scss";
 import { NodesPanel } from "./components/NodesPanel/NodesPanel";
 import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
-import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
 import {
   addNode,
@@ -46,7 +45,7 @@ import { toBlob } from "html-to-image";
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
-  const { nodeList } = useAppSelector((state) => state.nodes)
+  const { nodeList, nodeTypes } = useAppSelector((state) => state.nodes)
   const selectedNode = useAppSelector(
     (state) => state.processConstructor.selectedNode
   );

@@ -7,6 +7,9 @@ import { memo, useEffect, useMemo } from "react";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
 
+import styles from "./style.module.scss"
+import { useAppSelector } from "@hooks/storeHooks";
+
 type HandlePositionType = {
 	left?: number | string; 
 	right?: number | string; 
@@ -32,6 +35,8 @@ type NodeWrapperType = {
 	inputStyle?: React.CSSProperties;
 	isNeedInput?: boolean;
 	overrideStyle?: React.CSSProperties;
+	title?: React.ReactNode;
+	resizable?: boolean;
 };
 
 export const NodeWrapper = memo(({
@@ -45,8 +50,12 @@ export const NodeWrapper = memo(({
 	handleStyle,
 	inputStyle,
 	isNeedInput = true,
-	overrideStyle
+	overrideStyle,
+	resizable = true,
+	title
 }: NodeWrapperType) => {
+	const { nodesCategory } = useAppSelector(state => state.nodes)
+
 	const { token } = useTheme()
 
 	const dispatch = useDispatch()
@@ -76,7 +85,7 @@ export const NodeWrapper = memo(({
 
 	return (
 		<div
-			className={`react-flow__node-input nopan selectable draggable`}
+			className={`react-flow__node-input nopan selectable draggable ${styles[nodesCategory ?? '']}`}
 			style={{
 				width: '100%',
 				height: '100%',
@@ -84,7 +93,22 @@ export const NodeWrapper = memo(({
 				...(overrideStyle ?? data.style),
 			}}
 		>
-			<NodeResizer isVisible={node.selected}/>
+			{resizable && <NodeResizer isVisible={node.selected}/>}
+
+			{title && <div className={styles["node-wrapper__title"]}>
+				<div className={styles['wrapper-title__icon']}></div>
+				<NodeInput
+					value={inputValue}
+					type="input"
+					onChange={handleChangeInput}
+					style={{ 
+						color: data.style?.color ?? token.colorText,
+						fontSize: data.style?.fontSize,
+						...inputStyle 
+					}}
+				/>
+			</div>
+			}
 
 			{isNeedInput && <NodeInput
 				value={inputValue}
