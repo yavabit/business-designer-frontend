@@ -2,7 +2,7 @@ import { PiRectangle, PiRectangleDashed } from "react-icons/pi";
 import { CgShapeRhombus } from "react-icons/cg";
 import { MdOutlineCircle } from "react-icons/md";
 import { ProcessNode } from "@components/Nodes/ProcessNode";
-import { DiamondNode } from "@components/Nodes/DiamonNode";
+import { DiamondNode } from "@components/Nodes/DiamondNode";
 import { CircleNode } from "@components/Nodes/CircleNode";
 import { SubProcessNode } from "@components/Nodes/SubProcessNode";
 

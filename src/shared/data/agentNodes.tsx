@@ -1,7 +1,7 @@
 import { PiRectangle, PiRectangleDashed } from "react-icons/pi";
 import { CgShapeRhombus } from "react-icons/cg";
 import { MdOutlineCircle } from "react-icons/md";
-import { DiamondNode } from "@components/Nodes/DiamonNode";
+import { DiamondNode } from "@components/Nodes/DiamondNode";
 import { RequestNode } from "@components/Nodes/AgentNodes/RequestNode";
 import { EmailNode } from "@components/Nodes/AgentNodes/EmailNode";
 import { WaitNode } from "@components/Nodes/AgentNodes/WaitNode";
