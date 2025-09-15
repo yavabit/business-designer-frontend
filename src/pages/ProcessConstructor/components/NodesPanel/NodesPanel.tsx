@@ -1,13 +1,13 @@
 import { Panel } from "@xyflow/react";
 import { Button, Card, Input, List, Tooltip } from "antd";
 import { NodeListCard } from "@components/NodeCard/NodeCard";
-
 import { memo, useMemo, useState } from "react";
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineSearch } from "react-icons/ai";
-import { nodeList } from "../../../../shared/data/nodes";
 import { useDnD } from "@hooks/useDnD";
+import { useAppSelector } from "@hooks/storeHooks";
 
 export const NodesPanel = memo(() => {
+  const { nodeList } = useAppSelector((state) => state.nodes)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 

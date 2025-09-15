@@ -30,6 +30,10 @@ interface IProcess {
     author_name: string;
     created_at: string;
     updated_at: string;
+    category: NodesCategoryEnum;
+    trigger_type?: 'never' | 'periodically' | null;
+    period?: number;
+    last_run_date?: string;
 }
 
 interface INodeItem {
@@ -79,4 +83,9 @@ type NodeCustomData = {
 interface ICredentials {
     accessToken: string;
     data: Omit<IUser, 'isAuth'>;
+}
+
+enum NodesCategoryEnum {
+    Business_process = 'business_process',
+    Agent = 'agent'
 }

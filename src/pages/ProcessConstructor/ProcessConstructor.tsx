@@ -21,9 +21,7 @@ import style from "./ProcessConstructor.module.scss";
 import { NodesPanel } from "./components/NodesPanel/NodesPanel";
 import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
-import { nodeTypes } from "@components/Nodes";
 import { useDnD } from "@hooks/useDnD";
-import { nodeList } from "../../shared/data/nodes";
 import {
   addNode,
   onConnect,
@@ -47,6 +45,16 @@ import { toBlob } from "html-to-image";
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
+  const { nodeList, nodeTypes } = useAppSelector((state) => state.nodes)
+  const selectedNode = useAppSelector(
+    (state) => state.processConstructor.selectedNode
+  );
+  const { nodes, edges, snapGrid, defaultViewport } = useAppSelector(
+    (state) => state.processConstructor
+  );
+
+  const dispatch = useAppDispatch();
+
   const { processId } = useParams();
 
   const [getProcess, { isLoading }] = useLazyGetProcessQuery();
@@ -63,15 +71,6 @@ export const ProcessConstructor = memo(() => {
   const colorModeFlow = useMemo(() => {
     return isDarkMode ? "dark" : "light";
   }, [isDarkMode]);
-
-  const selectedNode = useAppSelector(
-    (state) => state.processConstructor.selectedNode
-  );
-  const dispatch = useAppDispatch();
-
-  const { nodes, edges, snapGrid, defaultViewport } = useAppSelector(
-    (state) => state.processConstructor
-  );
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
 

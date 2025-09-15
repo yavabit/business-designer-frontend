@@ -27,6 +27,7 @@ interface ICreateProcess {
 	name: string
 	desc: string
 	project_id: string
+	category: NodesCategoryEnum
 }
 
 interface ICreateProcessPayload {
@@ -111,6 +112,7 @@ const processSlice = createSlice({
 				author_name: '0',
 				created_at: new Date().toLocaleDateString(),
 				updated_at: new Date().toLocaleDateString(),
+				category: payload.category
 			}])
 		},
 	},

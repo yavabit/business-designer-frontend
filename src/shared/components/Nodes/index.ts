@@ -1,9 +1,9 @@
 import type { NodeTypes } from "@xyflow/react";
-import { nodeList } from "../../data/nodes";
+import { agentNodesList } from "../../data";
 
 const nodeTypes: NodeTypes = {}
 
-nodeList.forEach(item => {
+agentNodesList.forEach(item => {
 	nodeTypes[item.code] = item.component
 })
 
