@@ -1,48 +1,57 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { agentNodesList, nodeList } from "../../shared/data";
-
-interface INodeListPayload {
-	payload: {
-		type: NodesTypeEnum
-	}
-}
+import { processConstructorApi } from "@store/api/processConstructor/processConstructorApi";
 
 type initialStateType = {
-	nodeList: INodeItem[] | [],
-	selectedNode: INodeItem | null,
-	nodesType: NodesTypeEnum | null
-}
+	nodeList: INodeItem[] | [];
+	selectedNode: INodeItem | null;
+	nodesCategory: NodesCategoryEnum | null;
+};
 
 const initialState: initialStateType = {
 	nodeList: [],
 	selectedNode: null,
-	nodesType: null
+	nodesCategory: null,
+};
+
+const getNodesByType = (type: NodesCategoryEnum) => {
+	switch (type) {
+		case NodesCategoryEnum.Business_process:
+			return nodeList;
+		case NodesCategoryEnum.Agent:
+			return agentNodesList;
+		default:
+			return [];
+	}
 };
 
 const nodeSlice = createSlice({
 	name: "nodes",
 	initialState,
 	reducers: {
-		setNodesByType: (state, { payload }: INodeListPayload) => {
-			switch(payload.type) {
-				case NodesTypeEnum.Business_process: {
-					state.nodeList = nodeList
-					break;
-				}
-				case NodesTypeEnum.Agent: {
-					state.nodeList = agentNodesList
-					break;
-				}
-				default:
-					state.nodeList = []
-			}
+		setNodesByCategory: (
+			state,
+			{ payload }: { payload: NodesCategoryEnum }
+		) => {
+			state.nodeList = getNodesByType(payload);
 		},
-		setNodesType: (state, { payload }: {payload: NodesTypeEnum}) => {
-			state.nodesType = payload
+		setNodesCategory: (state, { payload }: { payload: NodesCategoryEnum }) => {
+			state.nodesCategory = payload;
 		},
 		reset: () => initialState,
+	},
+	extraReducers(builder) {
+		builder.addMatcher(
+			processConstructorApi.endpoints.getProcess.matchFulfilled,
+			(state, { payload }) => {
+				const { data } = payload;
+
+				state.nodeList = getNodesByType(data.category);
+				state.nodesCategory = data.category;
+			}
+		);
 	},
 });
 
 export const nodeReducer = nodeSlice.reducer;
-export const { setNodesByType, setNodesType, reset } = nodeSlice.actions;
+export const { setNodesByCategory, setNodesCategory, reset } = nodeSlice.actions;
