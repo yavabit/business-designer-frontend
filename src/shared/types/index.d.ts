@@ -80,3 +80,8 @@ interface ICredentials {
     accessToken: string;
     data: Omit<IUser, 'isAuth'>;
 }
+
+enum NodesTypeEnum {
+    Business_process = 'business_process',
+    Agent = 'agent'
+}
