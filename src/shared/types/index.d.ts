@@ -84,8 +84,3 @@ interface ICredentials {
     accessToken: string;
     data: Omit<IUser, 'isAuth'>;
 }
-
-enum NodesCategoryEnum {
-    Business_process = 'business_process',
-    Agent = 'agent'
-}

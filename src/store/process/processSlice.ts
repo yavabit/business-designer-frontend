@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { NodesCategoryEnum } from "@type/nodes";
 
 interface IProcessState {
 	listProcesses: IProcess[]

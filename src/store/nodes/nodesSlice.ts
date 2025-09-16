@@ -3,6 +3,7 @@ import { agentNodesList, nodeList } from "../../shared/data";
 import { processConstructorApi } from "@store/api/processConstructor/processConstructorApi";
 import type { NodeTypes } from "@xyflow/react";
 import { nodeTypes } from "@components/Nodes";
+import { NodesCategoryEnum } from "@type/nodes";
 
 type initialStateType = {
 	nodeList: INodeItem[] | [];
