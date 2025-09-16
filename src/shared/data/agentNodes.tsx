@@ -1,11 +1,11 @@
-import { MdOutlineCircle } from "react-icons/md";
-import { DiamondNode } from "@components/Nodes/BusinessNodes/DiamondNode";
 import { RequestNode } from "@components/Nodes/AgentNodes/RequestNode";
 import { EmailNode } from "@components/Nodes/AgentNodes/EmailNode";
 import { WaitNode } from "@components/Nodes/AgentNodes/WaitNode";
 import { MdHttp } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import { CiStopwatch } from "react-icons/ci";
+import { StartStopNode } from "@components/Nodes/AgentNodes/StartStopNode";
+import { VscDebugStart } from "react-icons/vsc";
 
 export const agentNodesList: INodeItem[] = [
 	{
@@ -32,11 +32,11 @@ export const agentNodesList: INodeItem[] = [
 	},
 	{
 		id: "3",
-		code: "circle",
+		code: "start",
 		name: "Старт/стоп",
 		description: "Точка старта или окончания всего процесса",
-		icon: <MdOutlineCircle />,
-		component: DiamondNode,
+		icon: <VscDebugStart />,
+		component: StartStopNode,
 		defaultData: {
 			label: 'Старт/стоп'
 		}

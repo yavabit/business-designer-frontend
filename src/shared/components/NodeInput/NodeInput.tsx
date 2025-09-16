@@ -5,14 +5,16 @@ type NodeInputType = {
 	onChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
 	value: unknown;
 	style?: React.CSSProperties;
-	type?: "input" | "text"
+	type?: "input" | "text";
+	editable?: boolean;
 }
 
-export const NodeInput = ({ onChange, value, style, type="text" }: NodeInputType) => {
+export const NodeInput = ({ onChange, value, style, type="text", editable=true }: NodeInputType) => {
 	if(type === "text") {
 		return (
 			<TextArea
 				name="text"
+				disabled={!editable}
 				onChange={onChange}
 				className="nodrag"
 				value={value as string}
@@ -37,6 +39,7 @@ export const NodeInput = ({ onChange, value, style, type="text" }: NodeInputType
 				className="nodrag"
 				value={value as string}
 				variant="borderless"
+				disabled={!editable}
 				style={{
 					color: style?.color ?? 'white',
 					padding: 0,

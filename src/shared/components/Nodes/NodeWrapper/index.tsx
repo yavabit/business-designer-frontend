@@ -39,6 +39,7 @@ type NodeWrapperType = {
 	title?: React.ReactNode;
 	resizable?: boolean;
 	icon?: React.ReactNode;
+	editable?: boolean;
 };
 
 export const NodeWrapper = memo(({
@@ -55,7 +56,8 @@ export const NodeWrapper = memo(({
 	overrideStyle,
 	resizable = true,
 	title,
-	icon
+	icon,
+	editable = true
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
 
@@ -103,6 +105,7 @@ export const NodeWrapper = memo(({
 				<NodeInput
 					value={inputValue}
 					type="input"
+					editable={editable}
 					onChange={handleChangeInput}
 					style={{ 
 						color: data.style?.color ?? token.colorText,
@@ -116,6 +119,7 @@ export const NodeWrapper = memo(({
 			{isNeedInput && <NodeInput
 				value={inputValue}
 				onChange={handleChangeInput}
+				editable={editable}
 				style={{ 
 					color: data.style?.color ?? token.colorText,
 					fontSize: data.style?.fontSize,

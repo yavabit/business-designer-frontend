@@ -31,7 +31,7 @@ export const nodeList: INodeItem[] = [
 	},
 	{
 		id: "3",
-		code: "circle",
+		code: "start",
 		name: "Начало/конец",
 		description: "Начало или окончание всего процесса или подпроцесса",
 		icon: <MdOutlineCircle />,
