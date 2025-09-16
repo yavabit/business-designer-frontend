@@ -1,5 +1,5 @@
 import { type NodeProps, type Node } from "@xyflow/react";
-import { NodeWrapper } from "../NodeWrapper";
+import { NodeWrapper } from "../../NodeWrapper";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useDispatch } from "react-redux";
 import { useNodeInput } from "@hooks/useNodeInput";

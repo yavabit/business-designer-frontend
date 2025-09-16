@@ -1,5 +1,5 @@
 import { MdOutlineCircle } from "react-icons/md";
-import { DiamondNode } from "@components/Nodes/DiamondNode";
+import { DiamondNode } from "@components/Nodes/BusinessNodes/DiamondNode";
 import { RequestNode } from "@components/Nodes/AgentNodes/RequestNode";
 import { EmailNode } from "@components/Nodes/AgentNodes/EmailNode";
 import { WaitNode } from "@components/Nodes/AgentNodes/WaitNode";
