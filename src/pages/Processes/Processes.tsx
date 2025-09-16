@@ -250,7 +250,11 @@ export const Processes: FC = () => {
                                     </div>,
                                     <div
                                         onClick={() =>
-                                            navigate(`/process/${item.id}`)
+                                            navigate(`/process/${item.id}`,{
+                                                state: {
+                                                    metadata: item.project_id ?? ""
+                                                }
+                                            })
                                         }>
                                         <AiOutlineEdit key="edit" />
                                     </div>,
