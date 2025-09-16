@@ -16,7 +16,7 @@ export const agentNodesList: INodeItem[] = [
 		icon: <MdHttp />,
 		component: RequestNode,
 		defaultData: {
-			label: 'Процесс'
+			label: 'Запрос'
 		}
 	},
 	{
@@ -27,18 +27,18 @@ export const agentNodesList: INodeItem[] = [
 		icon: <MdEmail />,
 		component: EmailNode,
 		defaultData: {
-			label: 'Условие'
+			label: 'Письмо'
 		}
 	},
 	{
 		id: "3",
 		code: "circle",
-		name: "Начало/конец",
-		description: "Начало или окончание всего процесса или подпроцесса",
+		name: "Старт/стоп",
+		description: "Точка старта или окончания всего процесса",
 		icon: <MdOutlineCircle />,
 		component: DiamondNode,
 		defaultData: {
-			label: 'Начало/конец'
+			label: 'Старт/стоп'
 		}
 	},
 	{
@@ -49,7 +49,7 @@ export const agentNodesList: INodeItem[] = [
 		icon: <CiStopwatch />,
 		component: WaitNode,
 		defaultData: {
-			label: 'Промежуточный процесс'
+			label: 'Ожидание'
 		}
 	},
 ];

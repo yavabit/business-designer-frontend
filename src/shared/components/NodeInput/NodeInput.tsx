@@ -39,6 +39,7 @@ export const NodeInput = ({ onChange, value, style, type="text" }: NodeInputType
 				variant="borderless"
 				style={{
 					color: style?.color ?? 'white',
+					padding: 0,
 					resize: 'none',
 					...(style || {})
 				}}
