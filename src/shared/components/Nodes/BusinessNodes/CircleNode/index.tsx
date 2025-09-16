@@ -1,5 +1,5 @@
 import { type Node, type NodeProps } from "@xyflow/react";
-import { NodeWrapper } from "../NodeWrapper";
+import { NodeWrapper } from "../../NodeWrapper";
 
 const circleNodeStyle = {
 	borderRadius: "50%",

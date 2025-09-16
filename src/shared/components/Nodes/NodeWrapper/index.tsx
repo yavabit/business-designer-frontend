@@ -9,6 +9,7 @@ import { useTheme } from "@hooks/useTheme";
 
 import styles from "./style.module.scss"
 import { useAppSelector } from "@hooks/storeHooks";
+import { Avatar } from "antd";
 
 type HandlePositionType = {
 	left?: number | string; 
@@ -37,6 +38,8 @@ type NodeWrapperType = {
 	overrideStyle?: React.CSSProperties;
 	title?: React.ReactNode;
 	resizable?: boolean;
+	icon?: React.ReactNode;
+	editable?: boolean;
 };
 
 export const NodeWrapper = memo(({
@@ -52,7 +55,9 @@ export const NodeWrapper = memo(({
 	isNeedInput = true,
 	overrideStyle,
 	resizable = true,
-	title
+	title,
+	icon,
+	editable = true
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
 
@@ -85,7 +90,7 @@ export const NodeWrapper = memo(({
 
 	return (
 		<div
-			className={`react-flow__node-input nopan selectable draggable ${styles[nodesCategory ?? '']}`}
+			className={`react-flow__node-input nopan selectable draggable ${styles[nodesCategory ?? 'agent']}`}
 			style={{
 				width: '100%',
 				height: '100%',
@@ -96,10 +101,11 @@ export const NodeWrapper = memo(({
 			{resizable && <NodeResizer isVisible={node.selected}/>}
 
 			{title && <div className={styles["node-wrapper__title"]}>
-				<div className={styles['wrapper-title__icon']}></div>
+				{icon && <Avatar icon={icon} shape="square" style={{marginRight: 5, height: 25}}/>}
 				<NodeInput
 					value={inputValue}
 					type="input"
+					editable={editable}
 					onChange={handleChangeInput}
 					style={{ 
 						color: data.style?.color ?? token.colorText,
@@ -113,6 +119,7 @@ export const NodeWrapper = memo(({
 			{isNeedInput && <NodeInput
 				value={inputValue}
 				onChange={handleChangeInput}
+				editable={editable}
 				style={{ 
 					color: data.style?.color ?? token.colorText,
 					fontSize: data.style?.fontSize,

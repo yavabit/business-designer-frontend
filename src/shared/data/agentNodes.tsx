@@ -1,11 +1,11 @@
-import { MdOutlineCircle } from "react-icons/md";
-import { DiamondNode } from "@components/Nodes/DiamondNode";
 import { RequestNode } from "@components/Nodes/AgentNodes/RequestNode";
 import { EmailNode } from "@components/Nodes/AgentNodes/EmailNode";
 import { WaitNode } from "@components/Nodes/AgentNodes/WaitNode";
 import { MdHttp } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import { CiStopwatch } from "react-icons/ci";
+import { StartStopNode } from "@components/Nodes/AgentNodes/StartStopNode";
+import { VscDebugStart } from "react-icons/vsc";
 
 export const agentNodesList: INodeItem[] = [
 	{
@@ -16,7 +16,7 @@ export const agentNodesList: INodeItem[] = [
 		icon: <MdHttp />,
 		component: RequestNode,
 		defaultData: {
-			label: 'Процесс'
+			label: 'Запрос'
 		}
 	},
 	{
@@ -27,18 +27,18 @@ export const agentNodesList: INodeItem[] = [
 		icon: <MdEmail />,
 		component: EmailNode,
 		defaultData: {
-			label: 'Условие'
+			label: 'Письмо'
 		}
 	},
 	{
 		id: "3",
-		code: "circle",
-		name: "Начало/конец",
-		description: "Начало или окончание всего процесса или подпроцесса",
-		icon: <MdOutlineCircle />,
-		component: DiamondNode,
+		code: "start",
+		name: "Старт/стоп",
+		description: "Точка старта или окончания всего процесса",
+		icon: <VscDebugStart />,
+		component: StartStopNode,
 		defaultData: {
-			label: 'Начало/конец'
+			label: 'Старт/стоп'
 		}
 	},
 	{
@@ -49,7 +49,7 @@ export const agentNodesList: INodeItem[] = [
 		icon: <CiStopwatch />,
 		component: WaitNode,
 		defaultData: {
-			label: 'Промежуточный процесс'
+			label: 'Ожидание'
 		}
 	},
 ];

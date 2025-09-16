@@ -1,10 +1,10 @@
 import { PiRectangle, PiRectangleDashed } from "react-icons/pi";
 import { CgShapeRhombus } from "react-icons/cg";
 import { MdOutlineCircle } from "react-icons/md";
-import { ProcessNode } from "@components/Nodes/ProcessNode";
-import { DiamondNode } from "@components/Nodes/DiamondNode";
-import { CircleNode } from "@components/Nodes/CircleNode";
-import { SubProcessNode } from "@components/Nodes/SubProcessNode";
+import { ProcessNode } from "@components/Nodes/BusinessNodes/ProcessNode";
+import { DiamondNode } from "@components/Nodes/BusinessNodes/DiamondNode";
+import { CircleNode } from "@components/Nodes/BusinessNodes/CircleNode";
+import { SubProcessNode } from "@components/Nodes/BusinessNodes/SubProcessNode";
 
 export const nodeList: INodeItem[] = [
 	{
@@ -31,7 +31,7 @@ export const nodeList: INodeItem[] = [
 	},
 	{
 		id: "3",
-		code: "circle",
+		code: "start",
 		name: "Начало/конец",
 		description: "Начало или окончание всего процесса или подпроцесса",
 		icon: <MdOutlineCircle />,
