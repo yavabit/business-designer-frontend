@@ -224,9 +224,10 @@ export const Processes: FC = () => {
                     )}
 
                 {allProcesses.length > 0 && (
-                    <Flex wrap gap="small">
+                    <Flex wrap gap="middle">
                         {allProcesses.map((item) => (
                             <ProcessItem
+                                key={item.id}
                                 item={item}
                                 isLoading={isLoading}
                                 handleDelete={handleDelete}

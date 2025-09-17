@@ -15,6 +15,7 @@
       "@type/*": ["./src/shared/types/*"],
       "@contexts/*": ["./src/shared/contexts/*"],
       "@pages/*": ["./src/pages/*"],
+      "@data": ["./src/shared/data/index"],
     },
 
     /* Bundler mode */
