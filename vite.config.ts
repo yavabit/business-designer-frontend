@@ -14,6 +14,7 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/shared/hooks'),
       '@contexts': path.resolve(__dirname, './src/shared/contexts'),
       '@pages': path.resolve(__dirname, './src/pages'),
+      '@data': path.resolve(__dirname, './src/shared/data/index'),
     }
   }
 })
