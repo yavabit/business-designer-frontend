@@ -36,6 +36,11 @@ interface IProcess {
     last_run_date?: string;
 }
 
+interface IProcessType {
+	id: string
+	name: string
+}
+
 interface INodeItem {
     id: string;
     code: string;
