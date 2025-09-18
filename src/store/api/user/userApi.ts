@@ -39,7 +39,7 @@ export const usersApi = baseApi.injectEndpoints({
         checkAuth: builder.query<ICredentials, void>({
             query: () => ({
                 url: "/auth/check"
-            })
+            }),
         }),
 
         getProfile: builder.query<{data: Omit<IUser, 'isAuth'>  & { projects_count: number; }}, void>({

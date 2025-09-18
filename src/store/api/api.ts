@@ -27,34 +27,6 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-// const baseQueryWithReauth: BaseQueryFn = async (args, api, extraOptions) => {
-//     let res = await baseQuery(args, api, extraOptions);
-//     if (res?.error) {
-//         console.log("Sending refreshToken...");
-//         const refreshResult = await baseQuery(
-//             "/auth/refresh",
-//             api,
-//             extraOptions
-//         );
-//         if (refreshResult?.data) {
-//             const email = (api.getState() as RootState).user.email;
-//             const result = refreshResult.data as ICredentials;
-//             api.dispatch(
-//                 setCredentials({
-//                     accessToken: result.accessToken,
-//                     email,
-//                     id: result.data.id,
-//                 })
-//             );
-//             res = await baseQuery(args, api, extraOptions);
-//         } else {
-//             api.dispatch(reset());
-//             // location.href = "/login"
-//         }
-//     }
-//     return res;
-// };
-
 const baseQueryWithReauth: BaseQueryFn = async (
     args: string | FetchArgs,
     api,
@@ -64,6 +36,7 @@ const baseQueryWithReauth: BaseQueryFn = async (
 
     if (result?.error?.status === 401) {
         console.log("Token expired, attempting refresh...");
+        api.dispatch(setLoading(true));
 
         const refreshResult = await baseQuery(
             {

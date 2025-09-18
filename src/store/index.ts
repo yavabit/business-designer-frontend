@@ -5,7 +5,7 @@ import projectsReducer from './projects/projectsSlice'
 import { nodeReducer } from './nodes/nodesSlice'
 import { baseApi } from './api/api'
 import { processConstructorReducer } from '@store/processConstructor/processConstructorSlice'
-import { themeReducer } from '@store/user/themeSlice'
+import { themeReducer } from '@store/user/themeSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -15,7 +15,7 @@ export const store = configureStore({
 		projects: projectsReducer,
 		nodes: nodeReducer,
 		processConstructor: processConstructorReducer,
-		theme: themeReducer
+		theme: themeReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
