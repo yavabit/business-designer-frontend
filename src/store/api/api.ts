@@ -32,7 +32,7 @@ const baseQueryWithReauth: BaseQueryFn = async (
     api,
     extraOptions
 ) => {
-    let result = await baseQuery(args, api, extraOptions);
+    let result = await baseQuery(args, api, extraOptions) ;
 
     if (result?.error?.status === 401) {
         console.log("Token expired, attempting refresh...");
