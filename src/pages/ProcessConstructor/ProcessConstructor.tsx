@@ -202,9 +202,6 @@ export const ProcessConstructor = memo(() => {
             ".react-flow__viewport"
           );
 
-
-					return
-
           if ((!view && !refReactFlow) || refReactFlow?.current == null) return;
 
           if (refReactFlow?.current == null) return;
@@ -225,8 +222,6 @@ export const ProcessConstructor = memo(() => {
 
             const file = new File([dataUrl], "test.png", {
               type: "image/png",
-              mimetype: "image/png",
-              path: "test.png",
               lastModified: new Date().getTime(),
             });
 
