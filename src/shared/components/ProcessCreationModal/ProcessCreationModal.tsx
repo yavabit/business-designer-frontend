@@ -1,11 +1,11 @@
 import type { RootState } from "@store/index";
 import { setProcessCreationModal } from "@store/process/processSlice";
 import { Button, Modal } from "antd";
-import { type FC } from "react";
+import { useEffect, type FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useCreateProcessMutation,
-  useTypesProcessQuery,
+  useLazyTypesProcessQuery,
 } from "@store/api/processes/processesApi";
 import { ProcessCreationForm } from "./ProcessCreationForm/ProcessCreationForm";
 
@@ -15,7 +15,7 @@ export const ProcessCreationModal: FC = () => {
   );
 
   const [createProcess, { isLoading }] = useCreateProcessMutation();
-  const { data: typesProcessData } = useTypesProcessQuery();
+  const [getProcessTypes, typesProcessData] = useLazyTypesProcessQuery();
 
   const dispatch = useDispatch();
 
@@ -26,6 +26,10 @@ export const ProcessCreationModal: FC = () => {
   const handleSuccess = () => {
     dispatch(setProcessCreationModal(false));
   };
+
+  useEffect(() => {
+    getProcessTypes()
+  }, [])
 
   if (!isOpen) {
     return null;
@@ -57,7 +61,7 @@ export const ProcessCreationModal: FC = () => {
     >
       <ProcessCreationForm
         createProcess={createProcess}
-        typesProcessData={typesProcessData}
+        typesProcessData={typesProcessData.data}
         onSuccess={handleSuccess}
       />
     </Modal>
