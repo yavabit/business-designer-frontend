@@ -64,7 +64,7 @@ const baseQueryWithReauth: BaseQueryFn = async (
         } else {
             api.dispatch(reset());
             api.dispatch(setLoading(false));
-            // window.location.replace("/login")
+            window.location.replace("/login");
         }
     }
 
