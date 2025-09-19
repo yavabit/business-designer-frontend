@@ -15,6 +15,7 @@ import {
   type Edge,
   type OnConnect,
   getViewportForBounds,
+	type EdgeMouseHandler,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -27,6 +28,7 @@ import {
   onConnect,
   onEdgesChange,
   onNodesChange,
+  setSelectedEdge,
   setSelectedNode,
 } from "@store/processConstructor/processConstructorSlice";
 
@@ -157,6 +159,14 @@ export const ProcessConstructor = memo(() => {
     [dispatch]
   );
 
+	
+	const handleEdgeClick: EdgeMouseHandler = useCallback(
+    (_, edge) => {
+      dispatch(setSelectedEdge(edge));
+    },
+    [dispatch]
+  );
+
   const handlePaneClick = useCallback(() => {
     if (selectedNode != null) {
       dispatch(setSelectedNode(null));
@@ -192,6 +202,9 @@ export const ProcessConstructor = memo(() => {
             ".react-flow__viewport"
           );
 
+
+					return
+
           if ((!view && !refReactFlow) || refReactFlow?.current == null) return;
 
           if (refReactFlow?.current == null) return;
@@ -212,8 +225,8 @@ export const ProcessConstructor = memo(() => {
 
             const file = new File([dataUrl], "test.png", {
               type: "image/png",
-              // mimetype: "image/png",
-              // path: "test.png",
+              mimetype: "image/png",
+              path: "test.png",
               lastModified: new Date().getTime(),
             });
 
@@ -244,6 +257,7 @@ export const ProcessConstructor = memo(() => {
     (e) => dispatch(onConnect(e)),
     [dispatch]
   );
+
 
   return (
     <div className={style.dndflow}>
@@ -300,6 +314,7 @@ export const ProcessConstructor = memo(() => {
               flowAutosave();
             }}
             onNodeClick={handleNodeClick}
+						onEdgeClick={handleEdgeClick}
             nodeTypes={nodeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}

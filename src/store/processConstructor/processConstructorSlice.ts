@@ -8,6 +8,7 @@ interface IConstructorState {
 	snapGrid: SnapGrid
 	defaultViewport: Viewport
 	selectedNode: Node<NodeCustomData> | null
+	selectedEdge: Edge | null
 }
 
 const initialState: IConstructorState = {
@@ -15,7 +16,8 @@ const initialState: IConstructorState = {
 	edges: [],
 	snapGrid: [20, 20],
 	defaultViewport: { x: 0, y: 0, zoom: 1.5 },
-	selectedNode: null
+	selectedNode: null,
+	selectedEdge: null
 }
 
 const processConstructorSlice = createSlice({
@@ -115,8 +117,13 @@ const processConstructorSlice = createSlice({
 			state.edges = addEdge(newEdge, state.edges);
 		},
 		setSelectedNode: (state, { payload }) => {
+			state.selectedEdge = null
 			state.selectedNode = payload;
-		}
+		},
+		setSelectedEdge: (state, { payload }) => {
+			state.selectedNode = null;
+			state.selectedEdge = payload;
+		},
 	},
 	extraReducers(builder) {
 		builder.addMatcher(processConstructorApi.endpoints.getProcess.matchFulfilled, (state, { payload }) => {
@@ -144,6 +151,7 @@ export const {
 	addNode,
 	updateNodeProperties,
 	setSelectedNode,
+	setSelectedEdge,
 	updateNodeColor,
 	updateNodeSizes,
 	updateNodeText
