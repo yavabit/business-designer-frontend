@@ -3,10 +3,7 @@ import { useReactFlow } from "@xyflow/react";
 
 import style from "./style.module.scss";
 import { useAppDispatch } from "@hooks/storeHooks";
-import {
-  addNode,
-  updateNodeColor,
-} from "@store/processConstructor/processConstructorSlice";
+import { addNode } from "@store/processConstructor/processConstructorSlice";
 import { Divider } from "antd";
 import { useTheme } from "@hooks/useTheme";
 
@@ -61,10 +58,6 @@ const ContextMenu = ({
     setEdges((edges) => edges.filter((edge) => edge.source !== id));
   }, [id, setNodes, setEdges]);
 
-  const handleClickChangeColor = useCallback(() => {
-    dispatch(updateNodeColor({ id, color: "red" }));
-  }, [dispatch, id]);
-
   return (
     <div
       style={{
@@ -72,7 +65,7 @@ const ContextMenu = ({
         left,
         right,
         bottom,
-        backgroundColor: token.colorBgBase,
+        backgroundColor: token.colorBgContainer,
         color: token.colorText,
       }}
       className={style.contextMenu}
@@ -85,12 +78,9 @@ const ContextMenu = ({
       >
         Удалить
       </div>
-      <Divider size="small" />
+			<Divider size="small" />
       <div className={style.contextMenuButton} onClick={duplicateNode}>
         Дублировать
-      </div>
-      <div className={style.contextMenuButton} onClick={handleClickChangeColor}>
-        Изменить цвет
       </div>
     </div>
   );

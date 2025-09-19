@@ -15,6 +15,7 @@ import {
   type Edge,
   type OnConnect,
   getViewportForBounds,
+	type EdgeMouseHandler,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -27,6 +28,7 @@ import {
   onConnect,
   onEdgesChange,
   onNodesChange,
+  setSelectedEdge,
   setSelectedNode,
 } from "@store/processConstructor/processConstructorSlice";
 
@@ -42,11 +44,12 @@ import { toBlob } from "html-to-image";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Flex, Spin } from "antd";
 import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
+import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
-  const { nodeList, nodeTypes } = useAppSelector((state) => state.nodes)
+  const { nodeList, nodeTypes } = useAppSelector((state) => state.nodes);
   const selectedNode = useAppSelector(
     (state) => state.processConstructor.selectedNode
   );
@@ -60,7 +63,8 @@ export const ProcessConstructor = memo(() => {
 
   const navigate = useNavigate();
 
-  const [getProcess, { data: processData, isLoading }] = useLazyGetProcessQuery();
+  const [getProcess, { data: processData, isLoading }] =
+    useLazyGetProcessQuery();
 
   const [updateProcessScheme] = useUpdateProcessSchemeMutation();
   const [updateProcessImage] = useUpdateProcessImageMutation();
@@ -155,6 +159,14 @@ export const ProcessConstructor = memo(() => {
     [dispatch]
   );
 
+	
+	const handleEdgeClick: EdgeMouseHandler = useCallback(
+    (_, edge) => {
+      dispatch(setSelectedEdge(edge));
+    },
+    [dispatch]
+  );
+
   const handlePaneClick = useCallback(() => {
     if (selectedNode != null) {
       dispatch(setSelectedNode(null));
@@ -208,11 +220,8 @@ export const ProcessConstructor = memo(() => {
 
             if (!dataUrl) return;
 
-						
             const file = new File([dataUrl], "test.png", {
               type: "image/png",
-              // mimetype: "image/png",
-              // path: "test.png",
               lastModified: new Date().getTime(),
             });
 
@@ -244,6 +253,7 @@ export const ProcessConstructor = memo(() => {
     [dispatch]
   );
 
+
   return (
     <div className={style.dndflow}>
       <div
@@ -256,10 +266,12 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <Flex 
-          justify="space-between" 
-          align="center" 
-          className={`${style['process-bar']} ${isDarkMode ? style['bar-dark'] : ''}`}
+        <Flex
+          justify="space-between"
+          align="center"
+          className={`${style["process-bar"]} ${
+            isDarkMode ? style["bar-dark"] : ""
+          }`}
         >
           <Flex align="center" gap={16}>
             <Button onClick={() => navigate(-1)}>
@@ -297,6 +309,7 @@ export const ProcessConstructor = memo(() => {
               flowAutosave();
             }}
             onNodeClick={handleNodeClick}
+						onEdgeClick={handleEdgeClick}
             nodeTypes={nodeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}
@@ -320,6 +333,7 @@ export const ProcessConstructor = memo(() => {
           </ReactFlow>
         )}
       </div>
+      <Hotkeys />
     </div>
   );
 });

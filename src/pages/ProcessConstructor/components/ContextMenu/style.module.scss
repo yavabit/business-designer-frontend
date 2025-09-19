@@ -1,5 +1,5 @@
 .contextMenu {
-  border-style: solid;
+  border: 1px solid;
   position: absolute;
   z-index: 10;
 }
@@ -7,7 +7,12 @@
 .contextMenuButton {
   border: none;
   display: block;
-  padding: 0.5em;
+  padding: 0.6em;
   text-align: left;
   width: 100%;
+	cursor: pointer;
+}
+
+.contextMenuButton:hover {
+	background: #006ad8;
 }
