@@ -78,7 +78,7 @@ const ContextMenu = ({
       >
         Удалить
       </div>
-
+			<Divider size="small" />
       <div className={style.contextMenuButton} onClick={duplicateNode}>
         Дублировать
       </div>
