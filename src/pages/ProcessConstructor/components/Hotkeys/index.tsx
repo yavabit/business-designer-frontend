@@ -1,23 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
+import { MappingKeys } from "@pages/ProcessConstructor/components/Hotkeys/mapping";
 import { addNode } from "@store/processConstructor/processConstructorSlice";
 import { useReactFlow } from "@xyflow/react";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-
-export const MappingKeys = {
-  Copy: {
-    key: "ctrl+c",
-    name: "Копировать",
-  },
-  Paste: {
-    key: "ctrl+v",
-    name: "Копировать",
-  },
-  Delete: {
-    key: "delete",
-    name: "Удалить",
-  },
-};
 
 export const Hotkeys = () => {
   const { getNode, setNodes, setEdges, screenToFlowPosition } = useReactFlow();
@@ -80,9 +66,7 @@ export const Hotkeys = () => {
     }
 
     if (selectedEdge) {
-      setEdges((edges) =>
-        edges.filter((edge) => edge.id !== selectedEdge.id)
-      );
+      setEdges((edges) => edges.filter((edge) => edge.id !== selectedEdge.id));
     }
   });
 
