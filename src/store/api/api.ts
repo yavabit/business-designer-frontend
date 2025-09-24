@@ -3,6 +3,7 @@ import { apiTags } from "./apiTags";
 import type { RootState } from "..";
 import type { BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query";
 import { reset, setCredentials, setLoading } from "@store/user/userSlice";
+import { refreshMutex } from "../../shared/utils/mutex";
 
 export const baseUrl =
     import.meta.env.VITE_API_HOST + import.meta.env.VITE_API_URL;
@@ -26,26 +27,6 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-// const baseQuery = fetchBaseQuery({
-//     baseUrl: baseUrl,
-//     credentials: "include",
-//     prepareHeaders: (headers, { getState }) => {
-//         const url = (getState() as RootState).api?.queries?.[
-//             Object.keys((getState() as RootState).api.queries)[0]
-//         ]?.endpointName;
-//         if (url && ["login", "register", "refresh"].includes(url)) {
-//             return headers;
-//         }
-
-//         const token = (getState() as RootState).user.token;
-
-//         if (token) {
-//             headers.set("Authorization", `Bearer ${token}`);
-//         }
-//         return headers;
-//     },
-// });
-
 const baseQueryWithReauth: BaseQueryFn = async (
     args: string | FetchArgs,
     api,
@@ -55,83 +36,48 @@ const baseQueryWithReauth: BaseQueryFn = async (
 
     if (result?.error?.status === 401) {
         console.log("Token expired, attempting refresh...");
-        api.dispatch(setLoading(true));
-
-        const refreshResult = await baseQuery(
-            {
-                url: "/auth/refresh",
-                credentials: "include",
-            },
-            api,
-            extraOptions
-        );
-
-        if (refreshResult?.data) {
-            const refreshData = refreshResult.data as ICredentials;
-
-            if (refreshData.accessToken) {
-                api.dispatch(
-                    setCredentials({
-                        id: refreshData.data.id,
-                        email: refreshData.data.email,
-                        accessToken: refreshData.accessToken
-                    })
+        
+        const release = await refreshMutex.acquire();
+        
+        try {
+            const currentToken = (api.getState() as RootState).user.token;
+            if (currentToken !== (api.getState() as RootState).user.token) {
+                result = await baseQuery(args, api, extraOptions);
+            } else {
+                const refreshResult = await baseQuery(
+                    {
+                        url: "/auth/refresh",
+                        credentials: "include",
+                    },
+                    api,
+                    extraOptions
                 );
 
-                result = await baseQuery(args, api, extraOptions);
+                if (refreshResult?.data) {
+                    const refreshData = refreshResult.data as ICredentials;
+                    if (refreshData.accessToken) {
+                        api.dispatch(
+                            setCredentials({
+                                id: (api.getState() as RootState).user.id,
+                                email: (api.getState() as RootState).user.email,
+                                accessToken: refreshData.accessToken
+                            })
+                        );
+
+                        result = await baseQuery(args, api, extraOptions);
+                    }
+                } else {
+                    api.dispatch(reset());
+                    api.dispatch(setLoading(false));
+                }
             }
-        } else {
-            api.dispatch(reset());
+        } finally {
+            release();
         }
     }
 
-    api.dispatch(setLoading(false));
     return result;
 };
-
-// const baseQueryWithReauth: BaseQueryFn = async (
-//     args: string | FetchArgs,
-//     api,
-//     extraOptions
-// ) => {
-//     let result = await baseQuery(args, api, extraOptions) ;
-
-//     if (result?.error?.status === 401) {
-//         console.log("Token expired, attempting refresh...");
-//         api.dispatch(setLoading(true));
-
-//         const refreshResult = await baseQuery(
-//             {
-//                 url: "/auth/refresh",
-//                 credentials: "include",
-//             },
-//             api,
-//             extraOptions
-//         );
-
-//         if (refreshResult?.data) {
-//             const refreshData = refreshResult.data as ICredentials;
-
-//             if (refreshData.accessToken) {
-//                 api.dispatch(
-//                     setCredentials({
-//                         id: refreshData.data.id,
-//                         email: refreshData.data.email,
-// 						accessToken: refreshData.accessToken
-//                     })
-//                 );
-
-//                 result = await baseQuery(args, api, extraOptions);
-//             }
-//         } else {
-//             api.dispatch(reset());
-//             api.dispatch(setLoading(false));
-//             // window.location.replace("/login");
-//         }
-//     }
-
-//     return result;
-// };
 
 export const baseApi = createApi({
     reducerPath: "api",
