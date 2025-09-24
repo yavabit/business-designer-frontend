@@ -1,0 +1,8 @@
+.process-bar {
+  padding: .75rem 1rem;
+  border-bottom: 1px solid rgba(#000000, .2);
+
+  &.bar-dark {
+    border-bottom: 1px solid rgba(#FFFFFF, .2);
+  }
+}

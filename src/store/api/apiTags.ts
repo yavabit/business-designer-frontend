@@ -3,4 +3,5 @@ export const apiTags = {
     processes: "Processes",
     process: "Process",
     profile: "Profile",
+    triggers: "Triggers",
 }

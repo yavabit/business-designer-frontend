@@ -41,12 +41,12 @@ import {
   useUpdateProcessSchemeMutation,
 } from "@store/api/processConstructor/processConstructorApi";
 import { toBlob } from "html-to-image";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Flex, Spin } from "antd";
-import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import { Flex, Spin } from "antd";
 import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
 import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
+import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHeader";
 
 
 interface IDocumentRefresh {
@@ -67,8 +67,6 @@ export const ProcessConstructor = memo(() => {
   const dispatch = useAppDispatch();
 
   const { processId } = useParams();
-
-  const navigate = useNavigate();
 
   const [getProcess, { data: processData, isLoading }] =
     useLazyGetProcessQuery();
@@ -339,23 +337,10 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <Flex
-          justify="space-between"
-          align="center"
-          className={`${style["process-bar"]} ${
-            isDarkMode ? style["bar-dark"] : ""
-          }`}
-        >
-          <Flex align="center" gap={16}>
-            <Button onClick={() => navigate(-1)}>
-              <BsChevronLeft />
-            </Button>
-            <p>{processData?.data.name}</p>
-          </Flex>
-          <Button>
-            <BsFillPencilFill />
-          </Button>
-        </Flex>
+        <ConstructorHeader 
+          processName={processData?.data.name} 
+          isAgent={processData?.data.category === 'agent'} 
+        />
         {isLoading && (
           <Flex justify="center" style={{ padding: "20px" }}>
             <Spin size="large" />
