@@ -24,16 +24,16 @@ const UserMulticursor = ({ processId }: IUserMulticursor) => {
 
   useEffect(() => {
     function onUserCursorMove(e: IUserCursorMove) {
-      console.log("onUserCursorMove", e);
+      // console.log("onUserCursorMove", e);
       const { userId, x, y } = e;
 
-      setCursors({
-        ...cursors,
+			setCursors((prevState) => ({
+        ...prevState,
         [userId]: {
           x,
           y,
         },
-      });
+			}))
     }
 
     socket.on("user-cursor-move", onUserCursorMove);
