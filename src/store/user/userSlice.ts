@@ -21,7 +21,7 @@ const initialState: InitialState = {
     email: "",
     pict_url: "",
     token: "",
-    isAuth: true,
+    isAuth: false,
     isLoading: true,
     projects_count: 0,
 };
@@ -52,6 +52,7 @@ const userSlice = createSlice({
             state.email = action.payload.email;
             state.pict_url = action.payload.pict_url;
             state.projects_count = action.payload.projects_count
+            state.isAuth = true
         },
 
         setCredentials(
