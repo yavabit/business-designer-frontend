@@ -6,10 +6,10 @@ import { updateNodeText } from "@store/processConstructor/processConstructorSlic
 import { memo, useEffect, useMemo } from "react";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
-
+import { LoadingOutlined } from '@ant-design/icons';
 import styles from "./style.module.scss"
 import { useAppSelector } from "@hooks/storeHooks";
-import { Avatar } from "antd";
+import { Avatar, Spin } from "antd";
 
 type HandlePositionType = {
 	left?: number | string; 
@@ -40,6 +40,7 @@ type NodeWrapperType = {
 	resizable?: boolean;
 	icon?: React.ReactNode;
 	editable?: boolean;
+	loading?: boolean;
 };
 
 export const NodeWrapper = memo(({
@@ -57,7 +58,8 @@ export const NodeWrapper = memo(({
 	resizable = true,
 	title,
 	icon,
-	editable = true
+	editable = true,
+	loading = false
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
 
@@ -98,6 +100,24 @@ export const NodeWrapper = memo(({
 				...(overrideStyle ?? data.style),
 			}}
 		>
+			{loading && <div
+				style={{
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					backgroundColor: 'rgba(0, 0, 0, 0.4)',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					zIndex: 10,
+					borderRadius: 'inherit',
+				}}
+				>
+				<Spin size="large" indicator={<LoadingOutlined spin />}/>
+			</div>}
+			
 			{resizable && <NodeResizer isVisible={node.selected}/>}
 
 			{title && <div className={styles["node-wrapper__title"]}>

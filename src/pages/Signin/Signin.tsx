@@ -1,3 +1,4 @@
+import { PrefetchLink } from "@components/PrefetchLink/PrefetchLink";
 import { useTheme } from "@hooks/useTheme";
 import { useLoginMutation } from "@store/api/user/userApi";
 import { setCredentials } from "@store/user/userSlice";
@@ -5,7 +6,7 @@ import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type FieldType = {
   email?: string;
@@ -160,7 +161,13 @@ export const Signin = () => {
           </Form.Item>
           <div className="auth-form__additional">
             <span>Нет аккаунта?</span>
-            <Link to={"/signup"}>Зарегистрироваться</Link>
+            <PrefetchLink
+                to="/signup"
+                prefetchImport={() =>
+                    import("@pages/Signup/Signup").then(m => ({ default: m.Signup }))
+                }>
+                Зарегистрироваться
+            </PrefetchLink>
           </div>
         </Form>
       </div>

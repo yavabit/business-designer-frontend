@@ -16,5 +16,28 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, './src/pages'),
       '@data': path.resolve(__dirname, './src/shared/data/index'),
     }
-  }
+  },
+  server: {
+    open: true,
+  },
+  build: {
+    sourcemap: false,
+    cssCodeSplit: true,
+    target: 'esnext',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'antd-vendor': ['antd'],
+          'utils-vendor': ['lodash', 'dayjs'],
+          'flow-vendor': ['@xyflow/react'],
+          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+  },
 })

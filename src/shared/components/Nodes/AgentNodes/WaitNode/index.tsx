@@ -2,7 +2,7 @@ import { type Node, type NodeProps } from "@xyflow/react";
 import { NodeWrapper } from "../../NodeWrapper";
 import { CiStopwatch } from "react-icons/ci";
 import { InputNumber, Select } from 'antd';
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 const RangePickerStyles = {
 	width: '100%',
@@ -25,7 +25,20 @@ const timeOptions = [
 ]
 
 export const WaitNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
-	const [openSelect, setOpenSelect] = useState(false)
+	const [openSelect, setOpenSelect] = useState(false);
+	const [delay, setDelay] = useState({value: 0, type: 'minutes'})
+
+	const handleDelayChange = (value: number | null) => {
+		if(value) {
+			setDelay(prev => ({...prev, value}))
+		} else {
+			setDelay(prev => ({...prev, value: 0}))
+		}
+	}
+
+	const handleDelayTypeChange = (val: string) => {
+		setDelay(prev => ({...prev, type: val}))
+	}
 
 	const selectAfter = (
 		<Select 
@@ -36,9 +49,14 @@ export const WaitNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 				e.stopPropagation()
 				setOpenSelect(!openSelect)
 			}}
+			onChange={handleDelayTypeChange}
 			open={openSelect}
 		/>
 	);
+
+	useEffect(() => {
+		setOpenSelect(false)
+	}, [props])
 
 	return <NodeWrapper 
 		node={props}
@@ -61,7 +79,9 @@ export const WaitNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 					return isNaN(num) ? 0 : num;
 				}}
 				onClick={(e) => e.stopPropagation()}
+				onChange={handleDelayChange}
 				controls={false}
+				value={delay.value}
 			/>
 		</div>
 	</NodeWrapper>

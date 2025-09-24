@@ -1,15 +1,52 @@
 import { type Node, type NodeProps } from "@xyflow/react";
 import { NodeWrapper } from "../../NodeWrapper";
 import { MdEmail } from "react-icons/md";
-import { AddFieldsNode } from "@components/Nodes/AddFieldsNode";
-import { memo } from "react";
-import { Checkbox, Form, Input } from "antd";
+import { AddFieldsNode, type DefaultNodeInfoFieldType } from "@components/Nodes/AddFieldsNode";
+import { memo, useState } from "react";
+import { Badge, Checkbox, Flex, Form, Input, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 
+type DefaultEmailInfoProps = {
+	text: string;
+	success: boolean;
+	error: boolean;
+}
+
+const DefaultEmailInfo: React.FC<DefaultEmailInfoProps> = ({ text, success, error }) => {
+	return (
+		<>
+			<Typography.Text ellipsis={{ tooltip: text }}>{text}</Typography.Text>
+			<Flex vertical>
+				{success && <Badge status="success" text={"В случае успеха"} />}
+				{error && <Badge status="success" text={"В случае ошибки"}/>}
+			</Flex>
+		</>
+	);
+};
+
+type FieldType = {
+  to: string;
+  prev_success?: string;
+  prev_error?: string;
+};
+
 export const EmailNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 
-	const [emailForm] = useForm();
+	const [emailForm] = useForm<FieldType>();
+	const [defaultFields, setDefaultFields] = useState<DefaultNodeInfoFieldType[]>([]);
+
+	const handleConfirmModal = () => {
+		const result = [];
+		result.push({
+			label: <DefaultEmailInfo 
+				text={emailForm.getFieldValue("to")} 
+				success={emailForm.getFieldValue("prev_success")}
+				error={emailForm.getFieldValue("prev_error")}
+			/>,
+		});
+		setDefaultFields(result);
+	};
 
 	return <NodeWrapper 
 		node={props}
@@ -19,18 +56,18 @@ export const EmailNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 		handleTop={false}
 		icon={<MdEmail />}
 	>
-		<AddFieldsNode btnLabel={'Добавить отправку email'}>
+		<AddFieldsNode btnLabel={'Добавить отправку email'} handleConfirmModal={handleConfirmModal} defaultFields={defaultFields}>
 			<Form form={emailForm} layout="vertical">
-				<Form.Item label="Кому" required>
+				<Form.Item label="Кому" required name={"to"}>
 					<Input placeholder="https://example.com/api"/>
 				</Form.Item>
-				<Form.Item label={"Содержание"}>
+				<Form.Item label={"Содержание"} name={"text"}>
 					<TextArea/>
 				</Form.Item>
-				<Form.Item>
+				<Form.Item name={"prev_success"} valuePropName="checked">
 					<Checkbox>Выполнять если предыдущий этап успешный</Checkbox>
 				</Form.Item>
-				<Form.Item >
+				<Form.Item name={"prev_error"} valuePropName="checked">
 					<Checkbox>Выполнять если предыдущий этап не успешный</Checkbox>
 				</Form.Item>
 			</Form>
