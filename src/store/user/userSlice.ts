@@ -21,7 +21,7 @@ const initialState: InitialState = {
     email: "",
     pict_url: "",
     token: "",
-    isAuth: false,
+    isAuth: true,
     isLoading: true,
     projects_count: 0,
 };
