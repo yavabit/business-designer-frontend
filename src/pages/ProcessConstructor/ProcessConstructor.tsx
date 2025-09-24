@@ -15,7 +15,7 @@ import {
   type Edge,
   type OnConnect,
   getViewportForBounds,
-	type EdgeMouseHandler,
+  type EdgeMouseHandler,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -45,6 +45,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Flex, Spin } from "antd";
 import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
 import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
+import { socket } from "@store/api/soket";
+import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
@@ -159,8 +161,7 @@ export const ProcessConstructor = memo(() => {
     [dispatch]
   );
 
-	
-	const handleEdgeClick: EdgeMouseHandler = useCallback(
+  const handleEdgeClick: EdgeMouseHandler = useCallback(
     (_, edge) => {
       dispatch(setSelectedEdge(edge));
     },
@@ -240,19 +241,89 @@ export const ProcessConstructor = memo(() => {
 
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
     (e) => {
+      // socket.emit("document-update", {
+      //   documentId: processId,
+      //   content: {
+      //     nodes: e,
+      //   },
+      // });
       dispatch(onNodesChange(e));
     },
     [dispatch]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
-    (e) => dispatch(onEdgesChange(e)),
+    (e) => {
+      // socket.emit("document-update", {
+      //   documentId: processId,
+      //   content: {
+      //     edges: e,
+      //   },
+      // });
+      dispatch(onEdgesChange(e));
+    },
     [dispatch]
   );
   const handleChangeConnect = useCallback<OnConnect>(
-    (e) => dispatch(onConnect(e)),
+    (e) => {
+      // socket.emit("document-update", {
+      //   documentId: processId,
+      //   content: {
+      //     connects: e,
+      //   },
+      // });
+      dispatch(onConnect(e));
+    },
     [dispatch]
   );
 
+  // Сокеты.
+  // const [isConnected, setIsConnected] = useState(socket.connected);
+
+  useEffect(() => {
+    function onSocketConnect() {
+      console.log("onConnect");
+      // setIsConnected(true);
+    }
+
+    function onSocketDisconnect() {
+      console.log("onDisconnect");
+      // setIsConnected(false);
+    }
+
+    // function onDocumentUpdate(e) {
+    //   console.log("onDocumentUpdate", e);
+
+    //   const { content } = e;
+    //   const { nodes, edges, connects } = content;
+
+    //   if(nodes)
+    //   	dispatch(onNodesChange(nodes));
+
+    //   if(edges)
+    //   	dispatch(onEdgesChange(edges));
+
+    //   if(connects)
+    //   	dispatch(onConnect(connects));
+    // }
+
+    socket.on("connect", onSocketConnect);
+    socket.on("disconnect", onSocketDisconnect);
+    // socket.on("document-update", onDocumentUpdate);
+
+    return () => {
+      socket.off("connect", onSocketConnect);
+      socket.off("disconnect", onSocketDisconnect);
+      // socket.off("document-update", onDocumentUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit("join-document", processId);
+
+    return () => {
+      socket.emit("leave-document", processId);
+    };
+  }, [processId]);
 
   return (
     <div className={style.dndflow}>
@@ -309,7 +380,7 @@ export const ProcessConstructor = memo(() => {
               flowAutosave();
             }}
             onNodeClick={handleNodeClick}
-						onEdgeClick={handleEdgeClick}
+            onEdgeClick={handleEdgeClick}
             nodeTypes={nodeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}
@@ -334,6 +405,7 @@ export const ProcessConstructor = memo(() => {
         )}
       </div>
       <Hotkeys />
+      <UserMulticursor processId={processId} />
     </div>
   );
 });
