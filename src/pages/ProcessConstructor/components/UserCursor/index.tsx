@@ -1,22 +1,21 @@
 import { useMouse } from "@hooks/useMouse";
-import { socket } from "@store/api/soket";
+import { socket } from "@store/api/socket";
 import { useEffect, useState } from "react";
 import { FcCursor } from "react-icons/fc";
 
 interface IUserMulticursor {
-	processId: string | undefined
+  processId: string | undefined;
 }
 
 interface IUserCursorMove {
-	userId: string,
-	x: number,
-	y: number
+  userId: string;
+  x: number;
+  y: number;
 }
 
 interface ICursors {
-	[userId: string]: { x: number, y: number }
+  [userId: string]: { x: number; y: number };
 }
-
 
 const UserMulticursor = ({ processId }: IUserMulticursor) => {
   const { mousePos } = useMouse();

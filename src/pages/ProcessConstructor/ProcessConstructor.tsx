@@ -45,8 +45,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Flex, Spin } from "antd";
 import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
 import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
-import { socket } from "@store/api/soket";
+import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
+
+
+interface IDocumentRefresh {
+	content: { nodes: []; edges: []; connects: [] }
+}
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
@@ -241,79 +246,76 @@ export const ProcessConstructor = memo(() => {
 
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
     (e) => {
-      // socket.emit("document-update", {
-      //   documentId: processId,
-      //   content: {
-      //     nodes: e,
-      //   },
-      // });
+      socket.emit("document-refresh", {
+        documentId: processId,
+        content: {
+          nodes: e,
+        },
+      });
       dispatch(onNodesChange(e));
     },
     [dispatch]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
     (e) => {
-      // socket.emit("document-update", {
-      //   documentId: processId,
-      //   content: {
-      //     edges: e,
-      //   },
-      // });
+      socket.emit("document-refresh", {
+        documentId: processId,
+        content: {
+          edges: e,
+        },
+      });
       dispatch(onEdgesChange(e));
     },
     [dispatch]
   );
   const handleChangeConnect = useCallback<OnConnect>(
     (e) => {
-      // socket.emit("document-update", {
-      //   documentId: processId,
-      //   content: {
-      //     connects: e,
-      //   },
-      // });
+      socket.emit("document-refresh", {
+        documentId: processId,
+        content: {
+          connects: e,
+        },
+      });
       dispatch(onConnect(e));
     },
     [dispatch]
   );
 
   // Сокеты.
-  // const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
     function onSocketConnect() {
       console.log("onConnect");
-      // setIsConnected(true);
     }
 
     function onSocketDisconnect() {
       console.log("onDisconnect");
-      // setIsConnected(false);
     }
 
-    // function onDocumentUpdate(e) {
-    //   console.log("onDocumentUpdate", e);
+    function onDocumentUpdate(e: IDocumentRefresh) {
+      console.log("onDocumentUpdate", e);
 
-    //   const { content } = e;
-    //   const { nodes, edges, connects } = content;
+      const { content } = e;
+      const { nodes, edges, connects } = content;
 
-    //   if(nodes)
-    //   	dispatch(onNodesChange(nodes));
+      if(nodes)
+      	dispatch(onNodesChange(nodes));
 
-    //   if(edges)
-    //   	dispatch(onEdgesChange(edges));
+      if(edges)
+      	dispatch(onEdgesChange(edges));
 
-    //   if(connects)
-    //   	dispatch(onConnect(connects));
-    // }
+      if(connects)
+      	dispatch(onConnect(connects));
+    }
 
     socket.on("connect", onSocketConnect);
     socket.on("disconnect", onSocketDisconnect);
-    // socket.on("document-update", onDocumentUpdate);
+    socket.on("document-refresh", onDocumentUpdate);
 
     return () => {
       socket.off("connect", onSocketConnect);
       socket.off("disconnect", onSocketDisconnect);
-      // socket.off("document-update", onDocumentUpdate);
+      socket.off("document-refresh", onDocumentUpdate);
     };
   }, []);
 
