@@ -1,11 +1,14 @@
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
+import { useMouse } from "@hooks/useMouse";
 import { MappingKeys } from "@pages/ProcessConstructor/components/Hotkeys/mapping";
 import { addNode } from "@store/processConstructor/processConstructorSlice";
 import { useReactFlow } from "@xyflow/react";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 export const Hotkeys = () => {
+	const { mousePos } = useMouse()
+
   const { getNode, setNodes, setEdges, screenToFlowPosition } = useReactFlow();
   const dispatch = useAppDispatch();
 
@@ -15,22 +18,6 @@ export const Hotkeys = () => {
     (state) => state.processConstructor
   );
 
-  const [mousePos, setMousePos] = useState({
-    x: 0,
-    y: 0,
-  });
-
-  const mouseMove = (event: MouseEvent) => {
-    setMousePos({
-      x: event.clientX,
-      y: event.clientY,
-    });
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousemove", mouseMove);
-    return () => document.removeEventListener("mousemove", mouseMove);
-  }, []);
 
   useHotkeys(MappingKeys.Copy.key, () => {
     if (!selectedNode) return;
