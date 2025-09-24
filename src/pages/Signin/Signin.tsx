@@ -50,6 +50,7 @@ export const Signin = () => {
       const creds = {
         email: values.email!,
         password: values.password!,
+        isMemo: values.remember,
       };
 
       const response = await login(creds);
