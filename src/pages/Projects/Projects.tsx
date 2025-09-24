@@ -14,6 +14,11 @@ import { Button, Flex, Spin } from "antd";
 import { useInfiniteScroll } from "@hooks/useInfinityScroll";
 import type { RootState } from "@store/index";
 import { useDebounce } from "@hooks/useDebounce";
+import { useLazyImport } from "@hooks/useLazyImport";
+
+const prefetchPages = [
+  () => import("@pages/Processes/Processes").then(m => ({ default: m.Processes })),
+];
 
 export const Projects: FC = () => {
     const [checked, setChecked] = useState<string | undefined>();
@@ -44,6 +49,8 @@ export const Projects: FC = () => {
     const isEditModalOpen = useSelector(
         (state: RootState) => state.projects.isEditModalOpen
     );
+
+    useLazyImport(prefetchPages, { eager: true });
 
     useEffect(() => {
         setSearchString(debouncedSearchValue);

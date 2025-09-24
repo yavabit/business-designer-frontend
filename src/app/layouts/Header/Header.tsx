@@ -11,6 +11,7 @@ import { setThemeName } from "@store/user/themeSlice";
 import logoLight from "../../../shared/assets/img/logo_light.svg";
 import logoDark from "../../../shared/assets/img/logo_dark.svg";
 import { useLogoutMutation } from "@store/api/user/userApi";
+import { PrefetchLink } from "@components/PrefetchLink/PrefetchLink";
 
 export const Header: FC = () => {
     const { isDarkMode, token } = useTheme();
@@ -41,7 +42,13 @@ export const Header: FC = () => {
     const avatarItems: MenuProps = {
         items: [
             {
-                label: <Link to="/me">Профиль</Link>,
+                label: <PrefetchLink
+                        to="/me"
+                        prefetchImport={() =>
+                            import("@pages/Profile/Profile").then(m => ({ default: m.Profile }))
+                        }>
+                        Профиль
+                    </PrefetchLink>,
                 key: "0",
             },
             {
@@ -84,6 +91,7 @@ export const Header: FC = () => {
                                     size={"large"}
                                     src={undefined}
                                     icon={<BsFillPersonFill />}
+                                    style={{cursor: 'pointer'}}
                                 />
                             </Dropdown>
                         </Flex>

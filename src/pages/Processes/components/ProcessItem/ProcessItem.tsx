@@ -1,3 +1,4 @@
+import { PrefetchButton } from "@components/PrefetchButton/PrefetchButton";
 import { nodesCategoriesColor, nodesCategoriesNames } from "@data";
 import { Avatar, Badge, Card, Image } from "antd";
 import { memo } from "react";
@@ -44,17 +45,20 @@ export const ProcessItem = memo(
 						>
 							<AiOutlineDelete key="ellipsis" />
 						</div>,
-						<div
-							onClick={() =>
-								navigate(`/process/${item.id}`, {
-									state: {
-										metadata: item.project_id ?? "",
-									},
-								})
-							}
-						>
-							<AiOutlineEdit key="edit" />
-						</div>,
+						<PrefetchButton
+      prefetchImport={() =>
+        import("@pages/ProcessConstructor/ProcessConstructor").then(m => ({
+          default: m.ProcessConstructor,
+        }))
+      }
+      onClick={() =>
+        navigate(`/process/${item.id}`, {
+          state: { metadata: item.project_id ?? "" },
+        })
+      }
+    >
+      <AiOutlineEdit key="edit" />
+    </PrefetchButton>,
 					]}
 					hoverable
 				>
