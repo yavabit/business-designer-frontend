@@ -4,13 +4,14 @@ import styles from "./Header.module.scss";
 import { BsFillPersonFill } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@store/index";
+import { persistor, type RootState } from "@store/index";
 import { AiOutlineMoon, AiOutlineSun } from "react-icons/ai";
 import { useTheme } from "@hooks/useTheme";
 import { setThemeName } from "@store/user/themeSlice";
 import logoLight from "../../../shared/assets/img/logo_light.svg";
 import logoDark from "../../../shared/assets/img/logo_dark.svg";
 import { useLogoutMutation } from "@store/api/user/userApi";
+import { reset } from "@store/user/userSlice";
 
 export const Header: FC = () => {
     const { isDarkMode, token } = useTheme();
@@ -31,6 +32,8 @@ export const Header: FC = () => {
         logout().then((res) => {
             if (res.data) {
                 navigate("/login");
+                dispatch(reset());
+                persistor.purge();
             }
             if (res.error) {
                 message.error("Ошибка во время выхода");
