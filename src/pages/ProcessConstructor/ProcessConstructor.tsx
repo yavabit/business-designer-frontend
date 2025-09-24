@@ -45,7 +45,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Flex, Spin } from "antd";
 import { BsChevronLeft, BsFillPencilFill } from "react-icons/bs";
 import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
-import { socket } from "@store/api/soket";
+import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 
 export const ProcessConstructor = memo(() => {
