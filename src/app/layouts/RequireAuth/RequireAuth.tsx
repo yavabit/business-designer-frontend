@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 export const RequireAuth: FC = () => {
-    const isAuth = useSelector((state: RootState) => state.user.isAuth)
-    
-    return isAuth ? (
+    const { isAuth, token } = useSelector((state: RootState) => state.user);
+
+    return (isAuth && token) ? (
         <Outlet />
     ) : (
-        <Navigate to='/login'/>
+        <Navigate to='/login' replace />
     );
 };

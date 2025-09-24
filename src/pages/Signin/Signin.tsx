@@ -56,11 +56,11 @@ export const Signin = () => {
 
       if (response.data) {
         navigate("/projects");
-		dispatch(setCredentials({
-			email: response.data.data.email,
-			id: response.data.data.id,
-			accessToken: response.data.accessToken
-		}))
+        dispatch(setCredentials({
+          email: response.data.data.email,
+          id: response.data.data.id,
+          accessToken: response.data.accessToken
+        }))
       } else {
         if (response.error) {
           form.setFields([
