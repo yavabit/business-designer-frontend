@@ -25,11 +25,7 @@ export const ConstructorHeader: FC<{
 
     useEffect(() => {
         if (isAgent) {
-            getTriggers().then(res => {
-                if (res.data) {
-
-                }
-            })
+            getTriggers()
         }
     }, [isAgent])
     
