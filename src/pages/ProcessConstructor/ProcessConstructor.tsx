@@ -48,6 +48,11 @@ import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
 import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 
+
+interface IDocumentRefresh {
+	content: { nodes: []; edges: []; connects: [] }
+}
+
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
 
@@ -287,7 +292,7 @@ export const ProcessConstructor = memo(() => {
       console.log("onDisconnect");
     }
 
-    function onDocumentUpdate(e) {
+    function onDocumentUpdate(e: IDocumentRefresh) {
       console.log("onDocumentUpdate", e);
 
       const { content } = e;
