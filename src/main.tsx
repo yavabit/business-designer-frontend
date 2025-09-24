@@ -6,15 +6,12 @@ import { BrowserRouter } from 'react-router-dom'
 import '@ant-design/v5-patch-for-react-19';
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './store'
-import { Spin } from 'antd'
-
-
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ReduxProvider>
       <PersistGate 
-        loading={<Spin fullscreen />}
+        loading={null}
         persistor={persistor}
       >
         <BrowserRouter>
