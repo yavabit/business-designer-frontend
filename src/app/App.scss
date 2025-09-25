@@ -111,8 +111,9 @@ button:focus-visible {
       }
     }
 
-    button:focus {
-      outline: none;
-    }
+    
   }
+}
+button:focus {
+  outline: none;
 }
