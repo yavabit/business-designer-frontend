@@ -21,7 +21,7 @@ import { themeReducer } from '@store/user/themeSlice';
 const userPersistConfig = {
 	key: 'user',
 	storage,
-	whitelist: ['token']
+	whitelist: ['id', 'email', 'token']
 }
 
 const rootReducer = {
@@ -44,22 +44,6 @@ export const store = configureStore({
       },
     }).concat(baseApi.middleware),
 })
-
-// export const store = configureStore({
-// 	reducer: {
-// 		[baseApi.reducerPath]: baseApi.reducer,
-// 		user: userReducer,
-// 		process: processReducer,
-// 		projects: projectsReducer,
-// 		nodes: nodeReducer,
-// 		processConstructor: processConstructorReducer,
-// 		theme: themeReducer,
-// 	},
-// 	middleware: (getDefaultMiddleware) =>
-// 		getDefaultMiddleware({
-// 			serializableCheck: false
-// 		}).concat(baseApi.middleware),
-// })
 
 export const persistor = persistStore(store)
 
