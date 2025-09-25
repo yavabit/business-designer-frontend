@@ -89,3 +89,9 @@ interface ICredentials {
     accessToken: string;
     data: Omit<IUser, 'isAuth'>;
 }
+
+interface ITrigger {
+    id: string,
+    name: string,
+    created_at: string,
+}

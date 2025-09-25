@@ -112,6 +112,22 @@ export const processesApi = baseApi.injectEndpoints({
 				],
 			})
 		}),
+		getTriggerTypes: builder.query<{data: ITrigger[]}, void>({
+			query: () => ({
+				url: `/triggers`,
+				method: "GET",
+			}),
+			providesTags: (result) =>
+                result
+                    ? [
+                          ...result.data.map(({ id }) => ({
+                              type: apiTags.projects,
+                              id,
+                          })),
+                          { type: apiTags.triggers, id: "LIST" },
+                      ]
+                    : [{ type: apiTags.triggers, id: "LIST" }],
+		}),
 	}),
 });
 
@@ -123,5 +139,6 @@ export const {
 	useDeleteProcessMutation,
 	useUpdateProcessDataMutation,
 	useLazyTypesProcessQuery,
-	useTypesProcessQuery
+	useTypesProcessQuery,
+	useLazyGetTriggerTypesQuery,
 } = processesApi;
