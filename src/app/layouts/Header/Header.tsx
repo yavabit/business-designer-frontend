@@ -80,9 +80,26 @@ export const Header: FC = () => {
                         )}
                     </Link>
                 </Flex>
-                {isAuth && (
-                    <div>
-                        <Flex justify="center" align="center" gap={10}>
+                <div>
+                    <Flex justify="center" align="center" gap={10}>
+                        {isAuth &&
+                            <Link
+                                to="/"
+                                className={styles["header-link"] + (isDarkMode ? ` ${styles.dark}` : "")}
+                            >
+                                Проекты
+                            </Link>
+                        }
+                        <PrefetchLink
+                            to="/roadmap"
+                            className={styles["header-link"] + (isDarkMode ? ` ${styles.dark}` : "")}
+                            prefetchImport={() =>
+                                import("@pages/Roadmap/Roadmap").then(m => ({ default: m.Roadmap }))
+                            }>
+                            Роадмап
+                        </PrefetchLink>
+                    {isAuth && (
+                        <>
                             <Switch
                                 checkedChildren={<AiOutlineSun />}
                                 unCheckedChildren={<AiOutlineMoon />}
@@ -97,9 +114,10 @@ export const Header: FC = () => {
                                     style={{cursor: 'pointer'}}
                                 />
                             </Dropdown>
-                        </Flex>
-                    </div>
-                )}
+                        </>
+                    )}
+                    </Flex>
+                </div>
             </Flex>
         </header>
     );

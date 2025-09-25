@@ -22,6 +22,9 @@ const Processes = lazy(() =>
 const Profile = lazy(() =>
   import("@pages/Profile/Profile").then((m) => ({ default: m.Profile }))
 );
+const Roadmap = lazy(() =>
+  import("@pages/Roadmap/Roadmap").then((m) => ({ default: m.Roadmap }))
+);
 
 export const Router = () => {
   return (
@@ -44,6 +47,9 @@ export const Router = () => {
             <Route path="me" element={<Profile />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
+        </Route>
+        <Route element={<Layout />}>
+          <Route path="roadmap" element={<Roadmap />} />
         </Route>
         <Route path="login" element={<Signin />} />
         <Route path="signup" element={<Signup />} />

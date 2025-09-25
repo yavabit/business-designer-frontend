@@ -1,0 +1,24 @@
+.serpentine-timeline-container {
+  position: relative;
+  margin: 50px auto;
+}
+
+.timeline-item {
+  position: absolute;
+  width: 140px;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+
+  &.process {
+    border: 1px solid #1890ff;
+  }
+  &.light {
+    background: #9696963a;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
