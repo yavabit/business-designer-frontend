@@ -141,7 +141,7 @@ export const ProjectItem: FC<
                         <div
                             className={styles["project-pict"]}
                             style={{
-                                background: `url('${pict_url}') center / cover no-repeat`,
+                                background: `url('${import.meta.env.VITE_API_HOST}${pict_url}') center / cover no-repeat`,
                             }}></div>
                     ) : (
                         <FolderIcon />
