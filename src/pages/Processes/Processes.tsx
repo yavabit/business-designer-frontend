@@ -157,14 +157,13 @@ export const Processes: FC = () => {
             title={
                 <Flex align="center" gap={16}>
                     {!!project && (
-                        <Button 
-                            onClick={() => navigate('/')}
-                        >
+                        <Button onClick={() => navigate("/")}>
                             <BsChevronLeft />
                         </Button>
                     )}
                     <>Процессы {project}</>
-                </Flex>}
+                </Flex>
+            }
             action={() => dispatch(setProcessCreationModal(true))}
             searchAction={handleSearch}
             sortFieldAction={handleSortField}
@@ -245,13 +244,11 @@ export const Processes: FC = () => {
                     </Flex>
                 )}
 
-                {!hasMore && allProcesses.length > 0 && currentPage > 1 &&  (
+                {!hasMore && allProcesses.length > 0 && currentPage > 1 && (
                     <Flex
                         justify="center"
                         style={{ padding: "20px", color: "#666" }}>
-                        <p>
-                            Все процессы загружены
-                        </p>
+                        <p>Все процессы загружены</p>
                     </Flex>
                 )}
 
