@@ -184,10 +184,11 @@ export const ProcessConstructor = memo(() => {
     () =>
       debounce(() => {
         if (processId && rfInstance) {
-          updateProcessScheme({
-            id: processId,
+
+					socket.emit('document-update', {
+						documentId: processId,
             content: JSON.stringify(rfInstance.toObject()),
-          });
+					})
 
           const imageWidth = 1920;
           const imageHeight = 1080;
