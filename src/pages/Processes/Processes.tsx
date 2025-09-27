@@ -101,17 +101,14 @@ export const Processes: FC = () => {
     });
 
     const handleDelete = useCallback(
-        async (id: string, name: string) => {
-            const shouldDelete = window.confirm(`Удалить процесс "${name}"?`);
-            if (shouldDelete) {
-                try {
-                    await deleteProcess(id).unwrap();
-                    setAllProcesses((prev) =>
-                        prev.filter((process) => process.id !== id)
-                    );
-                } catch (error) {
-                    console.error("Ошибка при удалении процесса:", error);
-                }
+        async (id: string, _name: string) => {
+            try {
+                await deleteProcess(id).unwrap();
+                setAllProcesses((prev) =>
+                    prev.filter((process) => process.id !== id)
+                );
+            } catch (error) {
+                console.error("Ошибка при удалении процесса:", error);
             }
         },
         [deleteProcess]

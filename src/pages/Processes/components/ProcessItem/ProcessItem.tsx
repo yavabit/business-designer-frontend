@@ -1,6 +1,6 @@
 import { PrefetchButton } from "@components/PrefetchButton/PrefetchButton";
 import { nodesCategoriesColor, nodesCategoriesNames } from "@data";
-import { Avatar, Badge, Card, Image } from "antd";
+import { Avatar, Badge, Card, Image, Modal } from "antd";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import processCardBack from "../../../../shared/assets/img/process_card_back.svg";
@@ -8,6 +8,8 @@ import processCardBackLight from "../../../../shared/assets/img/process_card_bac
 import { useTheme } from "@hooks/useTheme";
 import { BsFillTrashFill } from "react-icons/bs";
 import { BsFillPencilFill } from "react-icons/bs";
+import type { RootState } from "@store/index";
+import { useSelector } from "react-redux";
 
 const { Meta } = Card;
 
@@ -22,6 +24,7 @@ type ProcessItemProps = {
 export const ProcessItem = memo(
     ({ item, isLoading, handleDelete }: ProcessItemProps) => {
         const navigate = useNavigate();
+        const userId = useSelector((state: RootState) => state.user.id);
 
         const { isDarkMode } = useTheme();
 
@@ -58,13 +61,27 @@ export const ProcessItem = memo(
                         />
                     }
                     actions={[
-                        <div
+                        ...(userId === item.author_id ? [<div
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleDelete(item.id, item.name);
+                                    Modal.confirm({
+                                        title: 'Удалить',
+                                        content: 'Вы действительно хотите удалить процесс?',
+                                        cancelText: 'Отменить',
+                                        okText: 'Удалить',
+                                        onOk: () => {
+                                            handleDelete(item.id, item.name);
+                                        },
+                                        footer: (_, { OkBtn, CancelBtn }) => (
+                                        <>
+                                            <CancelBtn />
+                                            <OkBtn />
+                                        </>
+                                        ),
+                                });
                             }}>
 								<BsFillTrashFill key="ellipsis" size={16}/>
-                        </div>,
+                        </div>] : []),
                         <PrefetchButton
                             prefetchImport={() =>
                                 import(
