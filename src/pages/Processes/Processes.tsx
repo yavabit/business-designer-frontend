@@ -101,7 +101,7 @@ export const Processes: FC = () => {
     });
 
     const handleDelete = useCallback(
-        async (id: string, _name: string) => {
+        async (id: string) => {
             try {
                 await deleteProcess(id).unwrap();
                 setAllProcesses((prev) =>
