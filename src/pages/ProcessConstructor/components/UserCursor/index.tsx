@@ -1,7 +1,7 @@
 import { useMouse } from "@hooks/useMouse";
+import Cursor from "@pages/ProcessConstructor/components/UserCursor/Cursor";
 import { socket } from "@store/api/socket";
 import { useEffect, useState } from "react";
-import { FcCursor } from "react-icons/fc";
 
 interface IUserMulticursor {
   processId: string | undefined;
@@ -54,20 +54,7 @@ const UserMulticursor = ({ processId }: IUserMulticursor) => {
   return (
     <>
       {Object.keys(cursors).map((userId, i) => (
-        <span
-          key={i}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            transform: `translate(${cursors[userId].x}px, ${cursors[userId].y}px)`,
-            transition: "transform 120ms linear",
-            color: "red",
-          }}
-        >
-          <FcCursor size={25} />
-          <span>{userId}</span>
-        </span>
+        <Cursor key={i} x={cursors[userId].x} y={cursors[userId].y} label={userId}/>
       ))}
     </>
   );
