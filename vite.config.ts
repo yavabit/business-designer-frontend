@@ -10,6 +10,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, './src/shared/components'),
       '@app': path.resolve(__dirname, './src/app'),
       '@store': path.resolve(__dirname, './src/store'),
+      '@shared': path.resolve(__dirname, './src/shared'),
       '@type': path.resolve(__dirname, './src/shared/types'),
       '@hooks': path.resolve(__dirname, './src/shared/hooks'),
       '@contexts': path.resolve(__dirname, './src/shared/contexts'),
