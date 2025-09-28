@@ -36,7 +36,7 @@ import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 import { useTheme } from "@hooks/useTheme";
 import { debounce } from "lodash";
 import {
-  useLazyGetProcessQuery,
+  useGetProcessQuery,
   useUpdateProcessImageMutation,
   useUpdateProcessSchemeMutation,
 } from "@store/api/processConstructor/processConstructorApi";
@@ -48,9 +48,8 @@ import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHeader";
 
-
 interface IDocumentRefresh {
-	content: { nodes: []; edges: []; connects: [] }
+  content: { nodes: []; edges: []; connects: [] };
 }
 
 export const ProcessConstructor = memo(() => {
@@ -68,17 +67,10 @@ export const ProcessConstructor = memo(() => {
 
   const { processId } = useParams();
 
-  const [getProcess, { data: processData, isLoading }] =
-    useLazyGetProcessQuery();
+  const { data: processData, isLoading } = useGetProcessQuery({ processId });
 
   const [updateProcessScheme] = useUpdateProcessSchemeMutation();
   const [updateProcessImage] = useUpdateProcessImageMutation();
-
-  useEffect(() => {
-    getProcess({
-      processId,
-    });
-  }, [getProcess, processId]);
 
   const colorModeFlow = useMemo(() => {
     return isDarkMode ? "dark" : "light";
@@ -184,8 +176,8 @@ export const ProcessConstructor = memo(() => {
     () =>
       debounce(() => {
         if (processId && rfInstance) {
-          updateProcessScheme({
-            id: processId,
+          socket.emit("document-update", {
+            documentId: processId,
             content: JSON.stringify(rfInstance.toObject()),
           });
 
@@ -296,14 +288,11 @@ export const ProcessConstructor = memo(() => {
       const { content } = e;
       const { nodes, edges, connects } = content;
 
-      if(nodes)
-      	dispatch(onNodesChange(nodes));
+      if (nodes) dispatch(onNodesChange(nodes));
 
-      if(edges)
-      	dispatch(onEdgesChange(edges));
+      if (edges) dispatch(onEdgesChange(edges));
 
-      if(connects)
-      	dispatch(onConnect(connects));
+      if (connects) dispatch(onConnect(connects));
     }
 
     socket.on("connect", onSocketConnect);
@@ -337,9 +326,9 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <ConstructorHeader 
-          processName={processData?.data.name} 
-          isAgent={processData?.data.category === 'agent'} 
+        <ConstructorHeader
+          processName={processData?.data.name}
+          isAgent={processData?.data.category === "agent"}
         />
         {isLoading && (
           <Flex justify="center" style={{ padding: "20px" }}>

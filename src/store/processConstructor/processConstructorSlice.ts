@@ -30,6 +30,7 @@ const processConstructorSlice = createSlice({
 				id: crypto.randomUUID()
 			};
 			state.nodes = [...state.nodes, newNode];
+
 		},
 		updateNodeProperties: (state, { payload }: PayloadAction<{
 			id: string;

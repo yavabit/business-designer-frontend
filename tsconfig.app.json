@@ -12,6 +12,7 @@
       "@store/*": ["./src/store/*"],
       "@app/*": ["./src/app/*"],
       "@hooks/*": ["./src/shared/hooks/*"],
+      "@shared/*": ["./src/shared/*"],
       "@type/*": ["./src/shared/types/*"],
       "@contexts/*": ["./src/shared/contexts/*"],
       "@pages/*": ["./src/pages/*"],
