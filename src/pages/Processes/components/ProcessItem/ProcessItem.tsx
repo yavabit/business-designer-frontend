@@ -52,7 +52,7 @@ export const ProcessItem = memo(
                             alt="Изображение процесса"
                             height={300}
                             width={300}
-                            src={item.pict_url ?? undefined}
+                            src={import.meta.env.VITE_API_HOST + item.pict_url}
                             fallback={
                                 isDarkMode
                                     ? processCardBack
