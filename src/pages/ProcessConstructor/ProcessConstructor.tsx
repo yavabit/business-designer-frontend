@@ -314,7 +314,6 @@ export const ProcessConstructor = memo(() => {
     };
   }, [processId]);
 
-
   return (
     <div className={style.dndflow}>
       <div
@@ -378,10 +377,10 @@ export const ProcessConstructor = memo(() => {
             <MiniMap />
             <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
             {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
-						<UserMulticursor processId={processId}/>
           </ReactFlow>
         )}
       </div>
+      <UserMulticursor processId={processId} />
       <Hotkeys />
     </div>
   );

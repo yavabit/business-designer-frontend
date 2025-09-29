@@ -16,7 +16,11 @@ export const useMouse = () => {
 
 	useEffect(() => {
 		document.addEventListener("mousemove", mouseMove);
-		return () => document.removeEventListener("mousemove", mouseMove);
+		document.addEventListener("mouseover", mouseMove);
+		return () => {
+			document.removeEventListener("mousemove", mouseMove);
+			document.removeEventListener("mouseover", mouseMove);
+		}
 	}, []);
 
 	return {

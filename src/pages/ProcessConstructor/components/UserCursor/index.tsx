@@ -31,14 +31,12 @@ const UserMulticursor = ({
     function onUserCursorMove(e: IUserCursorMove) {
       const { userId, username, x, y } = e;
 
-      const firstName = username.split(" ")[0];
+      const firstName = username.split(" ")[1];
 
 			const flowPos = flowToScreenPosition({
 				x: x,
 				y: y
 			})
-
-			const headerOffset = 134
 
 
       setCursors((prevState) => ({
@@ -46,7 +44,7 @@ const UserMulticursor = ({
         [userId]: {
           username: firstName,
           x: flowPos.x,
-          y: flowPos.y - headerOffset,
+          y: flowPos.y,
         },
       }));
     }
