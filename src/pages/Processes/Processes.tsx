@@ -7,14 +7,14 @@ import {
     useLazyGetProcessesQuery,
 } from "@store/api/processes/processesApi";
 import { useDebounce } from "@hooks/useDebounce";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "@store/index";
 import { useInfiniteScroll } from "@hooks/useInfinityScroll";
-import { setProcessCreationModal } from "@store/process/processSlice";
 import { BsChevronLeft } from "react-icons/bs";
 import { ProcessItem } from "./components/ProcessItem/ProcessItem";
 
 export const Processes: FC = () => {
+    
     const [searchString, setSearchString] = useState<string>("");
     const [searchValue, setSearchValue] = useState<string>("");
     const [sortField, setSortField] = useState<string>("updated_at");
@@ -33,12 +33,10 @@ export const Processes: FC = () => {
 
     const [deleteProcess] = useDeleteProcessMutation();
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
     const project = location.state.metadata;
-
     const isCreationModalOpen = useSelector(
         (state: RootState) => state.process.isCreationModalOpen
     );
@@ -161,7 +159,7 @@ export const Processes: FC = () => {
                     <>Процессы {project}</>
                 </Flex>
             }
-            action={() => dispatch(setProcessCreationModal(true))}
+            action={() => navigate("create-process")}
             searchAction={handleSearch}
             sortFieldAction={handleSortField}
             sortOrderAction={handleSortOrder}>
@@ -199,7 +197,8 @@ export const Processes: FC = () => {
                             <p>Не создано ни одного процесса.</p>
                             <Button
                                 onClick={() =>
-                                    dispatch(setProcessCreationModal(true))
+                                    /* dispatch(setProcessCreationModal(true)) */
+                                    navigate("create-process")
                                 }>
                                 Создать?
                             </Button>

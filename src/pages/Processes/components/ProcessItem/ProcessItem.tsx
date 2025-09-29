@@ -18,12 +18,13 @@ const { Meta } = Card;
 type ProcessItemProps = {
     item: IProcess;
     isLoading: boolean;
-    handleDelete: (id: string) => Promise<void>;
+    handleDelete?: (id: string) => Promise<void>;
+    disabled?: boolean;
 };
 
 
 export const ProcessItem = memo(
-    ({ item, isLoading, handleDelete }: ProcessItemProps) => {
+    ({ item, isLoading, handleDelete, disabled = false }: ProcessItemProps) => {
         const navigate = useNavigate();
         const userId = useSelector((state: RootState) => state.user.id);
 
@@ -66,6 +67,8 @@ export const ProcessItem = memo(
                         ...(userId === item.author_id ? [<div
                             onClick={(e) => {
                                 e.stopPropagation();
+                                if(handleDelete && !disabled)
+
                                     Modal.confirm({
                                         title: 'Удалить',
                                         content: 'Вы действительно хотите удалить процесс?',
@@ -92,10 +95,12 @@ export const ProcessItem = memo(
                                     default: m.ProcessConstructor,
                                 }))
                             }
-                            onClick={() =>
-                                navigate(`/process/${item.id}`, {
-                                    state: { metadata: item.project_id ?? "" },
-                                })
+                            onClick={() => {
+                                if(handleDelete && !disabled)
+                                    navigate(`/process/${item.id}`, {
+                                        state: { metadata: item.project_id ?? "" },
+                                    })
+                                }
                             }>
                             <BsFillPencilFill key="edit" size={16} />
                         </PrefetchButton>,

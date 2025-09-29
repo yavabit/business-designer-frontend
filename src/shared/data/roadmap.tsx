@@ -16,7 +16,7 @@ export const roadmapItems: TimelineItem[] = [
     { date: '01.07.25', title: 'Feature', description: 'Категория бизнес-процессов', done: true },
     { date: '01.07.25', title: 'Feature', description: 'Категория агентов', done: true },
     { date: '01.07.25', title: 'Feature', description: 'Мультикурсор', done: true },
-    { date: '01.07.25', title: 'Development', description: 'Доработки', done: true, process: true },
+    { date: '01.07.25', title: 'Development', description: 'Проверка запуска процесса', done: true, process: true },
     { date: '01.07.25', title: 'Feature', description: 'Категория повседневной жизни', done: false },
     { date: '01.07.25', title: 'Feature', description: 'Категория подписок', done: false },
     { date: '01.07.25', title: 'Feature', description: 'Ролевая модель', done: false },
