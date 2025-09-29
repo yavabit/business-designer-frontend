@@ -29,7 +29,7 @@ const Roadmap = lazy(() =>
 
 export const Router = () => {
   return (
-    <Suspense fallback={<Spin/>}>
+    <Suspense fallback={<Spin fullscreen/>}>
       <Routes>
         <Route element={<RequireAuth />}>
           <Route element={<Layout />}>

@@ -1,5 +1,5 @@
 import { FolderIcon } from "@components/FolderIcon/FolderIcon";
-import { Flex, Input, type InputRef, Dropdown, type MenuProps } from "antd";
+import { Flex, Input, type InputRef, Dropdown, type MenuProps, Modal } from "antd";
 import { useEffect, useRef, useState, type FC } from "react";
 import styles from "./ProjectItem.module.scss";
 import { BsTrashFill } from "react-icons/bs";
@@ -88,11 +88,22 @@ export const ProjectItem: FC<
     };
 
     const showDeleteConfirm = () => {
-        const shouldDelete = window.confirm(`Удалить проект "${name}"?`);
-        if (shouldDelete) {
-            onDelete(id);
-            onClick(undefined);
-        }
+         Modal.confirm({
+              title: 'Удалить',
+              content: 'Вы действительно хотите удалить проект и все связанные процессы?',
+              cancelText: 'Отменить',
+              okText: 'Удалить',
+              onOk: () => {
+                onDelete(id);
+                onClick(undefined);
+              },
+              footer: (_, { OkBtn, CancelBtn }) => (
+                <>
+                  <CancelBtn />
+                  <OkBtn />
+                </>
+              ),
+        });
     };
 
     const menu: MenuProps = {
@@ -141,7 +152,7 @@ export const ProjectItem: FC<
                         <div
                             className={styles["project-pict"]}
                             style={{
-                                background: `url('${pict_url}') center / cover no-repeat`,
+                                background: `url('${import.meta.env.VITE_API_HOST}${pict_url}') center / cover no-repeat`,
                             }}></div>
                     ) : (
                         <FolderIcon />

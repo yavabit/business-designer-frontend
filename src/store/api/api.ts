@@ -58,8 +58,8 @@ const baseQueryWithReauth: BaseQueryFn = async (
                     if (refreshData.accessToken) {
                         api.dispatch(
                             setCredentials({
-                                id: (api.getState() as RootState).user.id,
-                                email: (api.getState() as RootState).user.email,
+                                id: refreshData.data.id,
+                                email: refreshData.data.email,
                                 accessToken: refreshData.accessToken
                             })
                         );
