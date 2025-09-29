@@ -1,6 +1,7 @@
 import { useMouse } from "@hooks/useMouse";
 import Cursor from "@pages/ProcessConstructor/components/UserCursor/Cursor";
 import { socket } from "@store/api/socket";
+import { useReactFlow } from "@xyflow/react";
 import { useEffect, useState } from "react";
 
 interface IUserMulticursor {
@@ -9,31 +10,45 @@ interface IUserMulticursor {
 
 interface IUserCursorMove {
   userId: string;
+  username: string;
   x: number;
   y: number;
 }
 
 interface ICursors {
-  [userId: string]: { x: number; y: number };
+  [userId: string]: { x: number; y: number; username: string };
 }
 
-const UserMulticursor = ({ processId }: IUserMulticursor) => {
+const UserMulticursor = ({
+  processId
+}: IUserMulticursor) => {
   const { mousePos } = useMouse();
 
   const [cursors, setCursors] = useState<ICursors>({});
+  const { screenToFlowPosition, flowToScreenPosition } = useReactFlow();
 
   useEffect(() => {
     function onUserCursorMove(e: IUserCursorMove) {
-      // console.log("onUserCursorMove", e);
-      const { userId, x, y } = e;
+      const { userId, username, x, y } = e;
 
-			setCursors((prevState) => ({
+      const firstName = username.split(" ")[0];
+
+			const flowPos = flowToScreenPosition({
+				x: x,
+				y: y
+			})
+
+			const headerOffset = 134
+
+
+      setCursors((prevState) => ({
         ...prevState,
         [userId]: {
-          x,
-          y,
+          username: firstName,
+          x: flowPos.x,
+          y: flowPos.y - headerOffset,
         },
-			}))
+      }));
     }
 
     socket.on("user-cursor-move", onUserCursorMove);
@@ -44,17 +59,29 @@ const UserMulticursor = ({ processId }: IUserMulticursor) => {
   }, []);
 
   useEffect(() => {
+    const position = screenToFlowPosition({
+			x: mousePos.x,
+			y: mousePos.y
+		}, {
+			snapToGrid: false
+		});
+
     socket.emit("cursor-move", {
       documentId: processId,
-      x: mousePos.x,
-      y: mousePos.y,
+			x: position.x,
+			y: position.y
     });
-  }, [processId, mousePos]);
+  }, [screenToFlowPosition, processId, mousePos]);
 
   return (
     <>
       {Object.keys(cursors).map((userId, i) => (
-        <Cursor key={i} x={cursors[userId].x} y={cursors[userId].y} label={userId}/>
+        <Cursor
+          key={i}
+          x={cursors[userId].x}
+          y={cursors[userId].y}
+          label={cursors[userId].username}
+        />
       ))}
     </>
   );

@@ -101,7 +101,6 @@ const processConstructorSlice = createSlice({
 		},
 
 		onNodesChange: (state, action) => {
-			//console.log('onNodesChange', action)
 			state.nodes = applyNodeChanges(action.payload, state.nodes);
 		},
 		onEdgesChange: (state, action) => {

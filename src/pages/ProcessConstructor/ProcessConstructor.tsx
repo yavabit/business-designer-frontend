@@ -244,7 +244,7 @@ export const ProcessConstructor = memo(() => {
       });
       dispatch(onNodesChange(e));
     },
-    [dispatch]
+    [dispatch, processId]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
     (e) => {
@@ -256,7 +256,7 @@ export const ProcessConstructor = memo(() => {
       });
       dispatch(onEdgesChange(e));
     },
-    [dispatch]
+    [dispatch, processId]
   );
   const handleChangeConnect = useCallback<OnConnect>(
     (e) => {
@@ -268,7 +268,7 @@ export const ProcessConstructor = memo(() => {
       });
       dispatch(onConnect(e));
     },
-    [dispatch]
+    [dispatch, processId]
   );
 
   // Сокеты.
@@ -313,6 +313,7 @@ export const ProcessConstructor = memo(() => {
       socket.emit("leave-document", processId);
     };
   }, [processId]);
+
 
   return (
     <div className={style.dndflow}>
@@ -377,11 +378,11 @@ export const ProcessConstructor = memo(() => {
             <MiniMap />
             <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
             {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
+						<UserMulticursor processId={processId}/>
           </ReactFlow>
         )}
       </div>
       <Hotkeys />
-      <UserMulticursor processId={processId} />
     </div>
   );
 });
