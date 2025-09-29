@@ -6,6 +6,7 @@ import { RequireAuth } from "@app/layouts/RequireAuth/RequireAuth";
 import { Suspense, lazy } from "react";
 import { Spin } from "antd";
 import { Projects } from "@pages/Projects/Projects";
+import { ProcessCreateSteps } from "@pages/Processes/components/ProcessCreateSteps/ProcessCreateSteps";
 
 const Signin = lazy(() =>
   import("@pages/Signin/Signin").then((module) => ({ default: module.Signin }))
@@ -33,7 +34,10 @@ export const Router = () => {
         <Route element={<RequireAuth />}>
           <Route element={<Layout />}>
             <Route index element={<Projects />} />
-            <Route path="project/:projectId" element={<Processes />} />
+            <Route path="project/:projectId">
+              <Route index element={<Processes />} />
+              <Route path="create-process" element={<ProcessCreateSteps />} />
+            </Route>
             <Route
               path="process/:processId"
               element={
@@ -44,6 +48,7 @@ export const Router = () => {
                 </ReactFlowProvider>
               }
             />
+            <Route path="create-process" element={<ProcessCreateSteps />} />
             <Route path="me" element={<Profile />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
