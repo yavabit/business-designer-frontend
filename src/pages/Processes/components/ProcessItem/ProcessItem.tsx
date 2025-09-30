@@ -113,7 +113,7 @@ export const ProcessItem = memo(
                                     backgroundColor: stringToHslColor(item.author_name),
                                     color: "#fff",
                                 }}>
-                                {getInitials(item.author_name)}
+                                {item.author_name && getInitials(item.author_name)}
                             </Avatar>
                         }
                         title={item.name}

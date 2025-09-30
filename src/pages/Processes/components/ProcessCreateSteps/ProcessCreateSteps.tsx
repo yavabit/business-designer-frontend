@@ -36,6 +36,7 @@ const initialPrepareForm = {
 
 export const ProcessCreateSteps = () => {
 	const {projects} = useAppSelector(state => state.projects)
+	const {firstname, lastname} = useAppSelector(state => state.user)
 	const { token } = useTheme();
 	const { projectId } = useParams();
 	const navigate = useNavigate();
@@ -62,7 +63,8 @@ export const ProcessCreateSteps = () => {
 	];
 
 	const next = () => {
-		let prepareItem = { ...commonForm };
+		let prepareItem = { ...commonForm, author_name: `${lastname} ${firstname}` };
+		console.log(prepareItem.author_name);
 		if (current === 0) {
 			prepareItem = {
 				...prepareItem,
@@ -117,6 +119,7 @@ export const ProcessCreateSteps = () => {
 				setIsModalOpen(false);
 				message.success(`Процесс "${name}" создан!`);
 				navigate(`/project/${projectId}`, {
+					replace: true,
 					state: {
 						metadata: projects.find(p => p.id === projectId)?.name || ""
 					}
