@@ -38,7 +38,6 @@ import { debounce } from "lodash";
 import {
   useGetProcessQuery,
   useUpdateProcessImageMutation,
-  useUpdateProcessSchemeMutation,
 } from "@store/api/processConstructor/processConstructorApi";
 import { toBlob } from "html-to-image";
 import { useParams } from "react-router-dom";
@@ -47,6 +46,7 @@ import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
 import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHeader";
+import useSocket from "@hooks/useSocket";
 
 interface IDocumentRefresh {
   content: { nodes: []; edges: []; connects: [], newNode: Node };
@@ -73,7 +73,6 @@ export const ProcessConstructor = memo(() => {
 		dispatch(setProcessId(processId))
 	}, [dispatch, processId])
 
-  const [updateProcessScheme] = useUpdateProcessSchemeMutation();
   const [updateProcessImage] = useUpdateProcessImageMutation();
 
   const colorModeFlow = useMemo(() => {
@@ -278,6 +277,7 @@ export const ProcessConstructor = memo(() => {
   );
 
   // Сокеты.
+	const { emitJoinDocument, emitLeaveDocument } = useSocket()
 
   useEffect(() => {
     function onSocketConnect() {
@@ -316,10 +316,10 @@ export const ProcessConstructor = memo(() => {
   }, []);
 
   useEffect(() => {
-    socket.emit("join-document", processId);
+		emitJoinDocument(processId)
 
     return () => {
-      socket.emit("leave-document", processId);
+			emitLeaveDocument(processId)
     };
   }, [processId]);
 
