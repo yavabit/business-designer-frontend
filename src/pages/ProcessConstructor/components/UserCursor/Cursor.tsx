@@ -35,6 +35,7 @@ const Cursor = ({ x, y, label }: ICursorProps) => {
         transform: `translate(${x}px, ${y}px)`,
         transition: "transform 120ms linear",
         color: "black",
+				zIndex: 99
       }}
     >
       <CursorSvg size={18} color={userColor} />

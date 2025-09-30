@@ -1,8 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { processConstructorApi } from "@store/api/processConstructor/processConstructorApi";
+import { socket } from "@store/api/socket";
 import { addEdge, applyEdgeChanges, applyNodeChanges, type Edge, type Node, type SnapGrid, type Viewport } from "@xyflow/react";
 
 interface IConstructorState {
+	processId: string | null
 	nodes: Node<NodeCustomData>[]
 	edges: Edge[]
 	snapGrid: SnapGrid
@@ -12,6 +14,7 @@ interface IConstructorState {
 }
 
 const initialState: IConstructorState = {
+	processId: null,
 	nodes: [],
 	edges: [],
 	snapGrid: [20, 20],
@@ -25,12 +28,20 @@ const processConstructorSlice = createSlice({
 	initialState,
 	reducers: {
 		addNode: (state, { payload }: PayloadAction<Node>) => {
+			const id = !payload.id || payload.id === "new" ? crypto.randomUUID() : payload.id
 			const newNode: Node = {
 				...payload,
-				id: crypto.randomUUID()
+				id
 			};
 			state.nodes = [...state.nodes, newNode];
 
+			// console.log('addNode', newNode)
+      socket.emit("document-refresh", {
+        documentId: state.processId,
+        content: {
+					newNode
+				},
+      });
 		},
 		updateNodeProperties: (state, { payload }: PayloadAction<{
 			id: string;
@@ -101,7 +112,6 @@ const processConstructorSlice = createSlice({
 		},
 
 		onNodesChange: (state, action) => {
-			//console.log('onNodesChange', action)
 			state.nodes = applyNodeChanges(action.payload, state.nodes);
 		},
 		onEdgesChange: (state, action) => {
@@ -125,6 +135,9 @@ const processConstructorSlice = createSlice({
 			state.selectedNode = null;
 			state.selectedEdge = payload;
 		},
+		setProcessId: (state, { payload }) => { 
+			state.processId = payload
+		}
 	},
 	extraReducers(builder) {
 		builder.addMatcher(processConstructorApi.endpoints.getProcess.matchFulfilled, (state, { payload }) => {
@@ -155,5 +168,6 @@ export const {
 	setSelectedEdge,
 	updateNodeColor,
 	updateNodeSizes,
-	updateNodeText
+	updateNodeText,
+	setProcessId
 } = processConstructorSlice.actions;

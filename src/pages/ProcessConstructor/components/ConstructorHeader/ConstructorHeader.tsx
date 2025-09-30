@@ -5,6 +5,8 @@ import { BsChevronLeft, BsFillPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@hooks/useTheme';
 import { useLazyGetTriggerTypesQuery } from '@store/api/processes/processesApi';
+import useSocket from '@hooks/useSocket';
+import UserAvatar from '@components/UserAvatar/UserAvatar';
 
 enum triggers {
     'never' = 'Никогда',
@@ -23,11 +25,20 @@ export const ConstructorHeader: FC<{
 
     const [getTriggers, triggersData] = useLazyGetTriggerTypesQuery();
 
+		const { listJoinedUsers } = useSocket()
+
     useEffect(() => {
         if (isAgent) {
             getTriggers()
         }
-    }, [isAgent])
+    }, [isAgent, getTriggers])
+
+
+		
+    // useEffect(() => {
+    //     console.log('onJoinDocument', onJoinDocument)
+    //     console.log('onLeaveDocument', onLeaveDocument)
+    // }, [onJoinDocument, onLeaveDocument])
     
     return (
         <Flex
@@ -42,7 +53,11 @@ export const ConstructorHeader: FC<{
                     <BsChevronLeft />
                 </Button>
                 <p>{processName}</p>
+								<Flex align="center" gap={16}>
+										{Object.values(listJoinedUsers).map((item) => <UserAvatar key={item.userId} label={item.username} />)}
+								</Flex>
             </Flex>
+
             {
                 isAgent && (
                     <Flex gap={12} align='center'>
