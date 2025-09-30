@@ -1,23 +1,20 @@
-import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
+import { useAppSelector } from "@hooks/storeHooks";
 import { useMouse } from "@hooks/useMouse";
 import { MappingKeys } from "@pages/ProcessConstructor/components/Hotkeys/mapping";
-import { addNode } from "@store/processConstructor/processConstructorSlice";
 import { useReactFlow } from "@xyflow/react";
-import {  useState } from "react";
+import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 export const Hotkeys = () => {
-	const { mousePos } = useMouse()
+  const { mousePos } = useMouse();
 
   const { getNode, setNodes, setEdges, screenToFlowPosition } = useReactFlow();
-  const dispatch = useAppDispatch();
 
   const [copyNodeId, setCopyNodeId] = useState("");
 
   const { selectedNode, selectedEdge } = useAppSelector(
     (state) => state.processConstructor
   );
-
 
   useHotkeys(MappingKeys.Copy.key, () => {
     if (!selectedNode) return;
@@ -34,14 +31,16 @@ export const Hotkeys = () => {
 
     const position = screenToFlowPosition(mousePos);
 
-    dispatch(
-      addNode({
-        ...node,
-        selected: false,
-        dragging: false,
-        position,
-      })
-    );
+    const newNode = {
+      ...node,
+      id: crypto.randomUUID(),
+      selected: false,
+      dragging: false,
+      position,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+
   });
 
   useHotkeys(MappingKeys.Delete.key, () => {

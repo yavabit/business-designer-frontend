@@ -24,10 +24,10 @@ import { NodeEditPanel } from "./components/NodeEditPanel/NodeEditPanel";
 import { useAppDispatch, useAppSelector } from "@hooks/storeHooks";
 import { useDnD } from "@hooks/useDnD";
 import {
-  addNode,
   onConnect,
   onEdgesChange,
   onNodesChange,
+  setProcessId,
   setSelectedEdge,
   setSelectedNode,
 } from "@store/processConstructor/processConstructorSlice";
@@ -49,7 +49,7 @@ import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHeader";
 
 interface IDocumentRefresh {
-  content: { nodes: []; edges: []; connects: [] };
+  content: { nodes: []; edges: []; connects: [], newNode: Node };
 }
 
 export const ProcessConstructor = memo(() => {
@@ -69,6 +69,10 @@ export const ProcessConstructor = memo(() => {
 
   const { data: processData, isLoading } = useGetProcessQuery({ processId });
 
+	useEffect(() => {
+		dispatch(setProcessId(processId))
+	}, [dispatch, processId])
+
   const [updateProcessScheme] = useUpdateProcessSchemeMutation();
   const [updateProcessImage] = useUpdateProcessImageMutation();
 
@@ -80,7 +84,7 @@ export const ProcessConstructor = memo(() => {
 
   // DnD
   const reactFlowWrapper = useRef(null);
-  const { screenToFlowPosition, getNodes, getNodesBounds } = useReactFlow();
+  const { screenToFlowPosition, getNodes, getNodesBounds, setNodes } = useReactFlow();
   const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
@@ -109,16 +113,18 @@ export const ProcessConstructor = memo(() => {
           }
         : nodeData.defaultData;
 
-      dispatch(
-        addNode({
-          id: "new",
-          data: defaultData,
-          type: type.toString(),
-          position,
-        })
-      );
+			const newNode = {
+				id: crypto.randomUUID(),
+				data: defaultData,
+				type: type.toString(),
+				position,
+			}
+
+      setNodes((nds) => nds.concat(newNode));
+
+			
     },
-    [screenToFlowPosition, type, dispatch]
+    [screenToFlowPosition, type, nodeList, setNodes]
   );
 
   // Context Menu.
@@ -231,7 +237,7 @@ export const ProcessConstructor = memo(() => {
           });
         }
       }, 400),
-    [processId, rfInstance, updateProcessScheme]
+    [processId, rfInstance, getNodes, getNodesBounds, updateProcessImage]
   );
 
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
@@ -286,13 +292,16 @@ export const ProcessConstructor = memo(() => {
       console.log("onDocumentUpdate", e);
 
       const { content } = e;
-      const { nodes, edges, connects } = content;
+      const { nodes, edges, connects, newNode } = content;
 
       if (nodes) dispatch(onNodesChange(nodes));
 
       if (edges) dispatch(onEdgesChange(edges));
 
       if (connects) dispatch(onConnect(connects));
+
+			if (newNode)
+				setNodes((nds) => nds.concat(newNode));
     }
 
     socket.on("connect", onSocketConnect);

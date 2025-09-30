@@ -2,8 +2,6 @@ import { memo, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 
 import style from "./style.module.scss";
-import { useAppDispatch } from "@hooks/storeHooks";
-import { addNode } from "@store/processConstructor/processConstructorSlice";
 import { Divider } from "antd";
 import { useTheme } from "@hooks/useTheme";
 
@@ -28,8 +26,6 @@ const ContextMenu = ({
 
   const { getNode, setNodes, setEdges } = useReactFlow();
 
-  const dispatch = useAppDispatch();
-
   const duplicateNode = useCallback(() => {
     const node = getNode(id);
 
@@ -43,15 +39,17 @@ const ContextMenu = ({
       y: node.position.y + 25,
     };
 
-    dispatch(
-      addNode({
-        ...node,
-        selected: false,
-        dragging: false,
-        position,
-      })
-    );
-  }, [dispatch, id, getNode]);
+    const newNode = {
+      ...node,
+      id: crypto.randomUUID(),
+      selected: false,
+      dragging: false,
+      position,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+
+  }, [id, getNode, setNodes]);
 
   const handleClickDeleteNode = useCallback(() => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
