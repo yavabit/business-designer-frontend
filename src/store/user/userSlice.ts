@@ -9,7 +9,6 @@ interface InitialState {
     pict_url: string | undefined;
     token: string;
     isAuth: boolean;
-    isLoading: boolean;
     projects_count: number;
 }
 
@@ -22,7 +21,6 @@ const initialState: InitialState = {
     pict_url: "",
     token: "",
     isAuth: true,
-    isLoading: true,
     projects_count: 0,
 };
 
@@ -40,10 +38,6 @@ const userSlice = createSlice({
             state.email = payload;
         },
 
-        setLoading: (state, action: PayloadAction<boolean>) => {
-            state.isLoading = action.payload;
-        },
-
         setProfile(state, action: PayloadAction<Omit<IUser, "isAuth"> & {projects_count: number}>) {
             state.id = action.payload.id;
             state.firstname = action.payload.firstname;
@@ -52,7 +46,6 @@ const userSlice = createSlice({
             state.email = action.payload.email;
             state.pict_url = action.payload.pict_url;
             state.projects_count = action.payload.projects_count
-            state.isAuth = true
         },
 
         setCredentials(
@@ -72,5 +65,5 @@ const userSlice = createSlice({
 });
 
 export const userReducer = userSlice.reducer;
-export const { setAuth, setLoading, setName, setEmail, setProfile, setCredentials, reset } =
+export const { setAuth, setName, setEmail, setProfile, setCredentials, reset } =
     userSlice.actions;

@@ -1,7 +1,7 @@
 import { PrefetchLink } from "@components/PrefetchLink/PrefetchLink";
 import { useTheme } from "@hooks/useTheme";
 import { useLoginMutation } from "@store/api/user/userApi";
-import { setCredentials } from "@store/user/userSlice";
+import { setCredentials, setProfile } from "@store/user/userSlice";
 import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -62,6 +62,7 @@ export const Signin = () => {
           id: response.data.data.id,
           accessToken: response.data.accessToken
         }))
+        dispatch(setProfile(response.data.data))
       } else {
         if (response.error) {
           form.setFields([

@@ -1,5 +1,5 @@
 import { FolderIcon } from "@components/FolderIcon/FolderIcon";
-import { Flex, Input, type InputRef, Dropdown, type MenuProps, Modal } from "antd";
+import { Flex, Input, type InputRef, Dropdown, type MenuProps, Modal, Badge } from "antd";
 import { useEffect, useRef, useState, type FC } from "react";
 import styles from "./ProjectItem.module.scss";
 import { BsTrashFill } from "react-icons/bs";
@@ -136,54 +136,62 @@ export const ProjectItem: FC<
             menu={menu}
             trigger={["contextMenu"]}
             disabled={userId !== author_id}>
-            <div
-                title={`Автор: ${author_name}, обновлено: ${dayjs(
-                    updated_at
-                ).format("DD.MM.YYYY HH:mm")}`}
-                ref={itemRef}
-                onDoubleClick={handleItemDoubleClick}
-                onClick={handleItemClick}
-                onContextMenu={handleContextMenu}
-                className={`${styles["project-item"]} ${
-                    checked ? styles.checked : ""
-                } ${isDarkMode ? styles.dark : ""}`}>
-                <Flex vertical gap={4}>
-                    {pict_url ? (
-                        <div
-                            className={styles["project-pict"]}
-                            style={{
-                                background: `url('${import.meta.env.VITE_API_HOST}${pict_url}') center / cover no-repeat`,
-                            }}></div>
-                    ) : (
-                        <FolderIcon />
-                    )}
-                    {editing ? (
-                        <Input
-                            ref={inputRef}
-                            name="edit"
-                            value={nameValue}
-                            onChange={(e) => setNameValue(e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            onPressEnter={handleEditConfirm}
-                            onBlur={handleEditConfirm}
-                            onKeyDown={handleKeyDown}
-                            className={styles.input}
-                        />
-                    ) : (
-                        <p
-                            ref={textRef}
-                            onClick={(e) => {
-                                if (userId == author_id) {
-                                    handleTextClick(e);
-                                }
-                            }}
-                            className={styles.text}
-                            title={name.length > 15 ? name : ""}>
-                            {name}
-                        </p>
-                    )}
-                </Flex>
-            </div>
+            <Badge 
+                title={'Мой проект'} 
+                dot={userId === author_id} 
+                color="green"
+                offset={[-20,20]}
+            >
+                <div
+                    title={`Автор: ${author_name}, обновлено: ${dayjs(
+                        updated_at
+                    ).format("DD.MM.YYYY HH:mm")}`}
+                    ref={itemRef}
+                    onDoubleClick={handleItemDoubleClick}
+                    onClick={handleItemClick}
+                    onContextMenu={handleContextMenu}
+                    className={`${styles["project-item"]} ${
+                        checked ? styles.checked : ""
+                    } ${isDarkMode ? styles.dark : ""}`}>
+                    <Flex vertical gap={4}>
+                        {pict_url ? (
+                            <div
+                                className={styles["project-pict"]}
+                                style={{
+                                    background: `url('${import.meta.env.VITE_API_HOST}${pict_url}') center / cover no-repeat`,
+                                }}></div>
+                        ) : (
+                            <FolderIcon />
+                        )}
+                        {editing ? (
+                            <Input
+                                ref={inputRef}
+                                name="edit"
+                                value={nameValue}
+                                onChange={(e) => setNameValue(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                onPressEnter={handleEditConfirm}
+                                onBlur={handleEditConfirm}
+                                onKeyDown={handleKeyDown}
+                                className={styles.input}
+                            />
+                        ) : (
+                            <p
+                                ref={textRef}
+                                onClick={(e) => {
+                                    if (userId == author_id) {
+                                        handleTextClick(e);
+                                    }
+                                }}
+                                className={styles.text}
+                                title={name.length > 15 ? name : ""}>
+                                {name}
+                            </p>
+                        )}
+                    </Flex>
+                </div>
+
+            </Badge>
         </Dropdown>
     );
 };
