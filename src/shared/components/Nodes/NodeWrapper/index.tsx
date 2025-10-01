@@ -34,13 +34,12 @@ type NodeWrapperType = {
 		bottom?: HandlePositionType;
 	};
 	inputStyle?: React.CSSProperties;
-	isNeedInput?: boolean;
 	overrideStyle?: React.CSSProperties;
-	title?: React.ReactNode;
 	resizable?: boolean;
 	icon?: React.ReactNode;
 	editable?: boolean;
 	loading?: boolean;
+	inputType?: 'input' | 'text';
 };
 
 export const NodeWrapper = memo(({
@@ -53,13 +52,12 @@ export const NodeWrapper = memo(({
 	style,
 	handleStyle,
 	inputStyle,
-	isNeedInput = true,
 	overrideStyle,
 	resizable = true,
-	title,
 	icon,
 	editable = true,
-	loading = false
+	loading = false,
+	inputType
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
 	const [isEditing, setIsEditing] = useState(false);
@@ -137,11 +135,11 @@ export const NodeWrapper = memo(({
 			
 			{resizable && <NodeResizer isVisible={node.selected}/>}
 
-			{title && <div className={styles["node-wrapper__title"]}>
+			{<div className={styles["node-wrapper__title"]}>
 				{icon && <Avatar icon={icon} shape="square" style={{marginRight: 5, height: 25}}/>}
 				<NodeInput
 					value={inputValue}
-					type="input"
+					type={inputType ?? "text"}
 					editable={editable}
 					onChange={handleChangeInput}
 					isEditing={isEditing}
@@ -157,7 +155,7 @@ export const NodeWrapper = memo(({
 			</div>
 			}
 
-			{isNeedInput && <NodeInput
+			{/* {isNeedInput && <NodeInput
 				value={inputValue}
 				onChange={handleChangeInput}
 				editable={editable}
@@ -169,7 +167,7 @@ export const NodeWrapper = memo(({
 					fontSize: data.style?.fontSize,
 					...inputStyle 
 				}}
-			/>}
+			/>} */}
 
 			{children}
 

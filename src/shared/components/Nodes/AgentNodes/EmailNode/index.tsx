@@ -50,8 +50,6 @@ export const EmailNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 
 	return <NodeWrapper 
 		node={props}
-		isNeedInput={false}
-		title={'Письмо'}
 		handleBottom={false}
 		handleTop={false}
 		icon={<MdEmail />}

@@ -34,8 +34,6 @@ export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 				label: isStartNode ? 'Старт' : 'Стоп'
 			}
 		}}
-		isNeedInput={false}
-		title={isStartNode ? 'Старт' : 'Стоп'}
 		handleBottom={false}
 		handleTop={false}
 		handleLeft={!isStartNode}
