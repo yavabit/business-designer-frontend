@@ -31,7 +31,7 @@ const Cursor = ({ x, y, label }: ICursorProps) => {
 
     const clearId = setTimeout(() => {
       setHidden(true);
-    }, 100000);
+    }, 30000);
 
     return () => {
       clearTimeout(clearId);
