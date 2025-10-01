@@ -16,39 +16,32 @@ interface IUserCursorMove {
 }
 
 interface ICursors {
-  [userId: string]: { x: number; y: number; username: string };
+  [userId: string]: IUserCursorMove;
 }
 
-const UserMulticursor = ({
-  processId
-}: IUserMulticursor) => {
+const UserMulticursor = ({ processId }: IUserMulticursor) => {
   const { mousePos } = useMouse();
 
   const [cursors, setCursors] = useState<ICursors>({});
-  const { screenToFlowPosition, flowToScreenPosition } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
+
+  function onUserCursorMove(e: IUserCursorMove) {
+    const { userId, username, x, y } = e;
+
+    const firstName = username?.split(" ")[1];
+
+    setCursors((prevState) => ({
+      ...prevState,
+      [userId]: {
+        userId,
+        username: firstName,
+        x,
+        y,
+      },
+    }));
+  }
 
   useEffect(() => {
-    function onUserCursorMove(e: IUserCursorMove) {
-      const { userId, username, x, y } = e;
-
-      const firstName = username.split(" ")[1];
-
-			const flowPos = flowToScreenPosition({
-				x: x,
-				y: y
-			})
-
-
-      setCursors((prevState) => ({
-        ...prevState,
-        [userId]: {
-          username: firstName,
-          x: flowPos.x,
-          y: flowPos.y,
-        },
-      }));
-    }
-
     socket.on("user-cursor-move", onUserCursorMove);
 
     return () => {
@@ -57,17 +50,20 @@ const UserMulticursor = ({
   }, []);
 
   useEffect(() => {
-    const position = screenToFlowPosition({
-			x: mousePos.x,
-			y: mousePos.y
-		}, {
-			snapToGrid: false
-		});
+    const position = screenToFlowPosition(
+      {
+        x: mousePos.x,
+        y: mousePos.y,
+      },
+      {
+        snapToGrid: false,
+      }
+    );
 
     socket.emit("cursor-move", {
       documentId: processId,
-			x: position.x,
-			y: position.y
+      x: position.x,
+      y: position.y,
     });
   }, [screenToFlowPosition, processId, mousePos]);
 

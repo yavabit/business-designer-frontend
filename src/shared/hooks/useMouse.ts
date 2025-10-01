@@ -9,8 +9,8 @@ export const useMouse = () => {
 
   const mouseMove = (event: MouseEvent) => {
     setMousePos({
-      x: event.clientX,
-      y: event.clientY,
+      x: Math.ceil(event.clientX),
+      y: Math.ceil(event.clientY),
     });
   };
 

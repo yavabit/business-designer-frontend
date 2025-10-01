@@ -16,6 +16,7 @@ import {
   type OnConnect,
   getViewportForBounds,
   type EdgeMouseHandler,
+  ViewportPortal,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -302,7 +303,6 @@ export const ProcessConstructor = memo(() => {
           flexDirection: "column",
           height: "calc(100vh - 76px)",
           width: "100%",
-					overflow: "hidden"
         }}
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
@@ -359,7 +359,9 @@ export const ProcessConstructor = memo(() => {
           </ReactFlow>
         )}
       </div>
-      <UserMulticursor processId={processId} />
+      <ViewportPortal>
+        <UserMulticursor processId={processId} />
+      </ViewportPortal>
       <Hotkeys />
     </div>
   );
