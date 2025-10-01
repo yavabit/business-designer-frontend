@@ -36,6 +36,7 @@ export const NodeInput = ({
 					color: style?.color ?? 'white',
 					textAlign: 'center',
 					overflow: 'hidden',
+					width: 159,
 					...(style || {}),
 					fontSize: style?.fontSize ?? 14,
 					height: 'auto'

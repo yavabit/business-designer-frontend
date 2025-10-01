@@ -139,7 +139,7 @@ export const NodeWrapper = memo(({
 				{icon && <Avatar icon={icon} shape="square" style={{marginRight: 5, height: 25}}/>}
 				<NodeInput
 					value={inputValue}
-					type={inputType ?? "text"}
+					type={inputType ?? "input"}
 					editable={editable}
 					onChange={handleChangeInput}
 					isEditing={isEditing}
@@ -154,20 +154,6 @@ export const NodeWrapper = memo(({
 				/>
 			</div>
 			}
-
-			{/* {isNeedInput && <NodeInput
-				value={inputValue}
-				onChange={handleChangeInput}
-				editable={editable}
-				isEditing={isEditing}
-				onDoubleClick={handleDoubleClick}
-				onClick={handleClick}
-				style={{ 
-					color: data.style?.color ?? token.colorText,
-					fontSize: data.style?.fontSize,
-					...inputStyle 
-				}}
-			/>} */}
 
 			{children}
 
