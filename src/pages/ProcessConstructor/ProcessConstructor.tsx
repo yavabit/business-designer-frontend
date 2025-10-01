@@ -67,7 +67,10 @@ export const ProcessConstructor = memo(() => {
 
   const { processId } = useParams();
 
-  const { data: processData, isLoading } = useGetProcessQuery({ processId });
+  const { data: processData, isLoading } = useGetProcessQuery(
+    { processId },
+    { skip: !processId, refetchOnMountOrArgChange: true }
+  );
 
 	useEffect(() => {
 		dispatch(setProcessId(processId))
