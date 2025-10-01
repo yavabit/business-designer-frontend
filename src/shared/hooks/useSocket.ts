@@ -16,11 +16,11 @@ const useSocket = () => {
 	const [listJoinedUsers, setListJoinedUsers] = useState<IListJoinedUsers>({})
 
 	const emitJoinDocument = (processId: string | undefined) => {
-    socket.emit("join-document", processId);
+		socket.emit("join-document", processId);
 	}
 
 	const emitLeaveDocument = (processId: string | undefined) => {
-    socket.emit("leave-document", processId);
+		socket.emit("leave-document", processId);
 	}
 
 
@@ -33,10 +33,12 @@ const useSocket = () => {
 		}
 
 		const onUserLeftDocument = (e: IUser) => {
-			const newItems = { ...listJoinedUsers };
-			delete newItems[e.userId];
+			const id = e.userId
 
-			setListJoinedUsers(newItems)
+			setListJoinedUsers(current => {
+				const { [id]: _, ...rest } = current;
+				return rest;
+			})
 		}
 
 		const onDocumentUsers = (e: { users: IUser[] }) => {
