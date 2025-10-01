@@ -9,7 +9,8 @@ import { useTheme } from "@hooks/useTheme";
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from "./style.module.scss"
 import { useAppSelector } from "@hooks/storeHooks";
-import { Avatar, Spin } from "antd";
+import { Avatar, Dropdown, Spin } from "antd";
+import useNodeDropdown from "@components/Nodes/NodeWrapper/useNodeDropdown";
 
 type HandlePositionType = {
 	left?: number | string; 
@@ -151,7 +152,14 @@ export const NodeWrapper = memo(({
 						fontSize: data.style?.fontSize,
 						...inputStyle 
 					}}
-				/>
+				/>}
+
+				{children}
+
+				{handleLeft && <Handle id="left" type="source" isConnectable position={Position.Left} style={{...handleStyle?.left}}/>}
+				{handleRight && <Handle id="right" type="source" isConnectable position={Position.Right} style={{...handleStyle?.right}}/>}
+				{handleTop && <Handle id="top" type="source" isConnectable position={Position.Top} style={{...handleStyle?.top}}/>}
+				{handleBottom && <Handle id="bottom" type="source" isConnectable position={Position.Bottom} style={{...handleStyle?.bottom}}/>}
 			</div>
 			}
 
