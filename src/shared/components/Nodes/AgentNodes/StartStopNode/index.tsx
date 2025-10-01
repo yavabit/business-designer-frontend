@@ -27,7 +27,13 @@ export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 	}, [nodes])
 
 	return <NodeWrapper 
-		node={props}
+		node={{
+			...props,
+			data: {
+				...props.data,
+				label: isStartNode ? 'Старт' : 'Стоп'
+			}
+		}}
 		isNeedInput={false}
 		title={isStartNode ? 'Старт' : 'Стоп'}
 		handleBottom={false}
