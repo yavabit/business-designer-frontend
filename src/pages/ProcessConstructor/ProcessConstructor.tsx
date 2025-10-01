@@ -302,6 +302,7 @@ export const ProcessConstructor = memo(() => {
           flexDirection: "column",
           height: "calc(100vh - 76px)",
           width: "100%",
+					overflow: "hidden"
         }}
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
