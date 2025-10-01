@@ -10,6 +10,21 @@ type NodeInputType = {
 }
 
 export const NodeInput = ({ onChange, value, style, type="text", editable=true }: NodeInputType) => {
+	if(!editable) {
+		return (
+			<div
+				style={{
+					color: style?.color ?? 'white',
+					textAlign: 'center',
+					overflow: 'hidden',
+					...(style || {}),
+					fontSize: style?.fontSize ?? 14,
+				}}
+			>
+				{value as string}
+			</div>
+		);
+	}
 	if(type === "text") {
 		return (
 			<TextArea
