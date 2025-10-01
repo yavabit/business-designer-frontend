@@ -3,7 +3,7 @@ import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
 import { useDispatch } from "react-redux";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
 import { LoadingOutlined } from '@ant-design/icons';
@@ -62,6 +62,7 @@ export const NodeWrapper = memo(({
 	loading = false
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
+	const [isEditing, setIsEditing] = useState(false);
 
 	const { token } = useTheme()
 
@@ -88,6 +89,22 @@ export const NodeWrapper = memo(({
 	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		onChangeInput(e);
 		debouncedDispatch(e.target.value);
+	};
+
+	const handleDoubleClick = () => {
+		if (editable) {
+			setIsEditing(true);
+		}
+	};
+
+	const handleClick = () => {
+		if (node.selected) {
+			setIsEditing(true);
+		}
+	};
+
+	const handleBlur = () => {
+		setIsEditing(false);
 	};
 
 	return (
@@ -127,6 +144,10 @@ export const NodeWrapper = memo(({
 					type="input"
 					editable={editable}
 					onChange={handleChangeInput}
+					isEditing={isEditing}
+					onDoubleClick={handleDoubleClick}
+					onClick={handleClick}
+					onBlur={handleBlur}
 					style={{ 
 						color: data.style?.color ?? token.colorText,
 						fontSize: data.style?.fontSize,
@@ -140,6 +161,9 @@ export const NodeWrapper = memo(({
 				value={inputValue}
 				onChange={handleChangeInput}
 				editable={editable}
+				isEditing={isEditing}
+				onDoubleClick={handleDoubleClick}
+				onClick={handleClick}
 				style={{ 
 					color: data.style?.color ?? token.colorText,
 					fontSize: data.style?.fontSize,
