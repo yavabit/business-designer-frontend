@@ -21,7 +21,15 @@ import { themeReducer } from '@store/user/themeSlice';
 const userPersistConfig = {
 	key: 'user',
 	storage,
-	whitelist: ['id', 'email', 'token']
+	whitelist: [
+		'id', 
+		'email', 
+		'token', 
+		'firstname', 
+		'lastname', 
+		'name', 
+		'pict_url'
+	]
 }
 
 const rootReducer = {

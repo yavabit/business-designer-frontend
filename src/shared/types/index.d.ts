@@ -87,7 +87,7 @@ type NodeCustomData = {
 
 interface ICredentials {
     accessToken: string;
-    data: Omit<IUser, 'isAuth'>;
+    data: Omit<IUser, 'isAuth'> & {projects_count: number};
 }
 
 interface ITrigger {

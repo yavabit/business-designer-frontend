@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiTags } from "./apiTags";
 import type { RootState } from "..";
 import type { BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query";
-import { reset, setCredentials, setLoading } from "@store/user/userSlice";
+import { reset, setCredentials, setProfile } from "@store/user/userSlice";
 import { refreshMutex } from "../../shared/utils/mutex";
 
 export const baseUrl =
@@ -64,11 +64,14 @@ const baseQueryWithReauth: BaseQueryFn = async (
                             })
                         );
 
+                        api.dispatch(
+                            setProfile(refreshData.data)
+                        )
+
                         result = await baseQuery(args, api, extraOptions);
                     }
                 } else {
                     api.dispatch(reset());
-                    api.dispatch(setLoading(false));
                 }
             }
         } finally {
