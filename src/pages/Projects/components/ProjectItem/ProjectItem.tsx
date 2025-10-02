@@ -1,5 +1,5 @@
 import { FolderIcon } from "@components/FolderIcon/FolderIcon";
-import { Flex, Input, type InputRef, Dropdown, type MenuProps, Modal, Badge } from "antd";
+import { Flex, Input, type InputRef, Dropdown, type MenuProps, Badge } from "antd";
 import { useEffect, useRef, useState, type FC } from "react";
 import styles from "./ProjectItem.module.scss";
 import { BsTrashFill } from "react-icons/bs";
@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@store/index";
 import dayjs from "dayjs";
 import { useTheme } from "@hooks/useTheme";
+import { DeleteObjectModal } from "@components/DeleteObjectModal/DeleteObjectModal";
 
 export const ProjectItem: FC<
     IProject & {
@@ -37,6 +38,7 @@ export const ProjectItem: FC<
     onGlobalEdit,
 }) => {
     const [nameValue, setNameValue] = useState<string>(name);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
     const inputRef = useRef<InputRef>(null);
     const itemRef = useRef<HTMLDivElement>(null);
@@ -87,25 +89,6 @@ export const ProjectItem: FC<
         }
     };
 
-    const showDeleteConfirm = () => {
-         Modal.confirm({
-              title: 'Удалить',
-              content: 'Вы действительно хотите удалить проект и все связанные процессы?',
-              cancelText: 'Отменить',
-              okText: 'Удалить',
-              onOk: () => {
-                onDelete(id);
-                onClick(undefined);
-              },
-              footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                  <CancelBtn />
-                  <OkBtn />
-                </>
-              ),
-        });
-    };
-
     const menu: MenuProps = {
         items: [
             {
@@ -119,7 +102,7 @@ export const ProjectItem: FC<
                 label: "Удалить",
                 icon: <BsTrashFill size={16} />,
                 danger: true,
-                onClick: () => showDeleteConfirm(),
+                onClick: () => setIsDeleteModalOpen(true),
             },
         ],
     };
@@ -191,6 +174,18 @@ export const ProjectItem: FC<
                     </Flex>
                 </div>
 
+                <DeleteObjectModal 
+                    isOpen={isDeleteModalOpen}
+                    title={`Удалить проект "${name}"?`} 
+                    content={
+                        `Вы действительно хотите удалить проект "${name}" и все связанные с ним процессы?`
+                    }
+                    onOk={() => {
+                        onDelete(id);
+                        onClick(undefined)
+                    }}
+                    onCancel={() => setIsDeleteModalOpen(false)}
+                />
             </Badge>
         </Dropdown>
     );

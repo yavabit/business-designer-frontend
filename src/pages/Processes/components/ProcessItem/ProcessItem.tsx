@@ -1,7 +1,7 @@
 import { PrefetchButton } from "@components/PrefetchButton/PrefetchButton";
 import { nodesCategoriesColor, nodesCategoriesNames } from "@data";
-import { Badge, Card, Image, Modal } from "antd";
-import { memo } from "react";
+import { Badge, Card, Image } from "antd";
+import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import processCardBack from "../../../../shared/assets/img/process_card_back.svg";
 import processCardBackLight from "../../../../shared/assets/img/process_card_back_light.svg";
@@ -11,6 +11,7 @@ import { BsFillPencilFill } from "react-icons/bs";
 import type { RootState } from "@store/index";
 import { useSelector } from "react-redux";
 import UserAvatar from "@components/UserAvatar/UserAvatar";
+import { DeleteObjectModal } from "@components/DeleteObjectModal/DeleteObjectModal";
 
 const { Meta } = Card;
 
@@ -27,6 +28,8 @@ export const ProcessItem = memo(
     const userId = useSelector((state: RootState) => state.user.id);
 
     const { isDarkMode } = useTheme();
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
     return (
       <Badge.Ribbon
@@ -64,21 +67,7 @@ export const ProcessItem = memo(
                     onClick={(e) => {
                       e.stopPropagation();
                       if (handleDelete && !disabled)
-                        Modal.confirm({
-                          title: "Удалить",
-                          content: "Вы действительно хотите удалить процесс?",
-                          cancelText: "Отменить",
-                          okText: "Удалить",
-                          onOk: () => {
-                            handleDelete(item.id);
-                          },
-                          footer: (_, { OkBtn, CancelBtn }) => (
-                            <>
-                              <CancelBtn />
-                              <OkBtn />
-                            </>
-                          ),
-                        });
+                        setIsDeleteModalOpen(true)
                     }}
                   >
                     <BsFillTrashFill key="ellipsis" size={16} />
@@ -121,6 +110,17 @@ export const ProcessItem = memo(
                 {item.desc}
               </p>
             }
+          />
+          <DeleteObjectModal 
+            isOpen={isDeleteModalOpen}
+            title={`Удалить процесс "${item.name}"?`}
+            content={`Вы действительно хотите удалить процесс "${item.name}"?`}
+            onOk={() => {
+              if (handleDelete) {
+                handleDelete(item.id)
+              }
+            }}
+            onCancel={() => setIsDeleteModalOpen(false)}
           />
         </Card>
       </Badge.Ribbon>
