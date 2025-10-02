@@ -72,6 +72,13 @@ export const ProcessConstructor = memo(() => {
     { skip: !processId, refetchOnMountOrArgChange: true }
   );
 
+  const {
+    emitDocumentUpdate,
+    emitDocumentRefresh,
+    emitJoinDocument,
+    emitLeaveDocument,
+  } = useSocket();
+
   useEffect(() => {
     dispatch(setProcessId(processId));
   }, [dispatch, processId]);
@@ -154,8 +161,8 @@ export const ProcessConstructor = memo(() => {
     () =>
       debounce(() => {
         if (processId && rfInstance) {
-          socket.emit("document-update", {
-            documentId: processId,
+          emitDocumentUpdate({
+            processId,
             content: JSON.stringify(rfInstance.toObject()),
           });
 
@@ -214,53 +221,51 @@ export const ProcessConstructor = memo(() => {
 
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           nodes: e,
         },
       });
+
       dispatch(onNodesChange(e));
     },
     [dispatch, processId]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           edges: e,
         },
       });
+
       dispatch(onEdgesChange(e));
     },
     [dispatch, processId]
   );
   const handleChangeConnect = useCallback<OnConnect>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           connects: e,
         },
       });
+
       dispatch(onConnect(e));
     },
     [dispatch, processId]
   );
 
-  // Сокеты.
-  const { emitJoinDocument, emitLeaveDocument } = useSocket();
-
   useEffect(() => {
-    function onSocketConnect() {
-      console.log("onConnect");
-    }
-
-    function onSocketDisconnect() {
-      console.log("onDisconnect");
-    }
-
     function onDocumentUpdate(e: IDocumentRefresh) {
       console.log("onDocumentUpdate", e);
 
@@ -276,13 +281,9 @@ export const ProcessConstructor = memo(() => {
       if (newNode) setNodes((nds) => nds.concat(newNode));
     }
 
-    socket.on("connect", onSocketConnect);
-    socket.on("disconnect", onSocketDisconnect);
     socket.on("document-refresh", onDocumentUpdate);
 
     return () => {
-      socket.off("connect", onSocketConnect);
-      socket.off("disconnect", onSocketDisconnect);
       socket.off("document-refresh", onDocumentUpdate);
     };
   }, []);
