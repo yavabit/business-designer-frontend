@@ -1,4 +1,5 @@
 import stringToHslColor from "@shared/utils/stringToHslColor";
+import { useEffect, useState } from "react";
 
 interface ICursorProps {
   x: number;
@@ -8,11 +9,10 @@ interface ICursorProps {
 
 interface ICursorSvgProps {
   color: string;
-	size: number;
+  size: number;
 }
 
 function CursorSvg({ color, size }: ICursorSvgProps) {
-
   return (
     <svg width={size} height={size} viewBox={`0 0 16 16`} fill="none">
       <path
@@ -23,34 +23,50 @@ function CursorSvg({ color, size }: ICursorSvgProps) {
   );
 }
 const Cursor = ({ x, y, label }: ICursorProps) => {
-	const userColor = stringToHslColor(label)
+  const userColor = stringToHslColor(label);
+  const [isHidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    setHidden(false);
+
+    const clearId = setTimeout(() => {
+      setHidden(true);
+    }, 30000);
+
+    return () => {
+      clearTimeout(clearId);
+    };
+  }, [x, y]);
 
   return (
     <span
-      
       style={{
+        display: isHidden ? "none" : "",
         position: "absolute",
         top: 0,
         left: 0,
         transform: `translate(${x}px, ${y}px)`,
         transition: "transform 120ms linear",
         color: "black",
-				zIndex: 99
+        zIndex: 1001,
       }}
     >
       <CursorSvg size={18} color={userColor} />
-      <span style={{
-				position: "relative",
-				background: userColor,
-				borderRadius: '20px',
-				padding: '5px 10px',
-				top: 11,
-				right: 7,
-				fontSize: 14
-			}}>{label}</span>
+      <span
+        style={{
+          position: "relative",
+          background: userColor,
+          borderRadius: "20px",
+          padding: "5px 10px",
+          top: 11,
+          right: 7,
+          fontSize: 14,
+        }}
+      >
+        {label}
+      </span>
     </span>
   );
 };
 
-
-export default Cursor
+export default Cursor;

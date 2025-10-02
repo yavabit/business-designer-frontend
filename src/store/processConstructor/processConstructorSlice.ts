@@ -35,7 +35,6 @@ const processConstructorSlice = createSlice({
 			};
 			state.nodes = [...state.nodes, newNode];
 
-			// console.log('addNode', newNode)
       socket.emit("document-refresh", {
         documentId: state.processId,
         content: {

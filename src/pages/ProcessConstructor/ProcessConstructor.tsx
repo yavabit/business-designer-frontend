@@ -16,6 +16,7 @@ import {
   type OnConnect,
   getViewportForBounds,
   type EdgeMouseHandler,
+  ViewportPortal,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -32,7 +33,6 @@ import {
   setSelectedNode,
 } from "@store/processConstructor/processConstructorSlice";
 
-import ContextMenu, { type IContextMenu } from "./components/ContextMenu";
 import { useTheme } from "@hooks/useTheme";
 import { debounce } from "lodash";
 import {
@@ -49,7 +49,7 @@ import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHea
 import useSocket from "@hooks/useSocket";
 
 interface IDocumentRefresh {
-  content: { nodes: []; edges: []; connects: [], newNode: Node };
+  content: { nodes: []; edges: []; connects: []; newNode: Node };
 }
 
 export const ProcessConstructor = memo(() => {
@@ -72,9 +72,16 @@ export const ProcessConstructor = memo(() => {
     { skip: !processId, refetchOnMountOrArgChange: true }
   );
 
-	useEffect(() => {
-		dispatch(setProcessId(processId))
-	}, [dispatch, processId])
+  const {
+    emitDocumentUpdate,
+    emitDocumentRefresh,
+    emitJoinDocument,
+    emitLeaveDocument,
+  } = useSocket();
+
+  useEffect(() => {
+    dispatch(setProcessId(processId));
+  }, [dispatch, processId]);
 
   const [updateProcessImage] = useUpdateProcessImageMutation();
 
@@ -83,10 +90,12 @@ export const ProcessConstructor = memo(() => {
   }, [isDarkMode]);
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const refReactFlow = useRef<HTMLDivElement | null>(null);
 
   // DnD
   const reactFlowWrapper = useRef(null);
-  const { screenToFlowPosition, getNodes, getNodesBounds, setNodes } = useReactFlow();
+  const { screenToFlowPosition, getNodes, getNodesBounds, setNodes } =
+    useReactFlow();
   const { type } = useDnD();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLElement>) => {
@@ -115,46 +124,16 @@ export const ProcessConstructor = memo(() => {
           }
         : nodeData.defaultData;
 
-			const newNode = {
-				id: crypto.randomUUID(),
-				data: defaultData,
-				type: type.toString(),
-				position,
-			}
+      const newNode = {
+        id: crypto.randomUUID(),
+        data: defaultData,
+        type: type.toString(),
+        position,
+      };
 
       setNodes((nds) => nds.concat(newNode));
-
-			
     },
     [screenToFlowPosition, type, nodeList, setNodes]
-  );
-
-  // Context Menu.
-  const [menu, setMenu] = useState<IContextMenu | null>(null);
-  const refReactFlow = useRef<HTMLDivElement | null>(null);
-
-  const onNodeContextMenu = useCallback<NodeMouseHandler<Node>>(
-    (event, node) => {
-      event.preventDefault();
-
-      if (refReactFlow?.current == null) return;
-
-      const pane = refReactFlow.current.getBoundingClientRect();
-      setMenu({
-        id: node.id,
-        top: event.clientY < pane.height - 200 ? undefined : event.clientY,
-        left: event.clientX < pane.width - 200 ? undefined : event.clientX,
-        right:
-          event.clientX >= pane.width - 200
-            ? undefined
-            : pane.width - event.clientX,
-        bottom:
-          event.clientY >= pane.height - 200
-            ? undefined
-            : pane.height - event.clientY,
-      });
-    },
-    [setMenu]
   );
 
   const handleNodeClick: NodeMouseHandler = useCallback(
@@ -175,17 +154,15 @@ export const ProcessConstructor = memo(() => {
     if (selectedNode != null) {
       dispatch(setSelectedNode(null));
     }
-
-    setMenu(null);
-  }, [dispatch, selectedNode, setMenu]);
+  }, [dispatch, selectedNode]);
 
   // Автосохранение.
   const flowAutosave = useMemo(
     () =>
       debounce(() => {
         if (processId && rfInstance) {
-          socket.emit("document-update", {
-            documentId: processId,
+          emitDocumentUpdate({
+            processId,
             content: JSON.stringify(rfInstance.toObject()),
           });
 
@@ -244,55 +221,52 @@ export const ProcessConstructor = memo(() => {
 
   const handleChangeNode = useCallback<OnNodesChange<Node>>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           nodes: e,
         },
       });
+
       dispatch(onNodesChange(e));
     },
     [dispatch, processId]
   );
   const handleChangeEdges = useCallback<OnEdgesChange<Edge>>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           edges: e,
         },
       });
+
       dispatch(onEdgesChange(e));
     },
     [dispatch, processId]
   );
   const handleChangeConnect = useCallback<OnConnect>(
     (e) => {
-      socket.emit("document-refresh", {
-        documentId: processId,
+      if (!processId) return;
+
+      emitDocumentRefresh({
+        processId,
         content: {
           connects: e,
         },
       });
+
       dispatch(onConnect(e));
     },
     [dispatch, processId]
   );
 
-  // Сокеты.
-	const { emitJoinDocument, emitLeaveDocument } = useSocket()
-
   useEffect(() => {
-    function onSocketConnect() {
-      console.log("onConnect");
-    }
-
-    function onSocketDisconnect() {
-      console.log("onDisconnect");
-    }
-
     function onDocumentUpdate(e: IDocumentRefresh) {
-      console.log("onDocumentUpdate", e);
 
       const { content } = e;
       const { nodes, edges, connects, newNode } = content;
@@ -303,26 +277,21 @@ export const ProcessConstructor = memo(() => {
 
       if (connects) dispatch(onConnect(connects));
 
-			if (newNode)
-				setNodes((nds) => nds.concat(newNode));
+      if (newNode) setNodes((nds) => nds.concat(newNode));
     }
 
-    socket.on("connect", onSocketConnect);
-    socket.on("disconnect", onSocketDisconnect);
     socket.on("document-refresh", onDocumentUpdate);
 
     return () => {
-      socket.off("connect", onSocketConnect);
-      socket.off("disconnect", onSocketDisconnect);
       socket.off("document-refresh", onDocumentUpdate);
     };
   }, []);
 
   useEffect(() => {
-		emitJoinDocument(processId)
+    emitJoinDocument(processId);
 
     return () => {
-			emitLeaveDocument(processId)
+      emitLeaveDocument(processId);
     };
   }, [processId]);
 
@@ -338,10 +307,12 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <ConstructorHeader
-          processName={processData?.data.name}
-          isAgent={processData?.data.category === "agent"}
-        />
+        {processData && (
+          <ConstructorHeader
+            processData={processData?.data}
+            isAgent={processData?.data.category === "agent"}
+          />
+        )}
         {isLoading && (
           <Flex justify="center" style={{ padding: "20px" }}>
             <Spin size="large" />
@@ -381,18 +352,18 @@ export const ProcessConstructor = memo(() => {
             onDrop={onDrop}
             onDragOver={onDragOver}
             onPaneClick={handlePaneClick}
-            onNodeContextMenu={onNodeContextMenu}
           >
             <NodesPanel />
             <NodeEditPanel />
             <Controls />
             <MiniMap />
             <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
-            {menu && <ContextMenu onClick={handlePaneClick} {...menu} />}
           </ReactFlow>
         )}
       </div>
-      <UserMulticursor processId={processId} />
+      <ViewportPortal>
+        <UserMulticursor processId={processId} />
+      </ViewportPortal>
       <Hotkeys />
     </div>
   );

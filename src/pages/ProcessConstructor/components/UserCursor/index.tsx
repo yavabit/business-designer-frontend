@@ -1,79 +1,44 @@
 import { useMouse } from "@hooks/useMouse";
+import useSocket from "@hooks/useSocket";
 import Cursor from "@pages/ProcessConstructor/components/UserCursor/Cursor";
-import { socket } from "@store/api/socket";
 import { useReactFlow } from "@xyflow/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface IUserMulticursor {
   processId: string | undefined;
 }
 
-interface IUserCursorMove {
-  userId: string;
-  username: string;
-  x: number;
-  y: number;
-}
-
-interface ICursors {
-  [userId: string]: { x: number; y: number; username: string };
-}
-
-const UserMulticursor = ({
-  processId
-}: IUserMulticursor) => {
+const UserMulticursor = ({ processId }: IUserMulticursor) => {
   const { mousePos } = useMouse();
 
-  const [cursors, setCursors] = useState<ICursors>({});
-  const { screenToFlowPosition, flowToScreenPosition } = useReactFlow();
+  const { cursors, emitCursorMove } = useSocket();
+
+  const { screenToFlowPosition } = useReactFlow();
 
   useEffect(() => {
-    function onUserCursorMove(e: IUserCursorMove) {
-      const { userId, username, x, y } = e;
+    const position = screenToFlowPosition(
+      {
+        x: mousePos.x,
+        y: mousePos.y,
+      },
+      {
+        snapToGrid: false,
+      }
+    );
 
-      const firstName = username.split(" ")[1];
+		if(!processId)
+			return
 
-			const flowPos = flowToScreenPosition({
-				x: x,
-				y: y
-			})
-
-
-      setCursors((prevState) => ({
-        ...prevState,
-        [userId]: {
-          username: firstName,
-          x: flowPos.x,
-          y: flowPos.y,
-        },
-      }));
-    }
-
-    socket.on("user-cursor-move", onUserCursorMove);
-
-    return () => {
-      socket.off("user-cursor-move", onUserCursorMove);
-    };
-  }, []);
-
-  useEffect(() => {
-    const position = screenToFlowPosition({
-			x: mousePos.x,
-			y: mousePos.y
-		}, {
-			snapToGrid: false
-		});
-
-    socket.emit("cursor-move", {
-      documentId: processId,
-			x: position.x,
+    emitCursorMove({
+      processId,
+      x: position.x,
 			y: position.y
     });
   }, [screenToFlowPosition, processId, mousePos]);
 
   return (
     <>
-      {Object.keys(cursors).map((userId, i) => (
+      {Object.keys(cursors).filter(item => item != undefined).map((userId, i) => (
         <Cursor
           key={i}
           x={cursors[userId].x}
