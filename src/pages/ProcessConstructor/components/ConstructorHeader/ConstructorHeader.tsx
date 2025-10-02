@@ -7,6 +7,9 @@ import { useTheme } from "@hooks/useTheme";
 import { useLazyGetTriggerTypesQuery } from "@store/api/processes/processesApi";
 import useSocket from "@hooks/useSocket";
 import UserAvatar from "@components/UserAvatar/UserAvatar";
+import { AiOutlineEdit } from "react-icons/ai";
+import { socket } from "@store/api/socket";
+import { useAppSelector } from "@hooks/storeHooks";
 
 enum triggers {
   "never" = "Никогда",
@@ -14,23 +17,40 @@ enum triggers {
 }
 
 export const ConstructorHeader: FC<{
-  processName?: string;
+  processData: IProcess;
   isAgent?: boolean;
-}> = ({ processName, isAgent = false }) => {
+}> = ({ processData, isAgent = false }) => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
 
   const [getTriggers, triggersData] = useLazyGetTriggerTypesQuery();
 
-  const { listJoinedUsers } = useSocket();
+  const { listJoinedUsers, emitDocumentNameUpdated } = useSocket();
 
   const [isEditProcessName, setEditProcessName] = useState(false);
+
+  const [processName, setProcessName] = useState(processData.name);
+
+  const curUserId = useAppSelector((state) => state.user.id);
+  const isAuthor = processData.author_id === curUserId;
 
   useEffect(() => {
     if (isAgent) {
       getTriggers();
     }
   }, [isAgent, getTriggers]);
+
+  const onDocumentNameUpdated = ({ name }: { name: string }) => {
+    setProcessName(name);
+  };
+
+  useEffect(() => {
+    socket.on("document-name-updated", onDocumentNameUpdated);
+
+    return () => {
+      socket.off("document-name-updated", onDocumentNameUpdated);
+    };
+  });
 
   const renderAvatars = useMemo(
     () =>
@@ -40,26 +60,61 @@ export const ConstructorHeader: FC<{
     [listJoinedUsers]
   );
 
-  const handleClickProcessName = () => {
-    setEditProcessName(true);
+  const handleToggleEditProcessName = (val: boolean) => {
+    if (isAuthor) return;
+
+    setEditProcessName(val);
+  };
+
+  const handleChangeProcessName = (e: React.InputEvent<HTMLInputElement>) => {
+    const name = e.currentTarget.value;
+
+    if (!processData.id || name.trim().length == 0) return;
+
+    emitDocumentNameUpdated({
+      processId: processData.id,
+      name,
+    });
+
+    setProcessName(name);
   };
 
   const renderProcessName = useMemo(() => {
-    if (isEditProcessName) {
+    const name =
+      processName.trim().length === 0
+        ? "Введите название процесса"
+        : processName;
+
+    if (isAuthor && isEditProcessName) {
       return (
-        <span>
+        <Flex gap={16}>
           <Input
             placeholder="Наименование"
             variant="underlined"
-            defaultValue={processName}
+            value={processName}
+            style={{
+              width: 300,
+            }}
+            onInput={handleChangeProcessName}
           />
-        </span>
+          <Button onClick={() => handleToggleEditProcessName(false)}>
+            <AiOutlineEdit />
+          </Button>
+        </Flex>
       );
     }
 
-    return <span onDoubleClick={handleClickProcessName}>{processName}</span>;
+    return (
+      <Flex
+        style={{
+          width: 300,
+        }}
+        onDoubleClick={() => handleToggleEditProcessName(true)}
+      >
+        {name}
+      </Flex>
+    );
   }, [isEditProcessName, processName]);
-	
 
   return (
     <Flex
@@ -73,14 +128,12 @@ export const ConstructorHeader: FC<{
         <Button onClick={() => navigate(-1)}>
           <BsChevronLeft />
         </Button>
-        <p>{renderProcessName}</p>
+        <div>{renderProcessName}</div>
       </Flex>
 
       <Flex gap={16}>
         <Flex align="center" gap={16}>
-          <Avatar.Group>
-            {renderAvatars}
-          </Avatar.Group>
+          <Avatar.Group>{renderAvatars}</Avatar.Group>
         </Flex>
         {isAgent && (
           <Flex gap={12} align="center">

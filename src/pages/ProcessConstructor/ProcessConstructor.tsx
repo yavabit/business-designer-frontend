@@ -267,7 +267,6 @@ export const ProcessConstructor = memo(() => {
 
   useEffect(() => {
     function onDocumentUpdate(e: IDocumentRefresh) {
-      console.log("onDocumentUpdate", e);
 
       const { content } = e;
       const { nodes, edges, connects, newNode } = content;
@@ -308,10 +307,12 @@ export const ProcessConstructor = memo(() => {
         className="reactflow-wrapper"
         ref={reactFlowWrapper}
       >
-        <ConstructorHeader
-          processName={processData?.data.name}
-          isAgent={processData?.data.category === "agent"}
-        />
+        {processData && (
+          <ConstructorHeader
+            processData={processData?.data}
+            isAgent={processData?.data.category === "agent"}
+          />
+        )}
         {isLoading && (
           <Flex justify="center" style={{ padding: "20px" }}>
             <Spin size="large" />
