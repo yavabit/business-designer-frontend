@@ -1,6 +1,6 @@
 import { Button, Flex, Spin } from "antd";
 import { useCallback, useEffect, useState, type FC } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ItemsPageLayout } from "@app/layouts/ItemsPageLayout/ItemsPageLayout";
 import {
     useDeleteProcessMutation,
@@ -12,6 +12,7 @@ import type { RootState } from "@store/index";
 import { useInfiniteScroll } from "@hooks/useInfinityScroll";
 import { BsChevronLeft } from "react-icons/bs";
 import { ProcessItem } from "./components/ProcessItem/ProcessItem";
+import { useLazyGetProjectByIdQuery } from "@store/api/projects/projectsApi";
 
 export const Processes: FC = () => {
     
@@ -24,6 +25,8 @@ export const Processes: FC = () => {
     const [allProcesses, setAllProcesses] = useState<IProcess[]>([]);
     const [previousModalState, setPreviousModalState] = useState(false);
 
+    const [getProject, projectData] = useLazyGetProjectByIdQuery();
+
     const debouncedSearchValue = useDebounce(searchValue, 500);
 
     const { projectId } = useParams();
@@ -34,9 +37,7 @@ export const Processes: FC = () => {
     const [deleteProcess] = useDeleteProcessMutation();
 
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const project = location.state.metadata;
     const isCreationModalOpen = useSelector(
         (state: RootState) => state.process.isCreationModalOpen
     );
@@ -44,6 +45,12 @@ export const Processes: FC = () => {
     useEffect(() => {
         setSearchString(debouncedSearchValue);
     }, [debouncedSearchValue]);
+
+    useEffect(() => {
+        if (projectId) {
+            getProject(projectId);
+        }
+    }, [projectId])
 
     const loadPage = useCallback(
         async (page: number, reset: boolean = false) => {
@@ -151,12 +158,10 @@ export const Processes: FC = () => {
         <ItemsPageLayout
             title={
                 <Flex align="center" gap={16}>
-                    {!!project && (
-                        <Button onClick={() => navigate("/")}>
-                            <BsChevronLeft />
-                        </Button>
-                    )}
-                    <>Процессы {project}</>
+                    <Button onClick={() => navigate("/")}>
+                        <BsChevronLeft />
+                    </Button>
+                    <>Процессы {projectData.data?.data.name}</>
                 </Flex>
             }
             action={() => navigate("create-process")}
