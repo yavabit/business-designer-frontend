@@ -61,7 +61,6 @@ export const processesApi = baseApi.injectEndpoints({
 					name: body.name,
 					desc: body.desc,
 					category_id: body.category_id,
-					trigger_type: 2
 				},
 			}),
 			invalidatesTags: [{ type: apiTags.processes, id: "LIST" }],

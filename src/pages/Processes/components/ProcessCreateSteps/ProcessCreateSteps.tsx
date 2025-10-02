@@ -106,14 +106,12 @@ export const ProcessCreateSteps = () => {
 		const category_id = typesProcessData.data?.data.find(
 					(item) => item.name === commonForm["category"]
 				)?.id as NodesCategoryEnum;
-		const trigger_type = "never";
 
 		createProcess({
 			projectId: projectId!,
 			name,
 			desc,
 			category_id,
-			trigger_type,
 		}).then((res) => {
 			if (res.data) {
 				setIsModalOpen(false);
