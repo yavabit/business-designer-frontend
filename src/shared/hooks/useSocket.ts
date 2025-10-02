@@ -23,8 +23,33 @@ const useSocket = () => {
 		socket.emit("leave-document", processId);
 	}
 
+	const emitDocumentUpdate = ({ processId, content }: { processId: string; content: string }) => {
+		socket.emit("document-update", {
+			documentId: processId,
+			content,
+		});
+	}
+
+	const emitDocumentRefresh = ({ processId, content }: { processId: string; content: object }) => {
+		socket.emit("document-refresh", {
+			documentId: processId,
+			content,
+		});
+	}
+
+
+	const onSocketConnect = () => {
+		console.log("onConnect");
+	}
+
+	const onSocketDisconnect = () => {
+		console.log("onDisconnect");
+	}
+
+
 
 	useEffect(() => {
+
 		const onUserJoinDocument = (e: IUser) => {
 			setListJoinedUsers(prevState => ({
 				...prevState,
@@ -42,6 +67,7 @@ const useSocket = () => {
 		}
 
 		const onDocumentUsers = (e: { users: IUser[] }) => {
+			console.log('onUserJoinDocument', e)
 			const newItems: IListJoinedUsers = {}
 			e.users.forEach(user => {
 				newItems[user.userId] = user
@@ -49,12 +75,18 @@ const useSocket = () => {
 			setListJoinedUsers(newItems)
 		}
 
+		socket.on("connect", onSocketConnect);
+		socket.on("disconnect", onSocketDisconnect);
+
 		socket.on("user-joined", onUserJoinDocument);
 		socket.on("user-left", onUserLeftDocument);
 
 		socket.on("users-in-document", onDocumentUsers);
 
 		return () => {
+			socket.off("connect", onSocketConnect);
+			socket.off("disconnect", onSocketDisconnect);
+
 			socket.off("user-joined", onUserJoinDocument);
 			socket.off("user-left", onUserLeftDocument);
 
@@ -65,7 +97,9 @@ const useSocket = () => {
 	return {
 		listJoinedUsers,
 		emitJoinDocument,
-		emitLeaveDocument
+		emitLeaveDocument,
+		emitDocumentUpdate,
+		emitDocumentRefresh
 	}
 }
 
