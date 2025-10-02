@@ -51,8 +51,6 @@ export const RequestNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 	return (
 		<NodeWrapper
 			node={props}
-			isNeedInput={false}
-			title={"Запрос"}
 			handleBottom={false}
 			handleTop={false}
 			icon={<MdHttp />}

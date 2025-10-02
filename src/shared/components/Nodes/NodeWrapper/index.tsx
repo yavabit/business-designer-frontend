@@ -3,7 +3,7 @@ import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
 import { useDispatch } from "react-redux";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
 import { LoadingOutlined } from '@ant-design/icons';
@@ -34,13 +34,12 @@ type NodeWrapperType = {
 		bottom?: HandlePositionType;
 	};
 	inputStyle?: React.CSSProperties;
-	isNeedInput?: boolean;
 	overrideStyle?: React.CSSProperties;
-	title?: React.ReactNode;
 	resizable?: boolean;
 	icon?: React.ReactNode;
 	editable?: boolean;
 	loading?: boolean;
+	inputType?: 'input' | 'text';
 };
 
 export const NodeWrapper = memo(({
@@ -53,15 +52,15 @@ export const NodeWrapper = memo(({
 	style,
 	handleStyle,
 	inputStyle,
-	isNeedInput = true,
 	overrideStyle,
 	resizable = true,
-	title,
 	icon,
 	editable = true,
-	loading = false
+	loading = false,
+	inputType
 }: NodeWrapperType) => {
 	const { nodesCategory } = useAppSelector(state => state.nodes)
+	const [isEditing, setIsEditing] = useState(false);
 
 	const { token } = useTheme()
 
@@ -88,6 +87,22 @@ export const NodeWrapper = memo(({
 	const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		onChangeInput(e);
 		debouncedDispatch(e.target.value);
+	};
+
+	const handleDoubleClick = () => {
+		if (editable) {
+			setIsEditing(true);
+		}
+	};
+
+	const handleClick = () => {
+		if (node.selected) {
+			setIsEditing(true);
+		}
+	};
+
+	const handleBlur = () => {
+		setIsEditing(false);
 	};
 
 	return (
@@ -120,13 +135,17 @@ export const NodeWrapper = memo(({
 			
 			{resizable && <NodeResizer isVisible={node.selected}/>}
 
-			{title && <div className={styles["node-wrapper__title"]}>
+			{<div className={styles["node-wrapper__title"]}>
 				{icon && <Avatar icon={icon} shape="square" style={{marginRight: 5, height: 25}}/>}
 				<NodeInput
 					value={inputValue}
-					type="input"
+					type={inputType ?? "input"}
 					editable={editable}
 					onChange={handleChangeInput}
+					isEditing={isEditing}
+					onDoubleClick={handleDoubleClick}
+					onClick={handleClick}
+					onBlur={handleBlur}
 					style={{ 
 						color: data.style?.color ?? token.colorText,
 						fontSize: data.style?.fontSize,
@@ -135,17 +154,6 @@ export const NodeWrapper = memo(({
 				/>
 			</div>
 			}
-
-			{isNeedInput && <NodeInput
-				value={inputValue}
-				onChange={handleChangeInput}
-				editable={editable}
-				style={{ 
-					color: data.style?.color ?? token.colorText,
-					fontSize: data.style?.fontSize,
-					...inputStyle 
-				}}
-			/>}
 
 			{children}
 

@@ -11,6 +11,7 @@ const circleNodeStyle = {
 export const CircleNode = (props: NodeProps<Node<NodeCustomData>>) => (
 	<NodeWrapper 
 		node={props} 
-		style={{ ...circleNodeStyle }} 
+		style={{ ...circleNodeStyle }}
+		inputType="text"
 	/>
 );

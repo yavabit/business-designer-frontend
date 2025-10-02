@@ -50,11 +50,10 @@ export const EmailNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 
 	return <NodeWrapper 
 		node={props}
-		isNeedInput={false}
-		title={'Письмо'}
 		handleBottom={false}
 		handleTop={false}
 		icon={<MdEmail />}
+		overrideStyle={{minWidth: 160}}
 	>
 		<AddFieldsNode btnLabel={'Добавить отправку email'} handleConfirmModal={handleConfirmModal} defaultFields={defaultFields}>
 			<Form form={emailForm} layout="vertical">

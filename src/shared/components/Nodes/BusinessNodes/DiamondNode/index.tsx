@@ -68,7 +68,7 @@ export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 				border: "none",
 				padding: "0px",
 			}}
-			isNeedInput={false}
+			inputType="text"
 		>
 			<div
 				style={{
