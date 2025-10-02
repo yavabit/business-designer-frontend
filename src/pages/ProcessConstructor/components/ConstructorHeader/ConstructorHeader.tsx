@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import style from "./ConstructorHeader.module.scss";
 import { Avatar, Button, Flex, Input, Select } from "antd";
 import { BsChevronLeft, BsFillPlayFill } from "react-icons/bs";
@@ -24,19 +24,42 @@ export const ConstructorHeader: FC<{
 
   const { listJoinedUsers } = useSocket();
 
+  const [isEditProcessName, setEditProcessName] = useState(false);
+
   useEffect(() => {
     if (isAgent) {
       getTriggers();
     }
   }, [isAgent, getTriggers]);
 
-  const renderAvatars = useCallback(
+  const renderAvatars = useMemo(
     () =>
       Object.values(listJoinedUsers).map((item) => (
         <UserAvatar key={item.userId} label={item.username} />
       )),
     [listJoinedUsers]
   );
+
+  const handleClickProcessName = () => {
+    setEditProcessName(true);
+  };
+
+  const renderProcessName = useMemo(() => {
+    if (isEditProcessName) {
+      return (
+        <span>
+          <Input
+            placeholder="Наименование"
+            variant="underlined"
+            defaultValue={processName}
+          />
+        </span>
+      );
+    }
+
+    return <span onDoubleClick={handleClickProcessName}>{processName}</span>;
+  }, [isEditProcessName, processName]);
+	
 
   return (
     <Flex
@@ -50,18 +73,15 @@ export const ConstructorHeader: FC<{
         <Button onClick={() => navigate(-1)}>
           <BsChevronLeft />
         </Button>
-        <p>
-          <span>
-            <Input placeholder="Наименование" variant="underlined" />
-          </span>
-          <span>{processName}</span>
-        </p>
-        <Flex align="center" gap={16}>
-          <Avatar.Group>{renderAvatars()}</Avatar.Group>
-        </Flex>
+        <p>{renderProcessName}</p>
       </Flex>
 
       <Flex gap={16}>
+        <Flex align="center" gap={16}>
+          <Avatar.Group>
+            {renderAvatars}
+          </Avatar.Group>
+        </Flex>
         {isAgent && (
           <Flex gap={12} align="center">
             <Flex align="center" gap={8}>
