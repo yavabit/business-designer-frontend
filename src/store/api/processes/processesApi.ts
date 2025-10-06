@@ -127,6 +127,29 @@ export const processesApi = baseApi.injectEndpoints({
                       ]
                     : [{ type: apiTags.triggers, id: "LIST" }],
 		}),
+		// updateTriggerType: builder.mutation<{message: string}, {process: string, trigger_type: string}>({
+		// 	query: ({process, trigger_type}) => ({
+		// 		url: `/documents/${process}/trigger`,
+		// 		method: 'PATCH',
+		// 		body: { trigger_type }
+		// 	}),
+		// 	invalidatesTags: [apiTags.process]
+		// }),
+		// updatePeriod: builder.mutation<{message: string}, {process: string, period: number | null}>({
+		// 	query: ({process, period}) => ({
+		// 		url: `/documents/${process}/period`,
+		// 		method: 'PATCH',
+		// 		body: { period }
+		// 	}),
+		// 	invalidatesTags: [apiTags.process]
+		// }),
+		// switchShedule: builder.mutation<{is_started: boolean}, string>({
+		// 	query: (process) => ({
+		// 		url: `/documents/${process}/switch_shedule`,
+		// 		method: 'POST',
+		// 	}),
+		// 	invalidatesTags: [apiTags.process]
+		// })
 	}),
 });
 
@@ -140,4 +163,7 @@ export const {
 	useLazyTypesProcessQuery,
 	useTypesProcessQuery,
 	useLazyGetTriggerTypesQuery,
+	// useUpdateTriggerTypeMutation,
+	// useUpdatePeriodMutation,
+	// useSwitchSheduleMutation,
 } = processesApi;

@@ -43,7 +43,38 @@ export const processConstructorApi = baseApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: apiTags.process, id: "LIST" }],
 		}),
+		updateTriggerType: builder.mutation<{message: string}, {process: string, trigger_type: string}>({
+			query: ({process, trigger_type}) => ({
+				url: `/documents/${process}/trigger`,
+				method: 'PATCH',
+				body: { trigger_type }
+			}),
+			invalidatesTags: [apiTags.process]
+		}),
+		updatePeriod: builder.mutation<{message: string}, {process: string, period: number | null}>({
+			query: ({process, period}) => ({
+				url: `/documents/${process}/period`,
+				method: 'PATCH',
+				body: { period }
+			}),
+			invalidatesTags: [apiTags.process]
+		}),
+		switchShedule: builder.mutation<{is_started: boolean}, string>({
+			query: (process) => ({
+				url: `/documents/${process}/switch_shedule`,
+				method: 'POST',
+			}),
+			invalidatesTags: [apiTags.process]
+		})
 	})
 })
 
-export const { useLazyGetProcessQuery, useGetProcessQuery, useUpdateProcessSchemeMutation, useUpdateProcessImageMutation } = processConstructorApi
+export const { 
+	useLazyGetProcessQuery, 
+	useGetProcessQuery, 
+	useUpdateProcessSchemeMutation, 
+	useUpdateProcessImageMutation, 
+	useUpdateTriggerTypeMutation,
+	useUpdatePeriodMutation,
+	useSwitchSheduleMutation,
+} = processConstructorApi

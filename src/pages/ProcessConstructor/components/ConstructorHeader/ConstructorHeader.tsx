@@ -1,15 +1,21 @@
 import { useEffect, useMemo, useState, type FC } from "react";
 import style from "./ConstructorHeader.module.scss";
-import { Avatar, Button, Flex, Input, Select } from "antd";
-import { BsChevronLeft, BsFillPlayFill } from "react-icons/bs";
+import { Avatar, Button, Flex, Input, Select, Tooltip } from "antd";
+import { BsChevronLeft, BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@hooks/useTheme";
 import { useLazyGetTriggerTypesQuery } from "@store/api/processes/processesApi";
+import { 
+  useSwitchSheduleMutation, 
+  useUpdatePeriodMutation, 
+  useUpdateTriggerTypeMutation 
+} from "@store/api/processConstructor/processConstructorApi";
 import useSocket from "@hooks/useSocket";
 import UserAvatar from "@components/UserAvatar/UserAvatar";
 import { AiOutlineEdit } from "react-icons/ai";
 import { socket } from "@store/api/socket";
 import { useAppSelector } from "@hooks/storeHooks";
+import { formatDate } from "@shared/utils/formatDate";
 
 enum triggers {
   "never" = "Никогда",
@@ -24,6 +30,9 @@ export const ConstructorHeader: FC<{
   const { isDarkMode } = useTheme();
 
   const [getTriggers, triggersData] = useLazyGetTriggerTypesQuery();
+  const [updateTrigger, updTriggerData] = useUpdateTriggerTypeMutation();
+  const [updatePeriod, updPeriodData] = useUpdatePeriodMutation();
+  const [switchShedule, sheduleData] = useSwitchSheduleMutation();
 
   const { listJoinedUsers, emitDocumentNameUpdated } = useSocket();
 
@@ -36,9 +45,36 @@ export const ConstructorHeader: FC<{
 
   useEffect(() => {
     if (isAgent) {
-      getTriggers();
+      getTriggers()
     }
   }, [isAgent, getTriggers]);
+
+  const getProcessTrigger = (triggerName: "never" | "periodically" | null | undefined) => {
+    return triggersData.data?.data.find(t => t.name == triggerName)?.id
+  }
+
+  const isNeverTrigger = (triggerName: "never" | "periodically" | null | undefined) => {
+    return getProcessTrigger(triggerName) == triggersData.data?.data.find(t => t.name == 'never')?.id
+  }
+
+  const changeTriggerType = (trigger_type_id: string) => {
+    const triggerObj = triggersData.data?.data.find(t => t.id == trigger_type_id)
+    if (triggerObj) {
+      if (triggerObj.name == 'never') {
+        updatePeriod({
+          process: processData.id, 
+          period: null
+        })
+        if (processData.is_started) {
+          switchShedule(processData.id)
+        }
+      }
+      updateTrigger({
+        process: processData.id, 
+        trigger_type: trigger_type_id
+      })
+    }
+  }
 
   const onDocumentNameUpdated = ({ name }: { name: string }) => {
     setProcessName(name);
@@ -140,17 +176,73 @@ export const ConstructorHeader: FC<{
             <Flex align="center" gap={8}>
               <p>Запускать:</p>
               <Select
+                disabled={triggersData.isLoading || updTriggerData.isLoading}
                 style={{ width: "150px" }}
                 options={triggersData.data?.data.map((t) => ({
                   value: t.id,
                   label: triggers[t.name as keyof typeof triggers],
                 }))}
                 placeholder="Не выбрано"
+                value={getProcessTrigger(processData.trigger_type)}
+                onChange={(val) => changeTriggerType(val)}
               />
             </Flex>
-            <Button color="green" variant="solid" title="Запустить процесс">
-              <BsFillPlayFill size={24} />
-            </Button>
+            <Flex align="center">
+                <Select
+                  disabled={
+                    !processData.trigger_type || 
+                    triggersData.isLoading ||
+                    updPeriodData.isLoading || 
+                    isNeverTrigger(processData.trigger_type)
+                  }
+                  style={{ width: "150px" }}
+                  options={[
+                    {value: 3600000, label: 'Раз в час'},
+                    {value: 86400000, label: 'Раз в день'},
+                    {value: 2592000000, label: 'Раз в месяц'},
+                  ]}
+                  placeholder="Период"
+                  value={processData.period ? Number(processData.period) : undefined}
+                  onChange={(val) => updatePeriod({process: processData.id, period: val})}
+                />
+            </Flex>
+            <Tooltip
+              title={ processData.is_started
+                ? (
+                  <Flex vertical>
+                    {!!processData.last_run_date && (
+                      <p>Дата последнего запуска: {formatDate(processData.last_run_date)}</p>
+                    )}
+                    {!!processData.next_run_date && (
+                      <p>Дата следующего запуска: {formatDate(processData.next_run_date)}</p>
+                    )}
+                    <p>Остановить агент?</p>
+                  </Flex>
+                ) 
+                : "Запустить процесс"
+              }
+              placement="bottom"
+            >
+              <Button
+                disabled={
+                  !processData.trigger_type || 
+                  !processData.period || 
+                  triggersData.isLoading ||
+                  updTriggerData.isLoading ||
+                  updPeriodData.isLoading ||
+                  isNeverTrigger(processData.trigger_type) ||
+                  sheduleData.isLoading
+                } 
+                color={processData.is_started ? "red" : "green"} 
+                variant="solid" 
+                onClick={() => switchShedule(processData.id)}>
+                {processData.is_started ? (
+                  <BsFillPauseFill size={24} />
+                ) : (
+                  <BsFillPlayFill size={24} />
+                )}
+              </Button>
+            </Tooltip>
           </Flex>
         )}
       </Flex>
