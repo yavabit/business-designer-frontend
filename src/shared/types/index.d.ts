@@ -34,6 +34,9 @@ interface IProcess {
     trigger_type?: 'never' | 'periodically' | null;
     period?: number;
     last_run_date?: string;
+    next_run_date?: string;
+    is_started?: boolean;
+    is_running?: boolean;
 }
 
 interface IProcessType {
