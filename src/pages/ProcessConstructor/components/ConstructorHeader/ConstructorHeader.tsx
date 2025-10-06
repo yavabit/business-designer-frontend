@@ -202,7 +202,7 @@ export const ConstructorHeader: FC<{
                     {value: 2592000000, label: 'Раз в месяц'},
                   ]}
                   placeholder="Период"
-                  value={!!processData.period ? Number(processData.period) : undefined}
+                  value={processData.period ? Number(processData.period) : undefined}
                   onChange={(val) => updatePeriod({process: processData.id, period: val})}
                 />
             </Flex>
