@@ -10,7 +10,7 @@ const ExportButton = ({ fileName }: { fileName: string | undefined }) => {
   const { getNodes, getNodesBounds } = useReactFlow();
 
   const downloadImage = (dataUrl: string) => {
-		const date = new Date().toLocaleString().replaceAll(':', '_').replaceAll('.', '_').replace(', ', '_')
+		const date = Date.now()
 
 
     const a = document.createElement("a");
