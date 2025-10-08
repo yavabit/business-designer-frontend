@@ -17,6 +17,8 @@ import {
   getViewportForBounds,
   type EdgeMouseHandler,
   ViewportPortal,
+  ConnectionLineType,
+  type DefaultEdgeOptions,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import style from "./ProcessConstructor.module.scss";
@@ -47,10 +49,20 @@ import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
 import { ConstructorHeader } from "./components/ConstructorHeader/ConstructorHeader";
 import useSocket from "@hooks/useSocket";
+import ExportButton from "@pages/ProcessConstructor/components/ExportButton";
 
 interface IDocumentRefresh {
   content: { nodes: []; edges: []; connects: []; newNode: Node };
 }
+
+const connectionLineStyle = { stroke: "#ffff" };
+
+const defaultEdgeOptions: DefaultEdgeOptions = {
+  type: "smoothstep",
+  style: {
+    fill: "red",
+  },
+};
 
 export const ProcessConstructor = memo(() => {
   const { isDarkMode } = useTheme();
@@ -166,8 +178,8 @@ export const ProcessConstructor = memo(() => {
             content: JSON.stringify(rfInstance.toObject()),
           });
 
-          const imageWidth = 1920;
-          const imageHeight = 1080;
+          const imageWidth = 3840;
+          const imageHeight = 2160;
 
           const nodesBounds = getNodesBounds(getNodes());
           const viewport = getViewportForBounds(
@@ -176,18 +188,16 @@ export const ProcessConstructor = memo(() => {
             imageHeight,
             0.5,
             2,
-            20
+            { left: 0.1, top: 0.1, right: 0.1, bottom: 0.1 }
           );
 
           const view: HTMLElement | null = document.querySelector(
             ".react-flow__viewport"
           );
 
-          if ((!view && !refReactFlow) || refReactFlow?.current == null) return;
+          if (view == null) return;
 
-          if (refReactFlow?.current == null) return;
-
-          toBlob(refReactFlow.current, {
+          toBlob(view, {
             backgroundColor: "#1a365d",
             width: imageWidth,
             height: imageHeight,
@@ -267,7 +277,6 @@ export const ProcessConstructor = memo(() => {
 
   useEffect(() => {
     function onDocumentUpdate(e: IDocumentRefresh) {
-
       const { content } = e;
       const { nodes, edges, connects, newNode } = content;
 
@@ -352,12 +361,25 @@ export const ProcessConstructor = memo(() => {
             onDrop={onDrop}
             onDragOver={onDragOver}
             onPaneClick={handlePaneClick}
+            connectionLineStyle={connectionLineStyle}
+            connectionLineType={ConnectionLineType.Step}
+            defaultEdgeOptions={defaultEdgeOptions}
           >
             <NodesPanel />
             <NodeEditPanel />
             <Controls />
             <MiniMap />
             <Background color="#ccc" variant={BackgroundVariant.Dots} />{" "}
+            <div
+              style={{
+                position: "absolute",
+                right: 10,
+                top: 10,
+                zIndex: 999,
+              }}
+            >
+              <ExportButton fileName={processData?.data.name} />
+            </div>
           </ReactFlow>
         )}
       </div>

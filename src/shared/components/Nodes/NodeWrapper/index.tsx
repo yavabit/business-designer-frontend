@@ -2,13 +2,12 @@ import {
   Handle,
   NodeResizer,
   Position,
+  useReactFlow,
   type Node,
   type NodeProps,
 } from "@xyflow/react";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useNodeInput } from "@hooks/useNodeInput";
-import { useDispatch } from "react-redux";
-import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
 import { memo, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
@@ -67,14 +66,15 @@ export const NodeWrapper = memo(
     editable = true,
     loading = false,
     inputType,
-    withTitle = true
+    withTitle = true,
   }: NodeWrapperType) => {
     const { nodesCategory } = useAppSelector((state) => state.nodes);
     const [isEditing, setIsEditing] = useState(false);
 
+    const { setNodes } = useReactFlow();
+
     const { token } = useTheme();
 
-    const dispatch = useDispatch();
     const { data } = node;
 
     const { inputValue, onChangeInput, setInput } = useNodeInput({
@@ -88,9 +88,23 @@ export const NodeWrapper = memo(
     const debouncedDispatch = useMemo(
       () =>
         debounce((value: string) => {
-          dispatch(updateNodeText({ id: node.id, text: value }));
+          setNodes((nds) =>
+            nds.map((itemNode) => {
+              if (itemNode.id === node.id) {
+                return {
+                  ...itemNode,
+                  data: {
+                    ...itemNode.data,
+                    label: value,
+                  },
+                };
+              }
+
+              return itemNode;
+            })
+          );
         }, 300),
-      [dispatch, node.id]
+      [node.id, setNodes]
     );
 
     useEffect(() => () => debouncedDispatch.cancel(), [debouncedDispatch]);
@@ -153,7 +167,7 @@ export const NodeWrapper = memo(
 
           {!loading && resizable && <NodeResizer isVisible={node.selected} />}
 
-          { withTitle &&
+          {withTitle && (
             <div className={styles["node-wrapper__title"]}>
               {icon && (
                 <Avatar
@@ -178,7 +192,7 @@ export const NodeWrapper = memo(
                 }}
               />
             </div>
-          }
+          )}
 
           {children}
 

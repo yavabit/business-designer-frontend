@@ -41,7 +41,9 @@ export const ConstructorHeader: FC<{
   const [processName, setProcessName] = useState(processData.name);
 
   const curUserId = useAppSelector((state) => state.user.id);
-  const isAuthor = processData.author_id === curUserId;
+  const isAuthor = useMemo(() => {
+		return processData.author_id === curUserId
+	}, [processData, curUserId])
 
   useEffect(() => {
     if (isAgent) {
@@ -97,7 +99,7 @@ export const ConstructorHeader: FC<{
   );
 
   const handleToggleEditProcessName = (val: boolean) => {
-    if (isAuthor) return;
+    if (!isAuthor) return;
 
     setEditProcessName(val);
   };
@@ -150,7 +152,7 @@ export const ConstructorHeader: FC<{
         {name}
       </Flex>
     );
-  }, [isEditProcessName, processName]);
+  }, [isEditProcessName, processName, isAuthor, handleChangeProcessName]);
 
   return (
     <Flex
