@@ -3,7 +3,7 @@ import { NodeWrapper } from "../../NodeWrapper";
 import { NodeInput } from "@components/NodeInput/NodeInput";
 import { useDispatch } from "react-redux";
 import { useNodeInput } from "@hooks/useNodeInput";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { updateNodeText } from "@store/processConstructor/processConstructorSlice";
 import { debounce } from "lodash";
 import { useTheme } from "@hooks/useTheme";
@@ -16,6 +16,7 @@ const inputStyle: React.CSSProperties = {
 export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 	const { token } = useTheme()
 	const { currentThemeName } = useAppSelector((state) => state.theme)
+	const [isEditing, setIsEditing] = useState(false);
 
 	const themeStylesDiamond = useMemo(() => {
 		const baseStyles = {
@@ -59,6 +60,18 @@ export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 		debouncedDispatch(e.target.value);
 	};
 
+	const handleDoubleClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleBlur = () => {
+      setIsEditing(false);
+    };
+
 	return (
 		<NodeWrapper
 			node={props}
@@ -69,6 +82,7 @@ export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 				padding: "0px",
 			}}
 			inputType="text"
+			withTitle={false}
 		>
 			<div
 				style={{
@@ -107,10 +121,18 @@ export const DiamondNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 				<NodeInput
 					value={inputValue}
 					onChange={handleChangeInput}
+					type={"input"}
+					isEditing={isEditing}
+					onDoubleClick={handleDoubleClick}
+					onClick={handleClick}
+					onBlur={handleBlur}
 					style={{
 						color: data.style?.color ?? token.colorText,
 						fontSize: data.style?.fontSize,
-						paddingTop: 20,
+						width: 'auto',
+						minWidth: 150,
+						minHeight: 50,
+						justifyContent: 'center',
 						...inputStyle,
 					}}
 				/>

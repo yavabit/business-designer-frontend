@@ -13,5 +13,10 @@ export const CircleNode = (props: NodeProps<Node<NodeCustomData>>) => (
 		node={props} 
 		style={{ ...circleNodeStyle }}
 		inputType="text"
+		inputStyle={{
+			width: 'auto',
+			minWidth: 159,
+			justifyContent: 'center'
+		}}
 	/>
 );

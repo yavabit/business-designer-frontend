@@ -47,6 +47,7 @@ type NodeWrapperType = {
   editable?: boolean;
   loading?: boolean;
   inputType?: "input" | "text";
+  withTitle?: boolean;
 };
 
 export const NodeWrapper = memo(
@@ -66,6 +67,7 @@ export const NodeWrapper = memo(
     editable = true,
     loading = false,
     inputType,
+    withTitle = true
   }: NodeWrapperType) => {
     const { nodesCategory } = useAppSelector((state) => state.nodes);
     const [isEditing, setIsEditing] = useState(false);
@@ -149,9 +151,9 @@ export const NodeWrapper = memo(
             </div>
           )}
 
-          {resizable && <NodeResizer isVisible={node.selected} />}
+          {!loading && resizable && <NodeResizer isVisible={node.selected} />}
 
-          {
+          { withTitle &&
             <div className={styles["node-wrapper__title"]}>
               {icon && (
                 <Avatar
