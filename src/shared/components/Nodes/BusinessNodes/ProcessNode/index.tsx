@@ -2,5 +2,8 @@ import { type Node, type NodeProps } from "@xyflow/react";
 import { NodeWrapper } from "../../NodeWrapper";
 
 export const ProcessNode = (props: NodeProps<Node<NodeCustomData>>) => (
-	<NodeWrapper node={props} inputType="text"/>
+	<NodeWrapper node={props} inputType="text" inputStyle={{
+			width: 'auto',
+			justifyContent: 'center'
+		}}/>
 );
