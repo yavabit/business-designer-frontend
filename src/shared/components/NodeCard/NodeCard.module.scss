@@ -1,7 +1,17 @@
 .node-card {
 	cursor: pointer;
 	transition: transform .3s;
+	
 	&:hover {
 		transform: translateX(-10px);
+	}
+	&:global(.disabled) {
+		cursor: not-allowed;
+		opacity: 0.6;
+		transform: none;
+		
+		&:hover {
+			transform: none;
+		}
 	}
 }

@@ -10,6 +10,7 @@ export const NodesPanel = memo(() => {
   const { nodeList } = useAppSelector((state) => state.nodes)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [disabled] = useState(false);
 
   const { setType } = useDnD();
 
@@ -41,7 +42,7 @@ export const NodesPanel = memo(() => {
   return (
     <Panel position="top-left">
       {isCollapsed && (
-        <Tooltip title="Добавить процесс">
+        <Tooltip title="Показать список процессов">
           <Button
             size="large"
             type="primary"
@@ -75,25 +76,27 @@ export const NodesPanel = memo(() => {
           style={{ width: 320 }}
         >
           <Input
-            placeholder="Поиск процессов..."
+            placeholder={disabled ? "Дождитесь окончания процесса" :"Поиск процессов..."}
             prefix={<AiOutlineSearch />}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             allowClear
             size="middle"
+            disabled={disabled}
             style={{ marginBottom: 8 }}
           />
           <List
             dataSource={filteredNodeList}
             renderItem={(item) => (
               <List.Item
-                onDragStart={(event) =>
-                  onDragStart(event, item.code ?? "input")
-                }
-                draggable
+                onDragStart={(event) => {
+                  if(!disabled)
+                    onDragStart(event, item.code ?? "input")
+                }}
+                draggable={!disabled}
                 style={{ padding: 0 }}
               >
-                <NodeListCard {...item} style={{ width: "100%" }} />
+                <NodeListCard {...item} style={{ width: "100%" }} className={disabled ? "disabled" : ""}/>
               </List.Item>
             )}
           />

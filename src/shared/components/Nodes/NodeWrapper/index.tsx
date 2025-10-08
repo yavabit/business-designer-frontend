@@ -151,7 +151,7 @@ export const NodeWrapper = memo(
             </div>
           )}
 
-          {resizable && <NodeResizer isVisible={node.selected} />}
+          {!loading && resizable && <NodeResizer isVisible={node.selected} />}
 
           { withTitle &&
             <div className={styles["node-wrapper__title"]}>
