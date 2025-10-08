@@ -5,7 +5,8 @@
 ![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=for-the-badge&logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-4.0-646CFF?style=for-the-badge&logo=vite)
-![React Flow](https://img.shields.io/badge/React_Flow-12.8.3-FF6B6B?style=for-the-badge&logo=react)
+![React Flow](https://img.shields.io/badge/React_Flow-12.8.3-2563EB?style=for-the-badge&logo=react)
+
 *Визуальный конструктор для создания бизнес-процессов и схем с совместным редактированием в реальном времени*
 
 </div>
