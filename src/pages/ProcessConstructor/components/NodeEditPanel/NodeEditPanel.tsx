@@ -1,5 +1,5 @@
 import { useAppSelector } from "@hooks/storeHooks";
-import { Panel } from "@xyflow/react";
+import { Panel, useReactFlow } from "@xyflow/react";
 import { Card, ColorPicker, Form, InputNumber, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useCallback, useEffect } from "react";
@@ -18,6 +18,7 @@ import { updateNodeProperties } from "@store/processConstructor/processConstruct
 
 export const NodeEditPanel = () => {
 	const selectedNode = useAppSelector((state) => state.processConstructor.selectedNode);
+	const { setNodes } = useReactFlow();
 
 	const dispatch = useDispatch()
 	const [form] = useForm();
@@ -45,6 +46,27 @@ export const NodeEditPanel = () => {
 
 	const handleValuesChange = debounce((curValue) => {
 		const [[key, value]] = Object.entries(curValue);
+
+		
+		setNodes((nds) =>
+			nds.map((itemNode) => {
+				if (itemNode.id === selectedNode?.id && itemNode.data.style) {
+					
+						return {
+							...itemNode,
+							data: {
+								...itemNode.data,
+								style: {
+									...itemNode.data.style,
+									[key]: value
+								},
+							},
+						};
+				}
+
+				return itemNode;
+			})
+		);
 		dispatch(updateNodeProperties({
 			id: selectedNode?.id as string,
 			propertyKey: key,
