@@ -26,7 +26,7 @@ export const SnakeLine = ({
 	const cardsPerRow = 4;
 	const stepX = (rowWidth - 2 * padding) / cardsPerRow;
 
-	// Запас для дуг и stroke
+	// Запас для дуг и stroke (иначе уходят за границы и отсекаются)
 	const extra = turnRadius + strokeWidth;
 
 	// Позиции точек (кружков)
@@ -41,7 +41,7 @@ export const SnakeLine = ({
 		return { x, y };
 	});
 
-	// Сегмент закругления угла (горизонталь + полукруг) между двумя точками
+	// Сегмент закругления угла (горизонталь + полукруг)
 	const generateSegment = (
 		prev: { x: number; y: number },
 		curr: { x: number; y: number },
