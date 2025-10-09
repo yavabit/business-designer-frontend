@@ -23,6 +23,7 @@ export const roadmapItems: TimelineItem[] = [
     { date: '10.25', title: 'Feature', description: 'Общий рефакторинг', done: false },
     { date: '11.25', title: 'Design', description: 'Правки по дизайну', done: false },
     { date: '11.25', title: 'Design', description: 'Мобильная адаптация', done: false },
+    { date: '11.25', title: 'Design', description: 'Входной тур для пользователя', done: false },
     { date: '11.25', title: 'Development', description: 'Покрытие автотестами', done: false },
     { date: '12.25', title: 'Testing', description: 'Финальное тестирование', done: false },
     { date: '01.26', title: 'Launch', description: 'Запуск продукта', done: false },
