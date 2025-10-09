@@ -1,3 +1,7 @@
+
+
+type TriggerNameType = "never" | "periodically" | null | undefined;
+
 interface IUser {
     id: string;
     firstname?: string;
@@ -31,7 +35,7 @@ interface IProcess {
     created_at: string;
     updated_at: string;
     category: NodesCategoryEnum;
-    trigger_type?: 'never' | 'periodically' | null;
+    trigger_type?: TriggerNameType;
     period?: number;
     last_run_date?: string;
     next_run_date?: string;
@@ -95,6 +99,6 @@ interface ICredentials {
 
 interface ITrigger {
     id: string,
-    name: string,
+    name: TriggerNameType,
     created_at: string,
 }
