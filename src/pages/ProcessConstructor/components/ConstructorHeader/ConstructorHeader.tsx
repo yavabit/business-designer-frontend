@@ -83,7 +83,6 @@ export const ConstructorHeader: FC<{
     const triggerObj = triggersData.data?.data.find(
       (t) => t.id == trigger_type_id
     );
-    console.log(trigger_type_id);
     if (triggerObj) {
       if (triggerObj.name == "never") {
         updatePeriod({
@@ -147,8 +146,6 @@ export const ConstructorHeader: FC<{
 
   const onDocumentStatusAgent = (e: IChangeAgent) => {
     const { agent } = e.content;
-
-		console.log('agent.period', agent.period)
 
     if ("statusAgent" in agent) setStartedAgent(agent.statusAgent);
 
