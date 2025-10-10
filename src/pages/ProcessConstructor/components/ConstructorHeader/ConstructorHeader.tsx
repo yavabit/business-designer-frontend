@@ -147,6 +147,9 @@ export const ConstructorHeader: FC<{
   const onDocumentStatusAgent = (e: IChangeAgent) => {
     const { agent } = e.content;
 
+		if(!agent)
+			return
+
     if ("statusAgent" in agent) setStartedAgent(agent.statusAgent);
 
     if ("triggerType" in agent) setTriggerType(agent.triggerType);
