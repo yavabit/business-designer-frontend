@@ -349,6 +349,7 @@ export const ConstructorHeader: FC<{
                 <BsListUl />
               </Button>
               <Modal 
+                destroyOnHidden
                 title={`Логи ${processData.name}`}
                 footer={false}
                 width={800}

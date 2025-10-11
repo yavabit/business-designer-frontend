@@ -57,7 +57,7 @@ const useSocket = () => {
 		})
 	}
 
-	const emitExecuteAgent = ({ processId }: { processId: string }) => {
+	const emitExecuteAgent = (processId: string) => {
 		socket.emit("execute-agent", { documentId: processId });
 	}
 
