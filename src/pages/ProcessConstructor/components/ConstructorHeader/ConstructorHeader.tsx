@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, type FC } from "react";
+import { useEffect, useMemo, useRef, useState, type FC } from "react";
 import style from "./ConstructorHeader.module.scss";
-import { Avatar, Button, Flex, Input, Select, Tooltip } from "antd";
-import { BsChevronLeft, BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
+import { Avatar, Button, Flex, Input, Modal, Select, Tooltip } from "antd";
+import { BsChevronLeft, BsFillPlayFill, BsFillPauseFill, BsListUl } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@hooks/useTheme";
 import { useLazyGetTriggerTypesQuery } from "@store/api/processes/processesApi";
@@ -34,11 +34,19 @@ export const ConstructorHeader: FC<{
   const [updatePeriod, updPeriodData] = useUpdatePeriodMutation();
   const [switchShedule, sheduleData] = useSwitchSheduleMutation();
 
-  const { listJoinedUsers, emitDocumentNameUpdated } = useSocket();
+  const { 
+    listJoinedUsers, 
+    emitDocumentNameUpdated, 
+    emitGetAgentLogs,
+    agentLogs,
+  } = useSocket();
 
   const [isEditProcessName, setEditProcessName] = useState(false);
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   const [processName, setProcessName] = useState(processData.name);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState<boolean>(false)
 
   const curUserId = useAppSelector((state) => state.user.id);
   const isAuthor = useMemo(() => {
@@ -81,6 +89,12 @@ export const ConstructorHeader: FC<{
   const onDocumentNameUpdated = ({ name }: { name: string }) => {
     setProcessName(name);
   };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [scrollRef.current])
 
   useEffect(() => {
     socket.on("document-name-updated", onDocumentNameUpdated);
@@ -245,6 +259,40 @@ export const ConstructorHeader: FC<{
                 )}
               </Button>
             </Tooltip>
+              <Button onClick={() => {
+                setIsLogsModalOpen(true);
+                emitGetAgentLogs(processData.id);
+              }}>
+                <BsListUl />
+              </Button>
+              <Modal 
+                footer={false}
+                width={800}
+                style={{top: '20px', width: "600px"}}
+                open={isLogsModalOpen} 
+                onCancel={() => setIsLogsModalOpen(false)}
+              >
+                <Flex 
+                  ref={scrollRef}
+                  vertical 
+                  gap={10} 
+                  style={{
+                    padding: '20px', 
+                    background: '#000000', 
+                    borderRadius: '8px',
+                    color: '#d6d6d6ff',
+                    whiteSpace: 'pre-wrap',
+                    height: '500px',
+                    overflowY: 'auto'
+                  }}
+                >
+                  {agentLogs?.map(l => (
+                    <div key={l.id} style={{fontWeight: 600, lineHeight: '24px'}}>
+                      {l.log_text}
+                    </div>
+                  ))}
+                </Flex>
+              </Modal>
           </Flex>
         )}
       </Flex>
