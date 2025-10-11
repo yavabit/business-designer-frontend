@@ -25,7 +25,8 @@ interface ICursors {
 const useSocket = () => {
 
 	const [listJoinedUsers, setListJoinedUsers] = useState<IListJoinedUsers>({})
-  const [cursors, setCursors] = useState<ICursors>({});
+  	const [cursors, setCursors] = useState<ICursors>({});
+	const [agentLogs, setAgentLogs] = useState<{ id: string; log_text: string; }[]>([]);
 
 	const emitJoinDocument = (processId: string | undefined) => {
 		socket.emit("join-document", processId);
@@ -55,6 +56,22 @@ const useSocket = () => {
 			name
 		})
 	}
+
+	const emitExecuteAgent = ({ processId }: { processId: string }) => {
+		socket.emit("execute-agent", { documentId: processId });
+	}
+
+	const emitGetExecuteingAgentStatus = ({ processId }: { processId: string }) => {
+		socket.emit("give-agent-executing-status", { documentId: processId });
+	}
+
+	useEffect(() => {
+		socket.on('executed-agent', () => {})
+
+		return () => {
+			socket.off('executed-agent', () => {})
+		}
+	}, [])
 
 	const onSocketConnect = () => {
 		console.log("onConnect");
@@ -118,6 +135,25 @@ const useSocket = () => {
 		};
 	}, []);
 
+	const emitGetAgentLogs = (processId: string) => {
+		socket.emit("get-agent-logs", {
+			documentId: processId
+		})
+	}
+
+	const onAgentLogsUpdate = (e: {agentLogs: {id: string, log_text: string}[]}) => {
+		const { agentLogs } = e;
+		setAgentLogs(agentLogs);
+	}
+
+	useEffect(() => {
+		socket.on("give-agent-logs", onAgentLogsUpdate);
+
+		return () => {
+			socket.off("give-agent-logs", onAgentLogsUpdate);
+		}
+	}, [])
+
   const onUserCursorMove = (e: IUserCursorMove) => {
     const { userId, username, x, y } = e;
 
@@ -157,7 +193,11 @@ const useSocket = () => {
 		emitDocumentUpdate,
 		emitDocumentRefresh,
 		emitDocumentNameUpdated,
+		emitExecuteAgent,
+		emitGetExecuteingAgentStatus,
+		emitGetAgentLogs,
 		cursors,
+		agentLogs,
 		emitCursorMove
 	}
 }
