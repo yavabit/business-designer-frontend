@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import style from "./ConstructorHeader.module.scss";
 import { Avatar, Button, Flex, Input, Modal, Select, Tooltip } from "antd";
 import { BsChevronLeft, BsFillPlayFill, BsFillPauseFill, BsListUl } from "react-icons/bs";
@@ -16,6 +16,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { socket } from "@store/api/socket";
 import { useAppSelector } from "@hooks/storeHooks";
 import { formatDate } from "@shared/utils/formatDate";
+import { LogsModalContent } from "./components/LogsModalContent/LogsModalContent";
 
 enum triggers {
   "never" = "Никогда",
@@ -54,13 +55,9 @@ export const ConstructorHeader: FC<{
     listJoinedUsers, 
     emitDocumentNameUpdated, 
     emitDocumentRefresh,
-    emitGetAgentLogs,
-    agentLogs,
   } = useSocket();
 
   const [isEditProcessName, setEditProcessName] = useState(false);
-
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   const [processName, setProcessName] = useState(processData.name);
   const [isLogsModalOpen, setIsLogsModalOpen] = useState<boolean>(false)
@@ -120,12 +117,6 @@ export const ConstructorHeader: FC<{
       });
     }
   };
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [scrollRef.current])
 
   const renderAvatars = useMemo(
     () =>
@@ -349,39 +340,23 @@ export const ConstructorHeader: FC<{
                 )}
               </Button>
             </Tooltip>
-              <Button onClick={() => {
-                setIsLogsModalOpen(true);
-                emitGetAgentLogs(processData.id);
-              }}>
+              <Button 
+                title="Посмотреть логи"
+                onClick={() => {
+                  setIsLogsModalOpen(true);
+                }}
+              >
                 <BsListUl />
               </Button>
               <Modal 
+                title={`Логи ${processData.name}`}
                 footer={false}
                 width={800}
                 style={{top: '20px', width: "600px"}}
                 open={isLogsModalOpen} 
                 onCancel={() => setIsLogsModalOpen(false)}
               >
-                <Flex 
-                  ref={scrollRef}
-                  vertical 
-                  gap={10} 
-                  style={{
-                    padding: '20px', 
-                    background: '#000000', 
-                    borderRadius: '8px',
-                    color: '#d6d6d6ff',
-                    whiteSpace: 'pre-wrap',
-                    height: '500px',
-                    overflowY: 'auto'
-                  }}
-                >
-                  {agentLogs?.map(l => (
-                    <div key={l.id} style={{fontWeight: 600, lineHeight: '24px'}}>
-                      {l.log_text}
-                    </div>
-                  ))}
-                </Flex>
+                <LogsModalContent processId={processData.id} />
               </Modal>
           </Flex>
         )}
