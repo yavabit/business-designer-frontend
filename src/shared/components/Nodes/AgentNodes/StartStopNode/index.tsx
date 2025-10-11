@@ -2,9 +2,13 @@ import { type Node, type NodeProps } from "@xyflow/react";
 import { NodeWrapper } from "../../NodeWrapper";
 import { VscDebugStart } from "react-icons/vsc";
 import { useAppSelector } from "@hooks/storeHooks";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { FaStop } from "react-icons/fa6";
-import { Popconfirm } from "antd";
+import { notification, Popconfirm, Spin } from "antd";
+import { useParams } from "react-router-dom";
+import useSocket from "@hooks/useSocket";
+import { socket } from "@store/api/socket";
+import { LoadingOutlined } from '@ant-design/icons';
 
 type BtnsProps = {
 	onConfirm: ()=> void;
@@ -46,22 +50,66 @@ const BtnStop = ({onConfirm}: BtnsProps) => {
 
 export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 
+	const { processId } = useParams();
+	const { emitExecuteAgent } = useSocket();
+
 	const [isStartNode, setStartNode] = useState(true)
+	const [isAgentProcessing, setIsAgentProcessing] = useState<boolean>(false);
 
 	const { nodes } = useAppSelector(state => state.processConstructor)
 
-	const handleStartClick = () => {
+	const onExecuteEnd = useCallback((e: {success: boolean}) => {
+		if (e.success) {
+			notification.success({
+				message: 'Агент завершён успешно!',
+				placement: 'bottomRight',
+			})
+		} else {
+			notification.error({
+				message: 'Агент завершился с ошибками.',
+				placement: 'bottomRight',
+			})
+		}
+	}, [])
 
+	const handleStartClick = () => {
+		if (processId) {
+			emitExecuteAgent(processId);
+		}
 	}
 
 	const handleStopClick = () => {
 
 	}
 
+	const whiteIcon = <LoadingOutlined style={{ fontSize: 16, color: '#FFFFFF' }} spin />;
+
 	useEffect(() => {
 		const startNode = nodes.find(node => node.type === 'start')
 		setStartNode(() => props.id == startNode?.id)
 	}, [nodes])
+
+	useEffect(() => {
+		socket.on("executed-agent", onExecuteEnd);
+
+		return () => {
+			socket.off("executed-agent", onExecuteEnd);
+		}
+	}, [])
+
+	useEffect(() => {
+		socket.on(
+			"get-agent-executing-status", 
+			(e: {isRunning: boolean}) => setIsAgentProcessing(e.isRunning)
+		);
+
+		return () => {
+			socket.off(
+				"get-agent-executing-status", 
+				(e: {isRunning: boolean}) => setIsAgentProcessing(e.isRunning)
+			);
+		}
+	}, [])
 
 	return <NodeWrapper 
 		node={{
@@ -75,7 +123,17 @@ export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 		handleTop={false}
 		handleLeft={!isStartNode}
 		handleRight={isStartNode}
-		icon={isStartNode ? <BtnStart onConfirm={handleStartClick}/> : <BtnStop onConfirm={handleStopClick}/>}
+		icon={isStartNode 
+			? isAgentProcessing ? (
+				<Spin 
+					size="small" 
+					indicator={whiteIcon}
+				/>
+			) : (
+				<BtnStart onConfirm={handleStartClick}/>
+			) 
+			: <BtnStop onConfirm={handleStopClick}/>
+		}
 		editable={false}
 		style={isStartNode ? {...initStartStyle} : {...initEndStyle}}
 	>

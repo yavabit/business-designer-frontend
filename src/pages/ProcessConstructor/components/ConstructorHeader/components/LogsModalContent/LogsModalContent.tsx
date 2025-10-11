@@ -8,10 +8,10 @@ export const LogsModalContent: FC<{processId: string}> = ({processId}) => {
     const scrollRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (scrollRef.current) {
+        if (scrollRef.current && agentLogs) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [scrollRef.current])
+    }, [scrollRef.current, agentLogs])
 
     useEffect(() => {
         emitGetAgentLogs(processId);
