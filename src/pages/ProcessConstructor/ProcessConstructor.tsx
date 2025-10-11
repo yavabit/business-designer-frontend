@@ -43,7 +43,7 @@ import {
 } from "@store/api/processConstructor/processConstructorApi";
 import { toBlob } from "html-to-image";
 import { useParams } from "react-router-dom";
-import { Flex, Spin } from "antd";
+import { Flex, notification, Spin } from "antd";
 import { Hotkeys } from "@pages/ProcessConstructor/components/Hotkeys";
 import { socket } from "@store/api/socket";
 import UserMulticursor from "@pages/ProcessConstructor/components/UserCursor";
@@ -301,6 +301,30 @@ export const ProcessConstructor = memo(() => {
 
     return () => {
       emitLeaveDocument(processId);
+    };
+  }, [processId]);
+
+  useEffect(() => {
+    const handleExecutedAgent = (e: {success: boolean; documentId: string}) => {
+      if (e.documentId !== processId) return;
+        
+      if (e.success) {
+        notification.success({
+          message: 'Агент завершён успешно!',
+          placement: 'bottomRight',
+        });
+      } else {
+        notification.error({
+          message: 'Агент завершился с ошибками.',
+          placement: 'bottomRight',
+        });
+      }
+    };
+
+    socket.on("executed-agent", handleExecutedAgent);
+
+    return () => {
+      socket.off("executed-agent", handleExecutedAgent);
     };
   }, [processId]);
 

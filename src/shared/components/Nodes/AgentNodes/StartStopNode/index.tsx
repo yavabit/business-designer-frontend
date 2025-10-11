@@ -2,9 +2,9 @@ import { type Node, type NodeProps } from "@xyflow/react";
 import { NodeWrapper } from "../../NodeWrapper";
 import { VscDebugStart } from "react-icons/vsc";
 import { useAppSelector } from "@hooks/storeHooks";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { FaStop } from "react-icons/fa6";
-import { notification, Popconfirm, Spin } from "antd";
+import { Popconfirm, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import useSocket from "@hooks/useSocket";
 import { socket } from "@store/api/socket";
@@ -58,20 +58,6 @@ export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 
 	const { nodes } = useAppSelector(state => state.processConstructor)
 
-	const onExecuteEnd = useCallback((e: {success: boolean}) => {
-		if (e.success) {
-			notification.success({
-				message: 'Агент завершён успешно!',
-				placement: 'bottomRight',
-			})
-		} else {
-			notification.error({
-				message: 'Агент завершился с ошибками.',
-				placement: 'bottomRight',
-			})
-		}
-	}, [])
-
 	const handleStartClick = () => {
 		if (processId) {
 			emitExecuteAgent(processId);
@@ -88,14 +74,6 @@ export const StartStopNode = memo((props: NodeProps<Node<NodeCustomData>>) => {
 		const startNode = nodes.find(node => node.type === 'start')
 		setStartNode(() => props.id == startNode?.id)
 	}, [nodes])
-
-	useEffect(() => {
-		socket.on("executed-agent", onExecuteEnd);
-
-		return () => {
-			socket.off("executed-agent", onExecuteEnd);
-		}
-	}, [])
 
 	useEffect(() => {
 		socket.on(
