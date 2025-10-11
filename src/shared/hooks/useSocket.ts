@@ -61,17 +61,13 @@ const useSocket = () => {
 		socket.emit("execute-agent", { documentId: processId });
 	}
 
-	const emitGetExecuteingAgentStatus = ({ processId }: { processId: string }) => {
-		socket.emit("give-agent-executing-status", { documentId: processId });
+	const emitGetAgentStatus = (processId: string) => {
+		socket.emit("give-agent-status", { documentId: processId });
 	}
 
-	useEffect(() => {
-		socket.on('executed-agent', () => {})
-
-		return () => {
-			socket.off('executed-agent', () => {})
-		}
-	}, [])
+	const emitSheduleSwitch = (processId: string) => {
+		socket.emit("shedule-switch", { documentId: processId });
+	}
 
 	const onSocketConnect = () => {
 		console.log("onConnect");
@@ -161,7 +157,6 @@ const useSocket = () => {
 		return () => {
 			socket.off("give-agent-logs", onAgentLogsUpdate);
 			socket.off("new-agent-log", onNewAgentLog);
-
 		}
 	}, [])
 
@@ -205,8 +200,9 @@ const useSocket = () => {
 		emitDocumentRefresh,
 		emitDocumentNameUpdated,
 		emitExecuteAgent,
-		emitGetExecuteingAgentStatus,
 		emitGetAgentLogs,
+		emitGetAgentStatus,
+		emitSheduleSwitch,
 		cursors,
 		agentLogs,
 		emitCursorMove
