@@ -146,11 +146,22 @@ const useSocket = () => {
 		setAgentLogs(agentLogs);
 	}
 
+	const onNewAgentLog = (data: { 
+		documentId: string;
+		log: { id: string; log_text: string };
+		timestamp: string;
+	}) => {    
+		setAgentLogs(prevLogs => [...prevLogs, data.log]);
+	};
+
 	useEffect(() => {
 		socket.on("give-agent-logs", onAgentLogsUpdate);
+		socket.on("new-agent-log", onNewAgentLog);
 
 		return () => {
 			socket.off("give-agent-logs", onAgentLogsUpdate);
+			socket.off("new-agent-log", onNewAgentLog);
+
 		}
 	}, [])
 
