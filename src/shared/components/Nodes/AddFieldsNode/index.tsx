@@ -54,7 +54,7 @@ export const AddFieldsNode = ({
 						setModal(prev => ({...prev, open: true}))
 					}
 				}>
-					{defaultFields.map(item => item.label)}
+					{defaultFields.map((item, index) => <span key={`${item.label}_${index}`}>{item.label}</span>)}
 				</div>
 			)}
 			<AddNodeActionModal open={modal.open} handleModalOk={handleModalOk} handleModalCancel={handleModalCancel} title={btnLabel}>
